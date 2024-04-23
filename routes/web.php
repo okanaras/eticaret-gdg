@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\MyOrdersController;
 use App\Http\Controllers\ProductController;
@@ -17,3 +18,7 @@ Route::get('/odeme', [CheckoutController::class, 'index']);
 
 Route::get('/siparislerim', [MyOrdersController::class, 'index']);
 Route::get('/siparislerim-detay', [MyOrdersController::class, 'detail']);
+
+Route::prefix('admin')->group(function () {
+    Route::get('/', [DashboardController::class, 'index']);
+});
