@@ -9,7 +9,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 
-Schedule::command('verify:send-mail')->daily();
+Schedule::command('verify:send-mail');
 
 /**
  * Dakika (0 - 59)

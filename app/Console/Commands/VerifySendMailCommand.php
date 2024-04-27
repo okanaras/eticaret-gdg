@@ -3,7 +3,13 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
+use App\Notifications\WelcomeMailNotification;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class VerifySendMailCommand extends Command
 {
@@ -44,8 +50,9 @@ class VerifySendMailCommand extends Command
         // dd($user, $queue, $tc);
         // dd('Hello World');
 
-
+        /*
         /** Command tablo ornegi */
+        /*
         $users = User::query()->select('name', 'email')->get();
 
         $this->info('Kullanicilarin ad ve email bilgileri tablosu:');
@@ -55,8 +62,10 @@ class VerifySendMailCommand extends Command
         );
 
         $this->newLine(2); // satir atlatma
+        */
 
         /** ProgressBar ornegi */
+        /*
         $this->warn('ProgressBar kullanimi:');
         $userBar = $this->withProgressBar($users, function (User $user) {
             echo $user->name;
@@ -71,5 +80,49 @@ class VerifySendMailCommand extends Command
         $this->newLine(2);
         $this->warn('Uyarı mesaji');
         $this->newLine(2);
+        */
+
+
+        // dd(time()); // unix time
+
+        /** Email dogrulama suresi dolanlar icin mail gonderme */
+
+        $users = User::query()
+            ->whereNull('email_verified_at') // whereNull null olma durumunu kontrol eder bu durumda : email dogrulama tarihi null ise
+            // ->where('email_verified_at', '=', null);
+            ->get();
+
+        foreach ($users as $user) {
+            $token = Str::random(40);
+            Cache::put('verify_token_' . $token, $user->id,  now()->addMinutes(60)); // now()->addMinutes(60) yerine 60 * 60 tan 3600 de yazabilirdik.
+
+            $user->notify(new WelcomeMailNotification($token));
+        }
+
+        // Log::info('test msj');
+
+        /** Cache ornegi */
+        /*
+        $cacheData = DB::table('cache')
+            ->where('expiration', '<', time())
+            ->get();
+        foreach ($cacheData as $data) {
+            $userID = explode(';', explode(':', $data->value)[1])[0];
+
+            $user = User::query()
+                ->where('id', $userID)
+                ->first();
+
+            if ($user) {
+                $token = Str::random(40);
+                DB::table('cache')
+                    ->where('value', 'LIKE', '%' . $user->id . '%')
+                    ->delete();
+
+                Cache::put('verify_token_' . $token, $user->id,  now()->addMinutes(60)); // now()->addMinutes(60) yerine 60 * 60 tan 3600 de yazabilirdik.
+                $user->notify(new WelcomeMailNotification($token));
+            }
+        }
+        */
     }
 }

@@ -39,7 +39,9 @@ Route::prefix('giris')->middleware('throttle:100,60')->group(function () {  // t
     Route::get('/', [LoginController::class, 'showForm'])->name('login');
     Route::post('/', [LoginController::class, 'login']);
 });
+
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
-/** Email Dogrulama */
 Route::get('dogrula/{token}', [RegisterController::class, 'verify'])->name('verify');
+Route::get('dogrula-mail', [RegisterController::class, 'sendVerifyMailShowForm'])->name('send-verify-mail');
+Route::post('dogrula-mail', [RegisterController::class, 'sendVerifyMail']);

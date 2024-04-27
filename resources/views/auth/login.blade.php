@@ -1,7 +1,7 @@
 @extends('layouts.auth')
 
 
-@section('title', 'Kayit Ol')
+@section('title', 'Giris Yap')
 
 
 @push('css')
