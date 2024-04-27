@@ -26,7 +26,10 @@ class UserObserver
      */
     public function updated(User $user): void
     {
-        //
+        // isDirty() bir alan değiştiğinde kontrol eder.
+        if ($user->isDirty('email_verified_at')) {
+            Cache::forget('verify_token_' . request()->token);
+        }
     }
 
     /**
