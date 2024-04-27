@@ -284,11 +284,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-
     btnRegister.addEventListener("click", function (event) {
-        registerForm.submit();
-
-        /*
         ruleName: for (const rule in validationRules) {
             // let element = $('[name=' + rule + ']');
             let element = document.querySelector("[name=" + rule + "]");
@@ -329,7 +325,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
         }
-        */
     });
 
     function validateEmail(email) {

@@ -16,7 +16,8 @@
             @csrf
             <div class="mb-3">
                 <label for="email" class="form-label">Email Adresi</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email"
+                    value="{{ old('email') }}">
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Parola</label>
@@ -45,4 +46,5 @@
 
 
 @push('js')
+    <script src="{{ asset('assets/js/auth/login.js') }}"></script>
 @endpush('')
