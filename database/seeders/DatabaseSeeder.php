@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Database\Seeders\Category\CategorySeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,11 +14,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        /**
+         * * call() methodu ile seedleri çağırabiliriz.
+         * * Seeder lar icerisinde factory methodları cagrilir ve kendimiz veri doldurabiliriz.
+         * * php artisan db:seed ile butun seederlar, php artisan db:seed --class=CategorySeeder ile belirtilen seederi calistirir.
+         * * seederlar eger seeders klasorunun altinda degilse, yani Seeders/Category/CategorySeeder.php seklinde baska bir kalsorun altindaysa eger asagidaki sekilde cagirilmasi gerekir.
+         * ? Not : Seeder namespace in defistirilmesi gerekir.
+         * * php artisan db:seed --class=Database\\Seeders\\Category\\CategorySeeder
+         */
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call([
+            CategorySeeder::class,
         ]);
     }
 }
