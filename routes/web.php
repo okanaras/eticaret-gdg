@@ -20,8 +20,8 @@ Route::get('/urun-detay', [ProductController::class, 'detail']);
 Route::get('/sepet', [CardController::class, 'card']);
 Route::get('/odeme', [CheckoutController::class, 'index']);
 
-Route::get('/siparislerim', [MyOrdersController::class, 'index']);
-Route::get('/siparislerim-detay', [MyOrdersController::class, 'detail']);
+Route::get('/siparislerim', [MyOrdersController::class, 'index'])->name('order.index');
+Route::get('/siparislerim-detay', [MyOrdersController::class, 'detail'])->name('order.detail');
 
 /** Admin */
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {

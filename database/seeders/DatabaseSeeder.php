@@ -6,6 +6,8 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Database\Seeders\Category\CategorySeeder;
+use Database\Seeders\RolePermissions\GeneralRolePermissionSeeder;
+use Database\Seeders\User\UserInitializeUserSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -24,7 +26,9 @@ class DatabaseSeeder extends Seeder
          */
 
         $this->call([
-            CategorySeeder::class,
+            GeneralRolePermissionSeeder::class,
+            UserInitializeUserSeeder::class,
+            // CategorySeeder::class,
         ]);
     }
 }

@@ -33,12 +33,19 @@ class LoginController extends Controller
             }
         }
 
+        if ($user->hasRole(['super-admin', 'category-manager', 'product-manager', 'order-manager', 'user-manager'])) {
+
+            return redirect()->route('admin.index');
+        }
+
+        return redirect()->route('order.index');
+
         /**
-         * intentended() -> Kullanicinin gitmek istedigi bi sayfa varsa oraya yonlendir yoksa default yere yonlendir.
+         * intended('/url') -> Kullanicinin gitmek istedigi bi sayfa varsa oraya yonlendir yoksa default yere yonlendir.
          * Ornek siparislerim sayfasina gidecgim ama giris yapmamisim.
          * Once giris ekranina yonlendirecek girsi yaptiktan sonra direkt siparislerime gidecek
          * */
-        return redirect()->intended('/admin');
+        // return redirect()->intended('/admin');
     }
 
     public function logout()

@@ -34,8 +34,8 @@
                 <a href="javascript:void(0)" id="btnLogin" class="btn btn-primary me-2 mb-2 mb-md-0 text-white">Giris
                     Yap</a>
                 <button type="button" class="btn btn-outline-primary btn-icon-text mb-2 mb-md-0">
-                    <i class="md mdi-google"></i>
-                    Google ile Giris Yap
+                    <i class="mdi mdi-google"></i>
+                    Google ile Kayit Ol
                 </button>
             </div>
             <a href="{{ route('register') }}" class="d-block mt-3 text-muted">Hesap Olustur</a>
