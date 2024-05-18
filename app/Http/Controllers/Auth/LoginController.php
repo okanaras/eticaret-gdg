@@ -79,8 +79,14 @@ class LoginController extends Controller
             return redirect()->route('index');
         }
 
+        if ($driver === 'google') {
+            $name = $user->getName();
+        } elseif ($driver === 'github') {
+            $name = $user->getNickname();
+        }
+
         $createUser = User::create([
-            'name' => $user->getName(),
+            'name' => $name,
             'email' => $user->getEmail(),
             'password' => bcrypt(123456),
             'email_verified_at' => now()

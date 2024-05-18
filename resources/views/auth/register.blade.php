@@ -66,10 +66,16 @@
             <div>
                 <a href="javascript:void(0)" class="btn btn-primary text-white me-2 mb-2 mb-md-0" id="btnRegister">Kayit
                     Ol</a>
-                <button type="button" class="btn btn-outline-primary btn-icon-text mb-2 mb-md-0">
+                <a href="{{ route('login.socialite', ['driver' => 'google']) }}"
+                    class="btn btn-outline-primary btn-icon-text mb-2 mb-md-0">
                     <i class="mdi mdi-google"></i>
                     Google ile Kayit Ol
-                </button>
+                </a>
+                <a href="{{ route('login.socialite', ['driver' => 'github']) }}"
+                    class="btn btn-outline-primary btn-icon-text mb-2 mb-md-0">
+                    <i class="mdi mdi-github"></i>
+                    Github ile Kayit Ol
+                </a>
             </div>
             <a href="{{ route('login') }}" class="d-block mt-3 text-muted">Giris Yap</a>
         </form>
