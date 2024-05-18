@@ -18,6 +18,9 @@
                 <label for="email" class="form-label">Email Adresi</label>
                 <input type="email" class="form-control" id="email" name="email" placeholder="Email"
                     value="{{ old('email') }}">
+                @error('email')
+                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                @enderror
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Parola</label>
@@ -33,10 +36,11 @@
             <div>
                 <a href="javascript:void(0)" id="btnLogin" class="btn btn-primary me-2 mb-2 mb-md-0 text-white">Giris
                     Yap</a>
-                <button type="button" class="btn btn-outline-primary btn-icon-text mb-2 mb-md-0">
+                <a href="{{ route('login.socialite', ['driver' => 'google']) }}"
+                    class="btn btn-outline-primary btn-icon-text mb-2 mb-md-0">
                     <i class="mdi mdi-google"></i>
                     Google ile Kayit Ol
-                </button>
+                </a>
             </div>
             <a href="{{ route('register') }}" class="d-block mt-3 text-muted">Hesap Olustur</a>
         </form>

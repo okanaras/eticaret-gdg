@@ -2,9 +2,13 @@
         <div class="container">
             <div class="login float-end">
                 <ul class="login-list">
-                    <li><a href="{{ route('login') }}" class="text-white">GIRIS</a></li>
-                    <li><a href="{{ route('register') }}" class="text-white">KAYIT</a></li>
+                    @guest
+                        <li><a href="{{ route('login') }}" class="text-white">GIRIS</a></li>
+                        <li><a href="{{ route('register') }}" class="text-white">KAYIT</a></li>
+                    @endguest
+                    @auth
                     <li><a href="" class="text-white">SIPARISLERIM</a></li>
+                    @endauth
                     <li><a href="" class="text-white">SEPETIM</a></li>
                     <li class="dropdown user-basket">
                         <a href="javascript:void(0)" class="dropdown-toggle position-relative" role="button"

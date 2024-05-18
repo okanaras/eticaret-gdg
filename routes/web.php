@@ -24,7 +24,7 @@ Route::get('/siparislerim', [MyOrdersController::class, 'index'])->name('order.i
 Route::get('/siparislerim-detay', [MyOrdersController::class, 'detail'])->name('order.detail');
 
 /** Admin */
-Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.check'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('index');
     Route::get('/order', [DashboardController::class, 'index'])->name('orders');
 });
@@ -41,6 +41,9 @@ Route::prefix('giris')->middleware('throttle:100,60')->group(function () {  // t
 });
 
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+Route::get('auth/{driver}/callback', [LoginController::class, 'socialiteVerify'])->name('login.socialite-verify');
+Route::get('auth/{driver}', [LoginController::class, 'socialite'])->name('login.socialite');
 
 Route::get('dogrula/{token}', [RegisterController::class, 'verify'])->name('verify');
 Route::get('dogrula-mail', [RegisterController::class, 'sendVerifyMailShowForm'])->name('send-verify-mail');

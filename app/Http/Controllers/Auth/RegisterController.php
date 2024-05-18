@@ -49,19 +49,28 @@ class RegisterController extends Controller
         // $user->email_verified_at = now();
         // $user->save();
 
+
         $userQuery = User::query()
             ->where('id', $userID);
 
         $user = $userQuery->firstOrFail();
 
-        $userUpdate = $userQuery->update(['email_verified_at' => now()]);
+        $user->email_verified_at = now();
+        $user->save();
+
+        // $userUpdate = $userQuery->update(['email_verified_at' => now()]);
 
         // Cache::forget('verify_token_' . $request->token);
 
         Auth::login($user);
         alert()->success('Basarili', 'Hesabiniz onaylandi.');
 
-        return redirect()->route('admin.index');
+        if ($user->hasRole(['super-admin', 'category-manager', 'product-manager', 'order-manager', 'user-manager'])) {
+
+            return redirect()->route('admin.index');
+        }
+
+        return redirect()->route('index');
     }
 
     public function sendVerifyMailShowForm()
