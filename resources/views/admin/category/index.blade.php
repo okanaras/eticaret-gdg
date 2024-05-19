@@ -32,10 +32,10 @@
                                 <td>
                                     @if ($category->status)
                                         <a href="javascript:void(0)" class="btn btn-inverse-success btn-change-status"
-                                            data-id="{{ $category->id }}">Aktif</a>
+                                            data-id="{{ $category->id }}" data-name="{{ $category->name }}">Aktif</a>
                                     @else
                                         <a href="javascript:void(0)" class="btn btn-inverse-danger btn-change-status"
-                                            data-id="{{ $category->id }}">Pasif</a>
+                                            data-id="{{ $category->id }}" data-name="{{ $category->name }}">Pasif</a>
                                     @endif
                                 </td>
                                 <td>
@@ -72,9 +72,10 @@
             document.querySelector('.table').addEventListener('click', (event) => {
                 let element = event.target;
 
+                let dataID = element.getAttribute('data-id');
+                let dataName = element.getAttribute('data-name');
+
                 if (element.classList.contains('btn-delete-category')) {
-                    let dataID = element.getAttribute('data-id');
-                    let dataName = element.getAttribute('data-name');
                     Swal.fire({
                         title: " '" + dataName + "' kategorisini silmek istediginize emin misiniz?",
                         showCancelButton: true,
@@ -93,11 +94,67 @@
                                 deleteForm.submit();
                             }, 100);
 
-                            // toastr.success('Kategori basariyla silindi!');
-                        } else if (result.isDenied) {
-                            Swal.fire("Herhangi bir islem gerceklestirilmedi!", "", "info");
+                        } else if (result.dismiss) {
+                            toastr.info("Herhangi bir islem gerceklestirilmedi!", 'Bilgi');
                         }
                     });
+                }
+
+                if (element.classList.contains('btn-change-status')) {
+                    Swal.fire({
+                        title: " '" + dataName +
+                            "' statusunu degistirmek istediginize emin misiniz?",
+                        showCancelButton: true,
+                        confirmButtonText: "Evet",
+                        cancelButtonText: "Hayir"
+                    }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            let body = {
+                                id: dataID
+                            };
+
+                            let data = {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify(body)
+                            }
+
+                            let route = "{{ route('admin.category.change-status') }}";
+
+                            fetch(route, data)
+                                .then(response => {
+                                    if (!response.ok) {
+                                        toastr.error('Status degistirilmedi, hata alindi!',
+                                            'Hata');
+                                        console.log(response);
+                                    }
+
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    element.textContent = data.status ? "Aktif" : "Pasif";
+
+                                    if (data.status) {
+                                        element.classList.add('btn-inverse-success');
+                                        element.classList.remove('btn-inverse-danger');
+
+                                    } else {
+                                        element.classList.remove('btn-inverse-success');
+                                        element.classList.add('btn-inverse-danger');
+                                    }
+                                    // console.log(data);
+                                })
+
+
+                        } else if (result.dismiss) {
+                            toastr.info("Herhangi bir islem gerceklestirilmedi!", 'Bilgi');
+                        }
+                    });
+
                 }
             });
         });

@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Requests\CategoryStoreRequest;
 use App\Http\Requests\CategoryUpdateRequest;
+use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
@@ -146,5 +147,37 @@ class CategoryController extends Controller
             ->get();
 
         return view('categories', compact('categories'));
+    }
+
+    public function changeStatus(Request $request): JsonResponse
+    {
+        $id = $request->id;
+
+        $category = Category::query()->where('id', $id)->first();
+
+        // dd($category);
+
+        if (is_null($category)) {
+            return response()
+                ->json()
+                ->setData([
+                    'message' => 'Kategori bulunamadi.'
+                ])
+                ->setStatusCode(404)
+                ->setCharset('utf-8')
+                ->header('Content-Type', 'application.json')
+                ->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+        }
+
+        $category->status = !$category->status;
+        $category->save();
+
+        return response()
+            ->json()
+            ->setData($category)
+            ->setStatusCode(200)
+            ->setCharset('utf-8')
+            ->header('Content-Type', 'application.json')
+            ->setEncodingOptions(JSON_UNESCAPED_UNICODE);
     }
 }

@@ -32,6 +32,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.check'])->gro
     Route::get('/order', [DashboardController::class, 'index'])->name('orders');
 
     Route::resource('category', CategoryController::class);
+    Route::post('category/change-status', [CategoryController::class, 'changeStatus'])->name('category.change-status');
 });
 
 /** Auth */
