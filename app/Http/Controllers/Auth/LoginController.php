@@ -69,8 +69,13 @@ class LoginController extends Controller
 
     public function socialiteVerify($driver)
     {
-        // google girisi yaptik yukardan buraya geldik once giris yapan user i aliyoruz ve bu user i db mizde buluyoruz.Eger mevcutsa direkt login yapiyoruz, mevcut degilse de create edip login yapiyoruz.
-        $user = Socialite::driver($driver)->user();
+        try {
+            // google girisi yaptik yukardan buraya geldik once giris yapan user i aliyoruz ve bu user i db mizde buluyoruz.Eger mevcutsa direkt login yapiyoruz, mevcut degilse de create edip login yapiyoruz.
+            $user = Socialite::driver($driver)->user();
+        } catch (\Throwable $th) {
+            // github ile erisime izin verilmediginde bad rq hatasi veriyordu o yuzden try catch blogu icerisine aldim bu kismi
+            return redirect()->route('index');
+        }
 
         $checkUser = User::query()->where('email', $user->getEmail())->first();
 

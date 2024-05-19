@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 
-@section('title', 'Admin Anasayfa')
+@section('title', 'Kategori Listesi')
 
 
 @push('css')
@@ -9,7 +9,7 @@
 
 
 @section('body')
-    Admin Anasayfa
+
 @endsection
 
 

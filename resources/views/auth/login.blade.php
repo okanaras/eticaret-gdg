@@ -5,7 +5,7 @@
 
 
 @push('css')
-@endpush('')
+@endpush
 
 
 @section('body')
@@ -51,9 +51,9 @@
         </form>
     </div>
 
-@endsection('')
+@endsection
 
 
 @push('js')
     <script src="{{ asset('assets/js/auth/login.js') }}"></script>
-@endpush('')
+@endpush

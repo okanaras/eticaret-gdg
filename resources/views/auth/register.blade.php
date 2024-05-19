@@ -5,7 +5,7 @@
 
 
 @push('css')
-@endpush('')
+@endpush
 
 
 @section('body')
@@ -81,9 +81,9 @@
         </form>
     </div>
 
-@endsection('')
+@endsection
 
 
 @push('js')
     <script src="{{ asset('assets/js/auth/register.js') }}"></script>
-@endpush('')
+@endpush

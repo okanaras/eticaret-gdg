@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Front\CardController;
 use App\Http\Controllers\Front\CheckoutController;
 use App\Http\Controllers\Front\DashboardController;
@@ -27,6 +28,8 @@ Route::get('/siparislerim-detay', [MyOrdersController::class, 'detail'])->name('
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.check'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('index');
     Route::get('/order', [DashboardController::class, 'index'])->name('orders');
+
+    Route::resource('category', CategoryController::class);
 });
 
 /** Auth */

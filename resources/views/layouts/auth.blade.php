@@ -19,6 +19,8 @@
     <link rel="stylesheet" href="{{ asset('assets/vendors/mdi/css/materialdesignicons.min.css') }}">
 
     <link rel="stylesheet" href="{{ asset('assets/vendors/sweetalert2/sweetalert2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/vendors/toastr/toastr.min.css') }}">
+
 
     <link rel="stylesheet" href="{{ asset('assets/css/demo1/style.css') }}">
 
@@ -59,6 +61,8 @@
 
     <script src="{{ asset('assets/js/template.js') }}"></script>
     <script src="{{ asset('assets/vendors/sweetalert2/sweetalert2.min.js') }}"></script>
+    <script src="{{ asset('assets/vendors/toastr/toastr.min.js') }}"></script>
+
 
     @include('sweetalert::alert')
 
