@@ -41,13 +41,19 @@
                                 <td>
                                     <a href="{{ route('admin.category.edit', ['category' => $category->id]) }}"><i
                                             data-feather="edit" class="text-warning"></i></a>
-                                    <a href="{{ route('admin.category.destroy', ['category' => $category->id]) }}"><i
-                                            data-feather="trash" class="text-danger"></i></a>
+                                    <a href="javascript:void(0)"><i data-feather="trash"
+                                            class="text-danger btn-delete-category" data-id="{{ $category->id }}"
+                                            data-name="{{ $category->name }}"></i></a>
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
+                <form action="" method="POST" id="deleteForm">
+                    @csrf
+                    @method('DELETE')
+                </form>
+
                 <div class="col-6 mx-auto mt-3">
                     {{ $categories->links() }}
                 </div>
@@ -59,4 +65,41 @@
 
 
 @push('js')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let deleteForm = document.querySelector('#deleteForm');
+
+            document.querySelector('.table').addEventListener('click', (event) => {
+                let element = event.target;
+
+                if (element.classList.contains('btn-delete-category')) {
+                    let dataID = element.getAttribute('data-id');
+                    let dataName = element.getAttribute('data-name');
+                    Swal.fire({
+                        title: " '" + dataName + "' kategorisini silmek istediginize emin misiniz?",
+                        showCancelButton: true,
+                        confirmButtonText: "Evet",
+                        cancelButtonText: "Hayir"
+                    }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            let route =
+                                '{{ route('admin.category.destroy', ['category' => ':category']) }}'
+                            route = route.replace(':category', dataID)
+
+                            deleteForm.action = route;
+
+                            setTimeout(() => {
+                                deleteForm.submit();
+                            }, 100);
+
+                            // toastr.success('Kategori basariyla silindi!');
+                        } else if (result.isDenied) {
+                            Swal.fire("Herhangi bir islem gerceklestirilmedi!", "", "info");
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 @endpush

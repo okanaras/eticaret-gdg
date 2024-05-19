@@ -76,7 +76,8 @@
                         <option selected='selected' value="-1">Ust Kategori Seciniz</option>
                         @foreach ($categories as $pCategory)
                             <option value="{{ $pCategory->id }}"
-                                {{ $pCategory->id === $category->parent_id ? 'selected' : '' }}>{{ $pCategory->name }}
+                                {{ isset($category) && $pCategory->id === $category->parent_id ? 'selected' : '' }}>
+                                {{ $pCategory->name }}
                             </option>
                         @endforeach
                     </select>

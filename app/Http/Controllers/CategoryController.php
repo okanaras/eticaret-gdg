@@ -130,7 +130,10 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        $category->delete();
+
+        toast('Kategori silindi.', 'success');
+        return redirect()->back();
     }
 
     public function front()
