@@ -59,6 +59,11 @@ class CategoryController extends Controller
         $data['slug'] = $slug;
         $data['status'] = $request->has('status');
 
+        if ($request->parent_id != -1) {
+
+            $data['parent_id'] = $request->parent_id;
+        }
+
         Category::create($data);
 
         toast('Kategori kaydedildi.', 'success');
@@ -109,6 +114,11 @@ class CategoryController extends Controller
         $data['slug'] = $slug;
         $data['status'] = $request->has('status');
 
+        if ($request->parent_id != -1) {
+
+            $data['parent_id'] = $request->parent_id;
+        }
+
         $category->update($data);
 
         toast('Kategori guncellendi.', 'success');
@@ -121,5 +131,17 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         //
+    }
+
+    public function front()
+    {
+        // ana kategori olup alt kategorileri olan sorgu
+        $categories = Category::query()
+            ->with('children')
+            ->whereHas('children')
+            ->whereNull('parent_id')
+            ->get();
+
+        return view('categories', compact('categories'));
     }
 }

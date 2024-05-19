@@ -24,6 +24,8 @@ Route::get('/odeme', [CheckoutController::class, 'index']);
 Route::get('/siparislerim', [MyOrdersController::class, 'index'])->name('order.index');
 Route::get('/siparislerim-detay', [MyOrdersController::class, 'detail'])->name('order.detail');
 
+Route::get('front', [CategoryController::class, 'front']);
+
 /** Admin */
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.check'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('index');

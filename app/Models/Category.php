@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
@@ -15,5 +16,12 @@ class Category extends Model
         'slug',
         'short_description',
         'description',
+        'parent_id',
     ];
+
+    // iliskiler
+    public function children(): HasMany
+    {
+        return $this->hasMany(Category::class, 'parent_id', 'id')->with('children'); // with ile gelen cocugun cocuklari varsa onlari getiriyor. Recursive fonk gibi
+    }
 }

@@ -73,9 +73,11 @@
                 <div class="mb-3">
                     <label for="parent_id" class="form-label">Ust Kategory</label>
                     <select class="form-select" name="parent_id" id="parent_id">
-                        <option selected='selected'>Ust Kategori Seciniz</option>
-                        @foreach ($categories as $category)
-                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        <option selected='selected' value="-1">Ust Kategori Seciniz</option>
+                        @foreach ($categories as $pCategory)
+                            <option value="{{ $pCategory->id }}"
+                                {{ $pCategory->id === $category->parent_id ? 'selected' : '' }}>{{ $pCategory->name }}
+                            </option>
                         @endforeach
                     </select>
                     @error('parent_id')
