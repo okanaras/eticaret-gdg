@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Support\Str;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CategoryStoreRequest extends FormRequest
+class CategoryUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -20,17 +20,17 @@ class CategoryStoreRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+
     public function rules(): array
     {
         return [
             'name' => ['required', 'min:2', 'max:255'],
-            'short_description' => ['sometimes', 'nullable', 'max:63'], // sometimes ve nullable ile bazen gelebiliri ekleyip idger kosullari kontrol edebiliriz.
+            'short_description' => ['sometimes', 'nullable', 'max:63'],
             'description' => ['sometimes', 'nullable', 'max:255'],
-            'slug' => ['sometimes', 'nullable', 'max:255', 'unique:categories,slug'],
+            'slug' => ['sometimes', 'nullable', 'max:255', 'unique:categories,slug, ' . $this->category->id], // kullani eger ki editte slug degistirmediyse buradaki unique kontrolune takilir bu yuzden en sonda this category id ekledik
         ];
     }
 
-    // mesajlari istedigimiz sekilde asagidaki gibi yonlendirebiliriz.
     public function messages()
     {
         return [

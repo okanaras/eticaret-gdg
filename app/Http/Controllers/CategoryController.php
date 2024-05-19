@@ -6,6 +6,7 @@ use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Requests\CategoryStoreRequest;
+use App\Http\Requests\CategoryUpdateRequest;
 
 class CategoryController extends Controller
 {
@@ -14,7 +15,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return view('admin.category.index');
+        $categories = Category::orderBy('id', 'DESC')->paginate(10);
+
+        return view('admin.category.index', compact('categories'));
     }
 
     /**
@@ -58,7 +61,7 @@ class CategoryController extends Controller
 
         Category::create($data);
 
-        toast('Category kaydedildi.', 'success');
+        toast('Kategori kaydedildi.', 'success');
         return redirect()->route('admin.category.index');
     }
 
@@ -75,15 +78,41 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        //
+        $categories = Category::all();
+        return view('admin.category.create_edit', compact('category', 'categories'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Category $category)
+    public function update(CategoryUpdateRequest $request, Category $category)
     {
-        //
+        $data = $request->only('name', 'short_description', 'description');
+
+        $slug = Str::slug($request->slug);
+
+        if (is_null($request->slug)) {
+
+            $slug = Str::slug(mb_substr($data['name'], 0, 64));
+
+            $checkSlug = Category::query()->where('slug', $slug)->first();
+
+            if ($checkSlug) {
+                return redirect()
+                    ->back()
+                    ->withErrors([
+                        'slug' => 'Slug degeriniz bos veya daha once farkli bir kategori icin kullaniliyor olabilir!'
+                    ])->withInput();
+            }
+        }
+
+        $data['slug'] = $slug;
+        $data['status'] = $request->has('status');
+
+        $category->update($data);
+
+        toast('Kategori guncellendi.', 'success');
+        return redirect()->route('admin.category.index');
     }
 
     /**

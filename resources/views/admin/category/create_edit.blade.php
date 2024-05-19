@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 
-@section('title', 'Kategori')
+@section('title', 'Kategori ' . (isset($category) ? 'Guncelleme' : 'Ekleme'))
 
 
 @push('css')
@@ -12,14 +12,23 @@
     <div class="card">
         <div class="card-body">
 
-            <h6 class="card-title">Kategori Ekleme</h6>
+            <h6 class="card-title">Kategori {{ isset($category) ? 'Guncelleme' : 'Ekleme' }}</h6>
 
-            <form class="forms-sample" action="{{ route('admin.category.store') }}" method="POST" id="gdgForm">
+            @php
+                $curenntRoute = !isset($category)
+                    ? route('admin.category.store')
+                    : route('admin.category.update', $category->id);
+            @endphp
+
+            <form class="forms-sample" action="{{ $curenntRoute }}" method="POST" id="gdgForm">
                 @csrf
+                @isset($category)
+                    @method('PUT')
+                @endisset
                 <div class="mb-3">
                     <label for="name" class="form-label">Kategori Adi</label>
                     <input type="text" class="form-control" id="name" autocomplete="off" placeholder="Kategori Adi"
-                        name="name" spellcheck="false" data-ms-editor="true">
+                        name="name" value="{{ isset($category) ? $category->name : old('name') }}">
                     @error('name')
                         <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
@@ -27,14 +36,16 @@
 
                 <div class="mb-3">
                     <label for="slug" class="form-label">Slug</label>
-                    <input type="text" class="form-control" id="slug" placeholder="Slug" name="slug">
+                    <input type="text" class="form-control" id="slug" placeholder="Slug" name="slug"
+                        value="{{ isset($category) ? $category->slug : old('slug') }}">
                     @error('slug')
                         <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="form-check mb-3">
-                    <input type="checkbox" class="form-check-input" id="status" name="status">
+                    <input type="checkbox" class="form-check-input" id="status" name="status"
+                        {{ isset($category) ? ($category->status ? 'checked' : '') : (old('status') ? 'checked' : '') }}>
                     <label class="form-check-label" for="status">
                         Aktif mi?
                     </label>
@@ -45,7 +56,7 @@
 
                 <div class="mb-3">
                     <label for="short_description" class="form-label">Kisa Aciklama</label>
-                    <textarea class="form-control" name="short_description" id="short_description" rows="3"></textarea>
+                    <textarea class="form-control" name="short_description" id="short_description" rows="3"> {{ isset($category) ? $category->short_description : old('short_description') }}</textarea>
                     @error('short_description')
                         <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
@@ -53,7 +64,7 @@
 
                 <div class="mb-3">
                     <label for="description" class="form-label">Aciklama</label>
-                    <textarea class="form-control" name="description" id="description" rows="3"></textarea>
+                    <textarea class="form-control" name="description" id="description" rows="7"> {{ isset($category) ? $category->description : old('description') }}</textarea>
                     @error('description')
                         <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror

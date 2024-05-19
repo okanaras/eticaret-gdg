@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\User;
 use App\Observers\UserObserver;
 use App\Events\UserRegisterEvent;
+use Illuminate\Pagination\Paginator;
 use App\Listeners\UserRegisterListener;
 use Illuminate\Support\ServiceProvider;
 
@@ -33,9 +34,11 @@ class AppServiceProvider extends ServiceProvider
          * user modeline asagidaki kodu yapistirmistik.
          * #[ObservedBy([UserObserver::class])]
          *
-         * yukardakini kaldirip asagidaki kodu buraya yazabiliriz.
+         * yukardakini kaldirip asagidaki kodu buraya yapistirsak da ayni islevi gorecekti.
          *
          ** User::observe(UserObserver::class);
          */
+
+        Paginator::useBootstrapFive();
     }
 }
