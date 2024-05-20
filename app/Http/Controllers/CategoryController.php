@@ -2,22 +2,40 @@
 
 namespace App\Http\Controllers;
 
+use Error;
+use Exception;
+use Throwable;
 use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Services\CategoryService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use App\Http\Requests\CategoryStoreRequest;
 use App\Http\Requests\CategoryUpdateRequest;
-use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
+    public function __construct(public CategoryService $categoryService)
+    {
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $categories = Category::orderBy('id', 'DESC')->paginate(10);
+        // $categories = Category::orderBy('id', 'DESC')->paginate(10);
 
+        $categories = $this->categoryService->getAllCategoriesPaginate(orderBy: ['name', 'ASC']);
+
+        /**
+         * constructeer olusturmadan tek seferlik asagidaki gibi service i kullanabiliriz
+         *
+         * $categoryService = new CategoryService(new Category());
+         * $categoryService = App::make(CategoryService::class);
+         */
         return view('admin.category.index', compact('categories'));
     }
 
@@ -26,8 +44,11 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $categories = Category::all();
         // $categories = Category::query()->whereNull('parent_id')->get(); // sadece ana kategorileri getirir
+
+        // $categories = Category::all();
+        $categories = $this->categoryService->getAllCategories();
+
         return view('admin.category.create_edit', compact('categories'));
     }
 
@@ -36,39 +57,25 @@ class CategoryController extends Controller
      */
     public function store(CategoryStoreRequest $request)
     {
-        $data = $request->only('name', 'short_description', 'description'); // 3'unu array seklinde rq ten aldik slug icin ayri islem yapacagiz
+        try {
+            $this->categoryService->prepareDataForCreate213()->create();
 
-        $slug = Str::slug($request->slug);
-
-        if (is_null($request->slug)) {
-            # eger rq ten gelen slug null ise rq teki name in mbsubstr ile ilk 64 char ini slugladik
-
-            $slug = Str::slug(mb_substr($data['name'], 0, 64));
-
-            $checkSlug = Category::query()->where('slug', $slug)->first();
-
-            // slug imiz egerki db de daha once varsa hata mesaji ve girilen input degerleriyle geri donduruyoruz.
-            if ($checkSlug) {
+            toast('Kategori kaydedildi.', 'success');
+            return redirect()->route('admin.category.index');
+        } catch (Throwable $th) {
+            if ($th->getCode() == 400) {
                 return redirect()
                     ->back()
                     ->withErrors([
-                        'slug' => 'Slug degeriniz bos veya daha once farkli bir kategori icin kullaniliyor olabilir!'
+                        'slug' => $th->getMessage()
                     ])->withInput();
             }
+
+            toast('Kategori kaydedilmedi.', 'error');
+
+            Log::error('Store Methodu Category Alinan Hata: ' . $th->getMessage(), [$th->getTraceAsString()]);
+            return redirect()->route('admin.category.index');
         }
-
-        $data['slug'] = $slug;
-        $data['status'] = $request->has('status');
-
-        if ($request->parent_id != -1) {
-
-            $data['parent_id'] = $request->parent_id;
-        }
-
-        Category::create($data);
-
-        toast('Kategori kaydedildi.', 'success');
-        return redirect()->route('admin.category.index');
     }
 
     /**
