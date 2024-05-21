@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Front\CardController;
 use App\Http\Controllers\Front\CheckoutController;
 use App\Http\Controllers\Front\DashboardController;
@@ -33,6 +34,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.check'])->gro
 
     Route::resource('category', CategoryController::class);
     Route::post('category/change-status', [CategoryController::class, 'changeStatus'])->name('category.change-status');
+
+    Route::prefix('brand')->name('brand.')->group(function () {
+        Route::get('/', [BrandController::class, 'index'])->name('index');
+        Route::get('/create', [BrandController::class, 'create'])->name('create');
+        Route::post('/create', [BrandController::class, 'store'])->name('store');
+    });
 });
 
 /** Auth */

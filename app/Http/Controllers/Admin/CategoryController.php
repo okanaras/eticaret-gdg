@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Traits\GdgException;
 use Error;
 use Exception;
 use Throwable;
@@ -12,11 +13,14 @@ use App\Services\CategoryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryStoreRequest;
 use App\Http\Requests\CategoryUpdateRequest;
 
 class CategoryController extends Controller
 {
+    use GdgException;
+
     public function __construct(public CategoryService $categoryService)
     {
     }
@@ -63,7 +67,7 @@ class CategoryController extends Controller
             toast('Kategori kaydedildi.', 'success');
             return redirect()->route('admin.category.index');
         } catch (Throwable $th) {
-            return $this->exceptionCategory($th, 'Kategori eklenmedi.');
+            return $this->exception($th, 'admin.category.index', 'Kategori eklenmedi.');
         }
     }
 
@@ -96,7 +100,7 @@ class CategoryController extends Controller
             toast('Kategori guncellendi.', 'success');
             return redirect()->route('admin.category.index');
         } catch (Throwable $th) {
-            return $this->exceptionCategory($th, 'Kategori guncellenemedi.');
+            return $this->exception($th, 'admin.category.index', 'Kategori guncellenemedi.');
         }
     }
 
@@ -111,7 +115,7 @@ class CategoryController extends Controller
             toast('Kategori silindi.', 'success');
             return redirect()->back();
         } catch (Throwable $th) {
-            return $this->exceptionCategory($th, 'Kategori silinemedi');
+            return $this->exception($th, 'admin.category.index', 'Kategori silinemedi');
         }
     }
 
@@ -158,21 +162,5 @@ class CategoryController extends Controller
             ->setCharset('utf-8')
             ->header('Content-Type', 'application.json')
             ->setEncodingOptions(JSON_UNESCAPED_UNICODE);
-    }
-
-    private function exceptionCategory(Throwable $th, string $errorDescription = 'Hata alindi')
-    {
-        toast($errorDescription, 'error');
-
-        if ($th->getCode() == 400) {
-            return redirect()
-                ->back()
-                ->withErrors([
-                    'slug' => $th->getMessage()
-                ])->withInput();
-        }
-
-        Log::error('Kategori Controller Alinan Hata: ' . $th->getMessage(), [$th->getTraceAsString()]);
-        return redirect()->route('admin.category.index');
     }
 }
