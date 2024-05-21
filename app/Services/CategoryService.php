@@ -16,6 +16,12 @@ class CategoryService
     {
     }
 
+    public function setCategory(Category $category): self
+    {
+        $this->category = $category;
+        return $this;
+    }
+
     public function getAllCategories(): Collection
     {
         return $this->category::all();
@@ -26,15 +32,7 @@ class CategoryService
         return $this->category::orderBy($orderBy[0], $orderBy[1])->paginate($page);
     }
 
-    public function create(array $data = null)
-    {
-        if (is_null($data)) {
-            $data = $this->prepareData;
-        }
-        return $this->category->create($data);
-    }
-
-    public function prepareDataForCreate(): self
+    public function prepareDataRequest(): self
     {
         $data = request()->only('name', 'short_description', 'description');
 
@@ -50,6 +48,31 @@ class CategoryService
 
         $this->prepareData = $data;
         return $this;
+    }
+
+    public function setPrepareData(array $data): self
+    {
+        $this->prepareData = $data;
+        return $this;
+    }
+
+    public function create(array $data = null): Category
+    {
+        if (is_null($data)) {
+            $data = $this->prepareData;
+        }
+        return $this->category->create($data);
+    }
+    public function update(array $data = null): bool
+    {
+        if (is_null($data)) {
+            $data = $this->prepareData;
+        }
+        return $this->category->update($data);
+    }
+    public function delete(): bool
+    {
+        return $this->category->delete();
     }
 
     public function checkSlug(string $slug): Category|null
@@ -74,5 +97,10 @@ class CategoryService
         }
 
         return $slug;
+    }
+
+    public function getById(int $id): Category|null
+    {
+        return $this->category::query()->where('id', $id)->first();
     }
 }

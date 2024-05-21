@@ -58,23 +58,12 @@ class CategoryController extends Controller
     public function store(CategoryStoreRequest $request)
     {
         try {
-            $this->categoryService->prepareDataForCreate213()->create();
+            $this->categoryService->prepareDataRequest()->create();
 
             toast('Kategori kaydedildi.', 'success');
             return redirect()->route('admin.category.index');
         } catch (Throwable $th) {
-            if ($th->getCode() == 400) {
-                return redirect()
-                    ->back()
-                    ->withErrors([
-                        'slug' => $th->getMessage()
-                    ])->withInput();
-            }
-
-            toast('Kategori kaydedilmedi.', 'error');
-
-            Log::error('Store Methodu Category Alinan Hata: ' . $th->getMessage(), [$th->getTraceAsString()]);
-            return redirect()->route('admin.category.index');
+            return $this->exceptionCategory($th, 'Kategori eklenmedi.');
         }
     }
 
@@ -91,7 +80,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        $categories = Category::all();
+        $categories = $this->categoryService->getAllCategories();
         return view('admin.category.create_edit', compact('category', 'categories'));
     }
 
@@ -100,37 +89,15 @@ class CategoryController extends Controller
      */
     public function update(CategoryUpdateRequest $request, Category $category)
     {
-        $data = $request->only('name', 'short_description', 'description');
 
-        $slug = Str::slug($request->slug);
+        try {
+            $this->categoryService->setCategory($category)->prepareDataRequest()->update();
 
-        if (is_null($request->slug)) {
-
-            $slug = Str::slug(mb_substr($data['name'], 0, 64));
-
-            $checkSlug = Category::query()->where('slug', $slug)->first();
-
-            if ($checkSlug) {
-                return redirect()
-                    ->back()
-                    ->withErrors([
-                        'slug' => 'Slug degeriniz bos veya daha once farkli bir kategori icin kullaniliyor olabilir!'
-                    ])->withInput();
-            }
+            toast('Kategori guncellendi.', 'success');
+            return redirect()->route('admin.category.index');
+        } catch (Throwable $th) {
+            return $this->exceptionCategory($th, 'Kategori guncellenemedi.');
         }
-
-        $data['slug'] = $slug;
-        $data['status'] = $request->has('status');
-
-        if ($request->parent_id != -1) {
-
-            $data['parent_id'] = $request->parent_id;
-        }
-
-        $category->update($data);
-
-        toast('Kategori guncellendi.', 'success');
-        return redirect()->route('admin.category.index');
     }
 
     /**
@@ -138,10 +105,14 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        $category->delete();
+        try {
+            $this->categoryService->setCategory($category)->delete();
 
-        toast('Kategori silindi.', 'success');
-        return redirect()->back();
+            toast('Kategori silindi.', 'success');
+            return redirect()->back();
+        } catch (Throwable $th) {
+            return $this->exceptionCategory($th, 'Kategori silinemedi');
+        }
     }
 
     public function front()
@@ -160,9 +131,7 @@ class CategoryController extends Controller
     {
         $id = $request->id;
 
-        $category = Category::query()->where('id', $id)->first();
-
-        // dd($category);
+        $category = $this->categoryService->getById($id);
 
         if (is_null($category)) {
             return response()
@@ -176,8 +145,11 @@ class CategoryController extends Controller
                 ->setEncodingOptions(JSON_UNESCAPED_UNICODE);
         }
 
-        $category->status = !$category->status;
-        $category->save();
+        $data = ['status' => !$category->status];
+        $this->categoryService
+            ->setCategory($category)
+            ->setPrepareData($data)
+            ->update();
 
         return response()
             ->json()
@@ -186,5 +158,21 @@ class CategoryController extends Controller
             ->setCharset('utf-8')
             ->header('Content-Type', 'application.json')
             ->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+    }
+
+    private function exceptionCategory(Throwable $th, string $errorDescription = 'Hata alindi')
+    {
+        toast($errorDescription, 'error');
+
+        if ($th->getCode() == 400) {
+            return redirect()
+                ->back()
+                ->withErrors([
+                    'slug' => $th->getMessage()
+                ])->withInput();
+        }
+
+        Log::error('Kategori Controller Alinan Hata: ' . $th->getMessage(), [$th->getTraceAsString()]);
+        return redirect()->route('admin.category.index');
     }
 }

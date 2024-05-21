@@ -128,9 +128,10 @@
                             fetch(route, data)
                                 .then(response => {
                                     if (!response.ok) {
-                                        toastr.error('Status degistirilmedi, hata alindi!',
+                                        toastr.error(
+                                            'Kategori status guncellenemedi, hata alindi!',
                                             'Hata');
-                                        console.log(response);
+                                        console.error(response);
                                     }
 
                                     return response.json();
@@ -146,7 +147,9 @@
                                         element.classList.remove('btn-inverse-success');
                                         element.classList.add('btn-inverse-danger');
                                     }
-                                    // console.log(data);
+                                    toastr.success(
+                                        `Kategori ${element.textContent.toLowerCase()} olarak guncellendi!`,
+                                        'Basarili');
                                 })
 
 
