@@ -63,6 +63,7 @@ class CategoryService
         }
         return $this->category->create($data);
     }
+
     public function update(array $data = null): bool
     {
         if (is_null($data)) {
@@ -70,6 +71,7 @@ class CategoryService
         }
         return $this->category->update($data);
     }
+
     public function delete(): bool
     {
         return $this->category->delete();

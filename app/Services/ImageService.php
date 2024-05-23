@@ -13,12 +13,18 @@ class ImageService
         /**
          * file upload islemi
          */
-        // $file = $request->file('logo');
 
+        $filePath = 'public/' . $path; // storage/public/{$gelenPath}
         $extension = $file->getClientOriginalExtension();
         $name = Str::slug($fileName) . uniqid() . '.' . $extension;
-        $path = 'public/uploads/brands/original';
 
-        return Storage::putFileAs($path, $file, $name);
+        Storage::putFileAs($filePath, $file, $name);
+
+        return 'storage/' . $path . '/' . $name; // db ye kaydedilecegi path
+    }
+
+    public function deleteImage(string $path)
+    {
+        return Storage::delete($path);
     }
 }

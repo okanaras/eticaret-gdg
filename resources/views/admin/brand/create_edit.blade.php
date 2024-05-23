@@ -72,13 +72,35 @@
                     @enderror
                 </div>
 
+                @php
+                    $logoStatus = isset($brand) && file_exists($brand->logo);
+                @endphp
+
                 <div class="mb-3">
-                    <label for="logo" class="form-label">Logo</label>
-                    <input type="file" class="form-control" id="logo" name="logo">
-                    <small class="text-warning">En fazla 2mb buyuklugunde logo yukleyebilirsiniz.</small>
-                    @error('logo')
-                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                    @enderror
+                    <div class="row">
+                        <div @class([
+                            'col-md-6' => $logoStatus,
+                            'col-md-12' => !$logoStatus,
+                        ])>
+                            <label for="logo" class="form-label">Logo</label>
+                            <input type="file" class="form-control" id="logo" name="logo">
+                            <small class="text-warning">En fazla 2mb buyuklugunde logo yukleyebilirsiniz.</small>
+                            @if (!$logoStatus && isset($brand))
+                                <img class="d-block" src="{{ asset('assets/images/logo-placeholder.png') }}"
+                                    height="200">
+                                <small class="text-info d-block">Daha once logo eklenmemistir.</small>
+                            @endif
+                            @error('logo')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        @if ($logoStatus)
+                            <div class="col-md-6">
+                                <img src="{{ asset($brand->logo) }}" class="img-fluid" style="max-height: 200px"
+                                    alt="{{ $brand->name }}">
+                            </div>
+                        @endif
+                    </div>
                 </div>
 
                 <button type="button" class="btn btn-primary me-2" id="btnSubmit">Kaydet</button>

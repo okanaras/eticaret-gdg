@@ -39,6 +39,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.check'])->gro
         Route::get('/', [BrandController::class, 'index'])->name('index');
         Route::get('/create', [BrandController::class, 'create'])->name('create');
         Route::post('/create', [BrandController::class, 'store'])->name('store');
+        Route::get('/edit/{brand}', [BrandController::class, 'edit'])->name('edit');
+        Route::put('/edit/{brand}', [BrandController::class, 'update'])->name('update');
+        Route::delete('/delete/{brand}', [BrandController::class, 'delete'])->name('destroy');
+
+        Route::post('brand/change-status', [BrandController::class, 'changeStatus'])->name('change-status');
+        Route::post('brand/change-is-featured', [BrandController::class, 'changeIsFeatured'])->name('change-is-featured');
     });
 });
 

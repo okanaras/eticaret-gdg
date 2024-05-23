@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Support\Str;
 use Illuminate\Foundation\Http\FormRequest;
 
-class BrandStoreRequest extends FormRequest
+class BrandUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,7 @@ class BrandStoreRequest extends FormRequest
     {
         return [
             'name' => ['required', 'min:2', 'max:255'],
-            'slug' => ['sometimes', 'nullable', 'max:255', 'unique:brands,slug'],
+            'slug' => ['sometimes', 'nullable', 'max:255', 'unique:brands,slug,' . $this->brand->id],
             'logo' => ['sometimes', 'nullable', 'mimes:jpeg,jpf,webp,png', 'max:2048'],
             'order' => ['sometimes', 'nullable', 'integer'],
         ];
