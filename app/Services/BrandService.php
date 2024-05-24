@@ -116,7 +116,8 @@ class BrandService
 
     public function deleteLogo()
     {
-        $path = $this->pathEditor($this->brand->logo);
+        $logo = $this->brand->logo;
+        $path = is_null($logo) ? '' :  $this->pathEditor($logo);
 
         if (file_exists(storage_path('app/' . $path))) {
             $this->imageService->deleteImage($path);
