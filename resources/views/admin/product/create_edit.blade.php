@@ -130,12 +130,15 @@
                     </div>
                     <div class="tab-pane fade" id="product-variant" role="tabpanel"
                         aria-labelledby="product-variant-tab">
-                        <div>
-                            <i data-feather="plus-square"></i>
-                            <span class="ms-2">Varyant Ekle</span>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4 mb-4">
+                        <a href="javascript:void(0)" id="addVariant">
+                            <div>
+                                <i data-feather="plus-square"></i>
+                                <span class="ms-2">Varyant Ekle</span>
+                            </div>
+                        </a>
+                        <div id="variants"></div>
+                        {{-- <div class="row"> --}}
+                        {{-- <div class="col-md-4 mb-4">
                                 <label for="name" class="form-label">Urun Adi</label>
                                 <input type="text" class="form-control" id="name" autocomplete="off"
                                     placeholder="Urun Adi" name="name" value="{{ old('name') }}">
@@ -182,7 +185,7 @@
                             <div class="col-md-12 mb-4">
                                 <label for="publish_date" class="form-label">Yayimlanma Tarihi</label>
 
-                                <div class="input-group flatpickr" id="flatpickr-date">
+                                <div class="input-group flatpickr flatpickr-date" id="flatpickr-date">
                                     <input type="text" name="publish_date" id="publish_date" class="form-control"
                                         placeholder="Yayimlanma tarihi seciniz" data-input>
                                     <span class="input-group-text input-group-addon" data-toggle><i
@@ -200,7 +203,40 @@
 
                             </div>
 
-                        </div>
+                            <div>
+                                <i data-feather="plus-circle"></i>
+                                <span class="ms-2">Beden Ekle</span>
+                            </div> --}}
+
+
+
+                        {{-- <hr> --}}
+
+
+
+                        {{-- <div class="col-md-6 mb-4">
+                                <label for="size" class="form-label">Beden</label>
+                                <select class="form-select" name="size" id="size">
+                                    <option selected='selected' value="-1">Beden Seciniz</option>
+                                    @for ($i = 20; $i < 51; $i++)
+                                        <option value="{{ $i }}">
+                                            {{ $i }}
+                                        </option>
+                                    @endfor
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label for="stock" class="form-label">Stok Sayisi</label>
+                                <input type="text" class="form-control" id="stock" placeholder="Stok Sayisi"
+                                    name="stock" value="{{ old('stock') }}">
+                            </div>
+
+                            <div class="col-md-12 mb-4">
+                                <label for="images" class="form-label">Varyan Gorselleri</label>
+                                <input type="file" class="form-control" id="images" name="images[]" multiple>
+                            </div> --}}
+                        {{-- </div> --}}
                     </div>
                 </div>
 
@@ -214,6 +250,7 @@
 
 @push('js')
     <script src="{{ asset('assets/vendors/flatpickr/flatpickr.min.js') }}"></script>
+    <script src="{{ asset('assets/js/product/gdg-variant.js') }}"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -231,8 +268,8 @@
             });
 
 
-            if ($('#flatpickr-date').length) {
-                flatpickr("#flatpickr-date", {
+            if ($('.flatpickr-date').length) {
+                flatpickr(".flatpickr-date", {
                     wrap: true,
                     enableTime: true,
                     dateFormat: "Y-m-d H:i",
