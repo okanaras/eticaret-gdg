@@ -52,8 +52,8 @@
                             </div>
 
                             <div class="col-md-4 mb-4">
-                                <label for="tpye_id" class="form-label">Urun Turu</label>
-                                <select class="form-select" name="tpye_id" id="tpye_id">
+                                <label for="type_id" class="form-label">Urun Turu</label>
+                                <select class="form-select" name="type_id" id="type_id">
                                     <option selected='selected' value="-1">Urun Turu Seciniz</option>
                                     @foreach ($types as $type)
                                         <option value="{{ $type->id }}">
@@ -61,7 +61,7 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('tpye_id')
+                                @error('type_id')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -82,7 +82,7 @@
                             </div>
 
                             <div class="col-md-4 mb-4">
-                                <label for="category_id" class="form-label">Kategory</label>
+                                <label for="category_id" class="form-label">Kategori</label>
                                 <select class="form-select" name="category_id" id="category_id">
                                     <option selected='selected' value="-1">Kategori Seciniz</option>
                                     @foreach ($categories as $category)
@@ -137,106 +137,6 @@
                             </div>
                         </a>
                         <div id="variants"></div>
-                        {{-- <div class="row"> --}}
-                        {{-- <div class="col-md-4 mb-4">
-                                <label for="name" class="form-label">Urun Adi</label>
-                                <input type="text" class="form-control" id="name" autocomplete="off"
-                                    placeholder="Urun Adi" name="name" value="{{ old('name') }}">
-
-                            </div>
-
-                            <div class="col-md-4 mb-4">
-                                <label for="variant_name" class="form-label">Urun Varyant Adi</label>
-                                <input type="text" class="form-control" id="variant_name" autocomplete="off"
-                                    placeholder="Urun Adi" name="variant_name" value="{{ old('variant_name') }}">
-
-                            </div>
-
-                            <div class="col-md-4 mb-4">
-                                <label for="slug" class="form-label">Slug</label>
-                                <input type="text" class="form-control" id="slug" placeholder="Slug"
-                                    name="slug" value="{{ old('slug') }}">
-
-                            </div>
-
-                            <div class="col-md-6 mb-4">
-                                <label for="additional_price" class="form-label">Fiyat</label>
-                                <input type="text" class="form-control" id="additional_price" placeholder="Fiyat"
-                                    name="additional_price" value="{{ old('additional_price') }}">
-
-                            </div>
-
-                            <div class="col-md-6 mb-4">
-                                <label for="final_price" class="form-label">Son Fiyat</label>
-                                <input type="text" class="form-control" id="final_price" placeholder="Son Fiyat"
-                                    name="final_price" value="{{ old('final_price') }}">
-
-                            </div>
-
-                            <div class="col-md-12 mb-4">
-                                <label for="extra_description" class="form-label">Ekstra Aciklama</label>
-                                <textarea class="form-control" name="extra_description" id="extra_description" rows="7">
-                                    {{ old('extra_description') }}
-                                </textarea>
-
-
-                            </div>
-
-                            <div class="col-md-12 mb-4">
-                                <label for="publish_date" class="form-label">Yayimlanma Tarihi</label>
-
-                                <div class="input-group flatpickr flatpickr-date" id="flatpickr-date">
-                                    <input type="text" name="publish_date" id="publish_date" class="form-control"
-                                        placeholder="Yayimlanma tarihi seciniz" data-input>
-                                    <span class="input-group-text input-group-addon" data-toggle><i
-                                            data-feather="calendar"></i></span>
-                                </div>
-
-                            </div>
-
-                            <div class="form-check col-md-6 mb-4">
-                                <input type="checkbox" class="form-check-input" id="p_status" name="p_status"
-                                    {{ old('p_status') ? 'checked' : '' }}>
-                                <label class="form-check-label" for="p_status">
-                                    Aktif mi?
-                                </label>
-
-                            </div>
-
-                            <div>
-                                <i data-feather="plus-circle"></i>
-                                <span class="ms-2">Beden Ekle</span>
-                            </div> --}}
-
-
-
-                        {{-- <hr> --}}
-
-
-
-                        {{-- <div class="col-md-6 mb-4">
-                                <label for="size" class="form-label">Beden</label>
-                                <select class="form-select" name="size" id="size">
-                                    <option selected='selected' value="-1">Beden Seciniz</option>
-                                    @for ($i = 20; $i < 51; $i++)
-                                        <option value="{{ $i }}">
-                                            {{ $i }}
-                                        </option>
-                                    @endfor
-                                </select>
-                            </div>
-
-                            <div class="col-md-6 mb-4">
-                                <label for="stock" class="form-label">Stok Sayisi</label>
-                                <input type="text" class="form-control" id="stock" placeholder="Stok Sayisi"
-                                    name="stock" value="{{ old('stock') }}">
-                            </div>
-
-                            <div class="col-md-12 mb-4">
-                                <label for="images" class="form-label">Varyan Gorselleri</label>
-                                <input type="file" class="form-control" id="images" name="images[]" multiple>
-                            </div> --}}
-                        {{-- </div> --}}
                     </div>
                 </div>
 
