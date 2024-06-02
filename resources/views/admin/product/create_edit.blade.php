@@ -25,8 +25,9 @@
                             aria-controls="home" aria-selected="true">Urun Bilgileri</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#product-variant" role="tab"
-                            aria-controls="product-variant" aria-selected="false">Urun Varyant Ekleme</a>
+                        <a class="nav-link" id="productVariantTab" data-bs-toggle="tab" href="#product-variant"
+                            role="tab" aria-controls="product-variant" aria-selected="false" disabled="">Urun Varyant
+                            Ekleme</a>
                     </li>
                 </ul>
                 <div class="tab-content border border-top-0 p-3" id="myTabContent">
@@ -136,6 +137,7 @@
                                 <span class="ms-2">Varyant Ekle</span>
                             </div>
                         </a>
+                        <hr class="my-3">
                         <div id="variants"></div>
                     </div>
                 </div>

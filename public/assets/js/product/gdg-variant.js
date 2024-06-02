@@ -2,9 +2,28 @@ document.addEventListener("DOMContentLoaded", () => {
     let addVariant = document.querySelector("#addVariant");
     let variants = document.querySelector("#variants");
     let typeID = document.querySelector("#type_id");
+    let productVariantTab = document.querySelector("#productVariantTab");
 
     let varianCount = 0;
     const sizeDivKey = "sizeDiv";
+    const requiredFields = {
+        name: {
+            type: "input",
+        },
+        price: {
+            type: "input",
+            data_type: "price",
+        },
+        type_id: {
+            type: "select",
+        },
+        brand_id: {
+            type: "select",
+        },
+        category_id: {
+            type: "select",
+        },
+    };
 
     let dressSize = ["XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL", "5XL"];
     let shoesSize = shoesNumberGenerate();
@@ -18,7 +37,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // *Varyant ekle butonuna basildigindaki olaylar...
     addVariant.addEventListener("click", () => {
-        let row = createDiv("row");
+        let row = createDiv("row", "row-" + varianCount);
+        let row2 = createDiv("row");
+
+        let variantDeleteDiv = createDiv("col-md-12 mb-1");
+        let variantDeleteAElement = createAElement(
+            null,
+            "btn-delete-variant btn btn-danger col-md-3",
+            "javascript:void(0)",
+            ["data-variant-id", varianCount],
+            "Variant Kaldir"
+        );
 
         let urunAdiID = "name-" + varianCount;
         let urunAdiNameAttr = "variant[" + varianCount + "][name]";
@@ -208,6 +237,16 @@ document.addEventListener("DOMContentLoaded", () => {
             sizeDivKey + varianCount
         );
 
+        let hr2 = document.createElement("hr");
+        hr2.className = "my-2";
+
+        variantDeleteDiv.appendChild(variantDeleteAElement);
+        variantDeleteDiv.appendChild(hr2);
+
+        row2.appendChild(variantDeleteDiv);
+
+        row.appendChild(row2);
+
         row.appendChild(urunAdiDiv);
         row.appendChild(urunVariantNameDiv);
         row.appendChild(urunSlugDiv);
@@ -223,6 +262,8 @@ document.addEventListener("DOMContentLoaded", () => {
         hr.className = "my-5";
         row.appendChild(hr);
 
+        // variants.insertAdjacentElement("beforebegin", row2);
+        // variants.insertAdjacentElement("beforebegin", hr2);
         variants.insertAdjacentElement("afterbegin", row);
 
         varianCount++;
@@ -252,12 +293,66 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.addEventListener("click", (event) => {
         let element = event.target;
 
+        if (element.classList.contains("btn-delete-variant")) {
+            let variantID = element.getAttribute("data-variant-id");
+            let findDeleteVariantElement = document.querySelector(
+                "#row-" + variantID
+            );
+
+            if (findDeleteVariantElement) {
+                findDeleteVariantElement.remove();
+            }
+        }
+
         if (element.classList.contains("btn-add-size")) {
             btnAddSizeAction(element);
         }
-
         if (element.parentElement.classList.contains("btn-add-size")) {
             btnAddSizeAction(element.parentElement);
+        }
+    });
+
+    document.body.addEventListener("input", (event) => {
+        let element = event.target;
+        let requiredFieldStatus = false;
+        let elementID = element.id;
+
+        for (const item in requiredFields) {
+            let fieldType = requiredFields[item]["type"];
+            let numberElementValue = Number(element.value);
+
+            if (
+                item === elementID &&
+                fieldType === "select" &&
+                element.value === "-1"
+            ) {
+                requiredFieldStatus = false;
+            } else if (
+                item === elementID &&
+                fieldType === "input" &&
+                element.value.trim().length < 2
+            ) {
+                requiredFieldStatus = false;
+            } else if (
+                (item === elementID &&
+                    fieldType === "input" &&
+                    item.hasOwnProperty("data_type") &&
+                    item.data_type === "price" &&
+                    isNaN(numberElementValue)) ||
+                (item === elementID &&
+                    fieldType === "input" &&
+                    element.value.trim().length < 2)
+            ) {
+                requiredFieldStatus = false;
+            } else {
+                requiredFieldStatus = true;
+            }
+        }
+
+        if (requiredFieldStatus) {
+            productVariantTab.removeAttribute("disabled");
+        } else {
+            productVariantTab.setAttribute("disabled", "");
         }
     });
 
@@ -311,7 +406,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // *Shoes Size icin otomatik olarak numara olusturma fonksiyonu
-
     function shoesNumberGenerate() {
         let numbers = [];
         for (let i = 20; i < 51; i++) {
@@ -322,7 +416,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // *element olusturma fonksiyonlari start
-
     function createDiv(className, id = null) {
         let div = document.createElement("div");
         div.className = className;
