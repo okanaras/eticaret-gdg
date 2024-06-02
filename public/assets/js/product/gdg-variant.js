@@ -314,38 +314,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.body.addEventListener("input", (event) => {
         let element = event.target;
-        let requiredFieldStatus = false;
+        let requiredFieldStatus = true;
         let elementID = element.id;
 
-        for (const item in requiredFields) {
-            let fieldType = requiredFields[item]["type"];
-            let numberElementValue = Number(element.value);
+        for (const [key, properties] of Object.entries(requiredFields)) {
+            // objedeki ilk property ler htmldeki id lere esit oldugu icin asagida onlari cektik
+            let keyElement = document.querySelector("#" + key);
+            let keyElementValue = keyElement.value;
 
-            if (
-                item === elementID &&
-                fieldType === "select" &&
-                element.value === "-1"
-            ) {
-                requiredFieldStatus = false;
+            if (properties.type === "input") {
+                if (keyElementValue.length < 2) {
+                    requiredFieldStatus = false;
+                } else if (
+                    properties.hasOwnProperty("data_type") &&
+                    properties.data_type === "price" &&
+                    (isNaN(keyElementValue) || keyElementValue < 0)
+                ) {
+                    requiredFieldStatus = false;
+                }
             } else if (
-                item === elementID &&
-                fieldType === "input" &&
-                element.value.trim().length < 2
+                properties.type === "select" &&
+                keyElementValue === "-1"
             ) {
                 requiredFieldStatus = false;
-            } else if (
-                (item === elementID &&
-                    fieldType === "input" &&
-                    item.hasOwnProperty("data_type") &&
-                    item.data_type === "price" &&
-                    isNaN(numberElementValue)) ||
-                (item === elementID &&
-                    fieldType === "input" &&
-                    element.value.trim().length < 2)
-            ) {
-                requiredFieldStatus = false;
-            } else {
-                requiredFieldStatus = true;
             }
         }
 

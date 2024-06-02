@@ -27,7 +27,9 @@
                     <li class="nav-item">
                         <a class="nav-link" id="productVariantTab" data-bs-toggle="tab" href="#product-variant"
                             role="tab" aria-controls="product-variant" aria-selected="false" disabled="">Urun Varyant
-                            Ekleme</a>
+                            Ekleme <i class="ms-1 text-primary" style="width: 18px" data-feather="info"
+                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                data-bs-title="Zorunlu alanlari doldurduktan sonra varyant girisi yapabilirsiniz!"></i></a>
                     </li>
                 </ul>
                 <div class="tab-content border border-top-0 p-3" id="myTabContent">
@@ -35,26 +37,27 @@
                         aria-labelledby="product-info-tab">
                         <div class="row">
                             <div class="col-md-6 mb-4">
-                                <label for="name" class="form-label">Urun Adi</label>
+                                <label for="name" class="form-label">Urun Adi <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="name" autocomplete="off"
-                                    placeholder="Urun Adi" name="name" value="{{ old('name') }}">
+                                    placeholder="Urun Adi" name="name" value="{{ old('name') }}" required>
                                 @error('name')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="col-md-6 mb-4">
-                                <label for="price" class="form-label">Fiyat</label>
+                                <label for="price" class="form-label">Fiyat <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="price" placeholder="Fiyat" name="price"
-                                    value="{{ old('price') }}">
+                                    value="{{ old('price') }}" required>
                                 @error('price')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="col-md-4 mb-4">
-                                <label for="type_id" class="form-label">Urun Turu</label>
-                                <select class="form-select" name="type_id" id="type_id">
+                                <label for="type_id" class="form-label">Urun Turu <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-select" name="type_id" id="type_id" required>
                                     <option selected='selected' value="-1">Urun Turu Seciniz</option>
                                     @foreach ($types as $type)
                                         <option value="{{ $type->id }}">
@@ -68,8 +71,8 @@
                             </div>
 
                             <div class="col-md-4 mb-4">
-                                <label for="brand_id" class="form-label">Marka</label>
-                                <select class="form-select" name="brand_id" id="brand_id">
+                                <label for="brand_id" class="form-label">Marka <span class="text-danger">*</span></label>
+                                <select class="form-select" name="brand_id" id="brand_id" required>
                                     <option selected='selected' value="-1">Marka Seciniz</option>
                                     @foreach ($brands as $brand)
                                         <option value="{{ $brand->id }}">
@@ -83,8 +86,9 @@
                             </div>
 
                             <div class="col-md-4 mb-4">
-                                <label for="category_id" class="form-label">Kategori</label>
-                                <select class="form-select" name="category_id" id="category_id">
+                                <label for="category_id" class="form-label">Kategori <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-select" name="category_id" id="category_id" required>
                                     <option selected='selected' value="-1">Kategori Seciniz</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}">
@@ -119,10 +123,10 @@
                                 @enderror
                             </div>
 
-                            <div class="form-check col-md-4 mb-4">
+                            <div class="col-md-4 mb-4">
                                 <input type="checkbox" class="form-check-input" id="status" name="status"
                                     {{ old('status') ? 'checked' : '' }}>
-                                <label class="form-check-label" for="status">
+                                <label class="form-check-label ps-1" for="status">
                                     Aktif mi?
                                 </label>
                             </div>
