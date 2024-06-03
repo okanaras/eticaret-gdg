@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let productVariantTab = document.querySelector("#productVariantTab");
 
     let varianCount = 0;
+    let varianSizeStockInfo = [];
     const sizeDivKey = "sizeDiv";
     const requiredFields = {
         name: {
@@ -37,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // *Varyant ekle butonuna basildigindaki olaylar...
     addVariant.addEventListener("click", () => {
-        let row = createDiv("row", "row-" + varianCount);
+        let row = createDiv("row variant", "row-" + varianCount);
         let row2 = createDiv("row");
 
         let variantDeleteDiv = createDiv("col-md-12 mb-1");
@@ -301,6 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (findDeleteVariantElement) {
                 findDeleteVariantElement.remove();
+                updateVariantIndexes();
             }
         }
 
@@ -347,20 +349,163 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // * UpdateVariantIndexes
+    function updateVariantIndexes() {
+        let allVariants = document.querySelectorAll(".row.variant");
+        allVariants = [...allVariants].reverse();
+        console.log(allVariants);
+
+        allVariants.forEach((variant, index) => {
+            variant.id = "row-" + index;
+
+            variant.querySelectorAll("[data-variant-id]").forEach((element) => {
+                element.setAttribute("data-variant-id", index);
+            });
+
+            variant.querySelectorAll('[for^="name-"]').forEach((element) => {
+                element.setAttribute("for", "name-" + index);
+            });
+
+            variant.querySelectorAll('[id^="name-"]').forEach((element) => {
+                element.id = "name-" + index;
+                element.setAttribute("name", "variant[" + index + "][name]");
+            });
+
+            variant
+                .querySelectorAll('[for^="variant_name-"]')
+                .forEach((element) => {
+                    element.setAttribute("for", "variant_name-" + index);
+                });
+            variant
+                .querySelectorAll('[id^="variant_name-"]')
+                .forEach((element) => {
+                    element.id = "variant_name-" + index;
+                    element.setAttribute(
+                        "name",
+                        "variant[" + index + "][variant_name]"
+                    );
+                });
+
+            variant.querySelectorAll('[for^="slug-"]').forEach((element) => {
+                element.setAttribute("for", "slug-" + index);
+            });
+            variant.querySelectorAll('[id^="slug-"]').forEach((element) => {
+                element.id = "slug-" + index;
+                element.setAttribute("name", "variant[" + index + "][slug]");
+            });
+
+            variant
+                .querySelectorAll('[for^="additional_price-"]')
+                .forEach((element) => {
+                    element.setAttribute("for", "additional_price-" + index);
+                });
+            variant
+                .querySelectorAll('[id^="additional_price-"]')
+                .forEach((element) => {
+                    element.id = "additional_price-" + index;
+                    element.setAttribute(
+                        "name",
+                        "variant[" + index + "][additional_price]"
+                    );
+                });
+
+            variant
+                .querySelectorAll('[for^="final_price-"]')
+                .forEach((element) => {
+                    element.setAttribute("for", "final_price-" + index);
+                });
+            variant
+                .querySelectorAll('[id^="final_price-"]')
+                .forEach((element) => {
+                    element.id = "final_price-" + index;
+                    element.setAttribute(
+                        "name",
+                        "variant[" + index + "][final_price]"
+                    );
+                });
+
+            variant
+                .querySelectorAll('[for^="extra_description-"]')
+                .forEach((element) => {
+                    element.setAttribute("for", "extra_description-" + index);
+                });
+            variant
+                .querySelectorAll('[id^="extra_description-"]')
+                .forEach((element) => {
+                    element.id = "extra_description-" + index;
+                    element.setAttribute(
+                        "name",
+                        "variant[" + index + "][extra_description]"
+                    );
+                });
+
+            variant
+                .querySelectorAll('[for^="publish_date-"]')
+                .forEach((element) => {
+                    element.setAttribute("for", "publish_date-" + index);
+                });
+            variant
+                .querySelectorAll('[id^="publish_date-"]')
+                .forEach((element) => {
+                    element.id = "publish_date-" + index;
+                    element.setAttribute(
+                        "name",
+                        "variant[" + index + "][publish_date]"
+                    );
+                });
+
+            variant
+                .querySelectorAll('[for^="p_status-"]')
+                .forEach((element) => {
+                    element.setAttribute("for", "p_status-" + index);
+                });
+            variant.querySelectorAll('[id^="p_status-"]').forEach((element) => {
+                element.id = "p_status-" + index;
+                element.setAttribute(
+                    "name",
+                    "variant[" + index + "][p_status]"
+                );
+            });
+
+            variant.querySelectorAll('[for^="size-"]').forEach((element) => {
+                element.setAttribute("for", "size-" + index);
+            });
+            variant.querySelectorAll('[id^="size-"]').forEach((element) => {
+                element.id = "size-" + index;
+                element.setAttribute("name", "variant[" + index + "][size]");
+            });
+
+            variant.querySelectorAll('[for^="stock-"]').forEach((element) => {
+                element.setAttribute("for", "stock-" + index);
+            });
+            variant.querySelectorAll('[id^="stock-"]').forEach((element) => {
+                element.id = "stock-" + index;
+                element.setAttribute("name", "variant[" + index + "][stock]");
+            });
+        });
+    }
+
     // *Size Stock Actions
     function btnAddSizeAction(element) {
+        let dataVariantID = element.getAttribute("data-variant-id");
+        let sizeStock = 0;
+        if (varianSizeStockInfo.hasOwnProperty(dataVariantID)) {
+            sizeStock = varianSizeStockInfo[dataVariantID]["size_stock"];
+        }
+
         let productTypeID = typeID.value;
         let productSize = sizes[productTypeID];
 
         let options = ["Beden Secebilirsiniz"];
         options = options.concat(productSize);
 
-        let divID = sizeDivKey + element.getAttribute("data-variant-id");
+        let divID = sizeDivKey + dataVariantID;
         let findDiv = document.querySelector("#" + divID);
 
-        let urunSizeID = "size-" + varianCount;
-        let urunSizeNameAttr = "variant[" + varianCount + "][size]";
-        let urunSizeDiv = createDiv("col-md-6 mb-2 px-3");
+        let urunSizeID = "size-" + dataVariantID + "-" + sizeStock;
+        let urunSizeNameAttr =
+            "variant[" + dataVariantID + "][size][" + sizeStock + "]";
+        let urunSizeDiv = createDiv("col-md-5 mb-2 px-3");
         let urunSizeLabel = createLabel("form-label", urunSizeID, "Beden");
         let urunSizeSelect = createSelect(
             "form-control",
@@ -373,9 +518,10 @@ document.addEventListener("DOMContentLoaded", () => {
         urunSizeDiv.appendChild(urunSizeLabel);
         urunSizeDiv.appendChild(urunSizeSelect);
 
-        let urunStockID = "stock-" + varianCount;
-        let urunStockNameAttr = "variant[" + varianCount + "][stock]";
-        let urunStockDiv = createDiv("col-md-6 mb-2 px-3");
+        let urunStockID = "stock-" + dataVariantID + "-" + sizeStock;
+        let urunStockNameAttr =
+            "variant[" + dataVariantID + "][stock][" + sizeStock + "]";
+        let urunStockDiv = createDiv("col-md-5 mb-2 px-3");
         let urunStockLabel = createLabel(
             "form-label",
             urunStockID,
@@ -392,8 +538,42 @@ document.addEventListener("DOMContentLoaded", () => {
         urunStockDiv.appendChild(urunStockLabel);
         urunStockDiv.appendChild(urunStockInput);
 
+        let urunSizeStockDeleteDiv = createDiv("col-md-2 mb-2 px-3");
+        let aElementID = "sizeStockDelete-" + dataVariantID + "-" + sizeStock;
+        let urunSizeStockDeleteAElement = createAElement(
+            aElementID,
+            "btn btn-danger w-100 btn-size-stock-delete",
+            "javascript:void",
+            ["data-size-stock-id", dataVariantID + "-" + sizeStock],
+            "Beden Sil"
+        );
+        let urunSizeStockDeleteAElementLabel = createLabel(
+            "form-label",
+            "",
+            "",
+            null
+        );
+
+        urunSizeStockDeleteDiv.appendChild(urunSizeStockDeleteAElementLabel);
+        urunSizeStockDeleteDiv.appendChild(urunSizeStockDeleteAElement);
+
         findDiv.appendChild(urunSizeDiv);
         findDiv.appendChild(urunStockDiv);
+        findDiv.appendChild(urunSizeStockDeleteDiv);
+
+        if (varianSizeStockInfo.hasOwnProperty(dataVariantID)) {
+            varianSizeStockInfo[dataVariantID]["size_stock"] = Number(
+                varianSizeStockInfo[dataVariantID]["size_stock"] + 1
+            );
+        } else {
+            varianSizeStockInfo[dataVariantID] = { size_stock: 1 };
+
+            // varianSizeStockInfo.push({
+            //     dataVariantID: { size_stock: 1 },
+            // });
+        }
+
+        console.log(varianSizeStockInfo);
     }
 
     // *Shoes Size icin otomatik olarak numara olusturma fonksiyonu
@@ -418,10 +598,16 @@ document.addEventListener("DOMContentLoaded", () => {
         return div;
     }
 
-    function createLabel(className, forAttr, textContent) {
+    function createLabel(
+        className,
+        forAttr,
+        textContent = null,
+        innerHTML = null
+    ) {
         let label = document.createElement("label");
         label.className = className;
         label.textContent = textContent;
+        label.innerHTML = innerHTML;
         label.setAttribute("for", forAttr);
 
         return label;
