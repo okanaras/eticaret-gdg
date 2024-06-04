@@ -53,7 +53,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.check'])->gro
         Route::get('/create', [AdminProductController::class, 'create'])->name('create');
     });
 
-    Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
+    Route::group(['prefix' => 'gdg-filemanager', 'middleware' => ['web', 'auth']], function () {
         \UniSharp\LaravelFilemanager\Lfm::routes();
     });
 });

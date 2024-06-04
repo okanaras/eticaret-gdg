@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
         urunPStatusDiv.appendChild(urunPStatusInput);
         urunPStatusDiv.appendChild(urunPStatusLabel);
 
-        let urunAddSizeDiv = createDiv("");
+        let urunAddSizeDiv = createDiv("row");
         let urunAddSizeSpan = createSpan("ms-2", "Beden Ekle", null);
         let urunAddSizeIElement = createIElement("add-size", [
             "data-feather",
@@ -224,13 +224,56 @@ document.addEventListener("DOMContentLoaded", () => {
         ]);
         let urunAddSizeAElement = createAElement(
             null,
-            "btn-add-size",
+            "btn-add-size col-md-12",
             "javascript:void",
             ["data-variant-id", varianCount]
         );
 
+        let urunAddSizeIElementImage = createIElement("add-size", [
+            "data-feather",
+            "image",
+        ]);
+        let urunAddSizeAElementImageSetAttribute = [];
+        urunAddSizeAElementImageSetAttribute.push({
+            "data-variant-id": varianCount,
+        });
+        let dataInputAttr = "data-input-" + varianCount;
+        let dataPreviewAttr = "data-preview-" + varianCount;
+        urunAddSizeAElementImageSetAttribute.push({
+            "data-input": dataInputAttr,
+        });
+        urunAddSizeAElementImageSetAttribute.push({
+            "data-preview": dataPreviewAttr,
+        });
+
+        let imageDataInputElementNameAttr = "image[" + varianCount + "][]";
+        let imageDataInputElement = createInput(
+            "form-control",
+            dataInputAttr,
+            "off",
+            "",
+            imageDataInputElementNameAttr,
+            null
+        );
+        let imageDataPreviewElement = createDiv("col-md-12", dataPreviewAttr);
+
+        let urunAddSizeAElementImage = createAElement(
+            null,
+            "btn btn-info btn-add-image mb-4",
+            "javascript:void",
+            urunAddSizeAElementImageSetAttribute,
+            "Gorsel Ekle "
+        );
+        let urunAddSizeAElementDiv = createDiv("col-md-12");
+        urunAddSizeAElementImage.appendChild(urunAddSizeIElementImage);
+        urunAddSizeAElementDiv.appendChild(urunAddSizeAElementImage);
+
         urunAddSizeAElement.appendChild(urunAddSizeIElement);
         urunAddSizeAElement.appendChild(urunAddSizeSpan);
+
+        urunAddSizeDiv.appendChild(urunAddSizeAElementDiv);
+        urunAddSizeDiv.appendChild(imageDataInputElement);
+        urunAddSizeDiv.appendChild(imageDataPreviewElement);
         urunAddSizeDiv.appendChild(urunAddSizeAElement);
 
         let urunAddSizeGeneralDiv = createDiv(
@@ -316,6 +359,71 @@ document.addEventListener("DOMContentLoaded", () => {
                 findSizeStockDiv.remove();
                 updateSizeStockIndexes(dataSizeStockID);
             }
+        }
+
+        if (element.classList.contains("btn-add-image")) {
+            var options = {
+                filebrowserImageBrowseUrl: "/admin/gdg-filemanager?type=Images",
+                filebrowserImageUploadUrl:
+                    "/admin/gdg-filemanager/upload?type=Images&_token=",
+                filebrowserBrowseUrl: "/admin/gdg-filemanager?type=Files",
+                filebrowserUploadUrl:
+                    "/admin/gdg-filemanager/upload?type=Files&_token=",
+                type: "file",
+            };
+
+            var route_prefix =
+                options && options.prefix
+                    ? options.prefix
+                    : "/admin/gdg-filemanager";
+            var target_input = document.getElementById(
+                element.getAttribute("data-input")
+            );
+            var target_preview = document.getElementById(
+                element.getAttribute("data-preview")
+            );
+            let variantID = element.getAttribute("data-variant-id");
+
+            var file_path = "";
+            window.open(
+                route_prefix + "?type=" + options.type || "file",
+                "FileManager",
+                "width=900,height=600"
+            );
+            window.SetUrl = function (items) {
+                file_path = items
+                    .map(function (item) {
+                        return item.url;
+                    })
+                    .join(",");
+
+                // set the value of the desired input to image url
+                target_input.value = file_path;
+                target_input.dispatchEvent(new Event("change"));
+
+                // clear previous preview
+                target_preview.innerHtml = "";
+
+                // set or change the preview image src
+                items.forEach(function (item) {
+                    let radio = document.createElement("input");
+                    radio.type = "radio";
+                    radio.setAttribute(
+                        "name",
+                        "variant[" + variantID + "][image]"
+                    );
+                    radio.setAttribute("value", item.url);
+
+                    let img = document.createElement("img");
+                    img.setAttribute("style", "height: 5rem");
+                    img.setAttribute("src", item.thumb_url);
+                    target_preview.appendChild(radio);
+                    target_preview.appendChild(img);
+                });
+
+                // trigger change event
+                target_preview.dispatchEvent(new Event("change"));
+            };
         }
 
         if (element.classList.contains("btn-add-size")) {
@@ -783,7 +891,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (setAttribute != null) {
-            aElement.setAttribute(setAttribute[0], setAttribute[1]);
+            if (Array.isArray(setAttribute) && setAttribute.length > 2) {
+                setAttribute.forEach((item, index, arr) => {
+                    let keys = Object.keys(item);
+                    keys.forEach((key) => {
+                        aElement.setAttribute(key, item[key]);
+                    });
+                });
+            } else {
+                aElement.setAttribute(setAttribute[0], setAttribute[1]);
+            }
         }
         aElement.textContent = textContent;
 
