@@ -234,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
         urunAddSizeDiv.appendChild(urunAddSizeAElement);
 
         let urunAddSizeGeneralDiv = createDiv(
-            "col-md-12 d-flex flex-wrap p-0 mb-3",
+            "col-md-12 p-0 mb-3",
             sizeDivKey + varianCount
         );
 
@@ -306,6 +306,18 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
+        if (element.classList.contains("btn-size-stock-delete")) {
+            let dataSizeStockID = element.getAttribute("data-size-stock-id");
+            let findSizeStockDiv = document.querySelector(
+                "#sizeStockDeleteGeneral-" + dataSizeStockID
+            );
+
+            if (findSizeStockDiv) {
+                findSizeStockDiv.remove();
+                updateSizeStockIndexes(dataSizeStockID);
+            }
+        }
+
         if (element.classList.contains("btn-add-size")) {
             btnAddSizeAction(element);
         }
@@ -353,7 +365,6 @@ document.addEventListener("DOMContentLoaded", () => {
     function updateVariantIndexes() {
         let allVariants = document.querySelectorAll(".row.variant");
         allVariants = [...allVariants].reverse();
-        console.log(allVariants);
 
         allVariants.forEach((variant, index) => {
             variant.id = "row-" + index;
@@ -483,6 +494,57 @@ document.addEventListener("DOMContentLoaded", () => {
                 element.setAttribute("name", "variant[" + index + "][stock]");
             });
         });
+
+        varianCount--;
+    }
+
+    //* beden silme islemi sonrasi index guncelleme
+    function updateSizeStockIndexes(dataSizeStockID) {
+        dataSizeStockID = dataSizeStockID.split("-");
+        let variantID = dataSizeStockID[0];
+        let sizeStockID = dataSizeStockID[1];
+
+        let allSizeStock = document.querySelectorAll(
+            ".row.size-stock-" + variantID
+        );
+        allSizeStock.forEach((variant, index) => {
+            let id = variantID + "-" + index;
+            variant.id = "sizeStockDeleteGeneral-" + id;
+
+            variant.querySelectorAll('[for^="size-"]').forEach((element) => {
+                element.setAttribute("for", "size-" + id);
+            });
+
+            variant.querySelectorAll('[id^="size-"]').forEach((element) => {
+                element.id = "size-" + id;
+                element.setAttribute(
+                    "name",
+                    "variant[" + variantID + "][size][" + index + "]"
+                );
+            });
+
+            variant.querySelectorAll('[for^="stock-"]').forEach((element) => {
+                element.setAttribute("for", "stock-" + id);
+            });
+
+            variant.querySelectorAll('[id^="stock-"]').forEach((element) => {
+                element.id = "stock-" + id;
+                element.setAttribute(
+                    "name",
+                    "variant[" + variantID + "][stock][" + index + "]"
+                );
+            });
+
+            variant
+                .querySelectorAll('[id^="sizeStockDelete-"]')
+                .forEach((element) => {
+                    element.id = "sizeStockDelete-" + id;
+                    element.setAttribute("data-size-stock-id", id);
+                });
+        });
+
+        let sizeStock = --varianSizeStockInfo[variantID]["size_stock"];
+        varianSizeStockInfo[variantID]["size_stock"] = sizeStock;
     }
 
     // *Size Stock Actions
@@ -538,6 +600,15 @@ document.addEventListener("DOMContentLoaded", () => {
         urunStockDiv.appendChild(urunStockLabel);
         urunStockDiv.appendChild(urunStockInput);
 
+        let generalDivID =
+            "sizeStockDeleteGeneral-" + dataVariantID + "-" + sizeStock;
+        let urunSizeStockGeneralDivClass =
+            "row mx-0 size-stock-" + dataVariantID;
+        let urunSizeStockGeneralDiv = createDiv(
+            urunSizeStockGeneralDivClass,
+            generalDivID
+        );
+
         let urunSizeStockDeleteDiv = createDiv("col-md-2 mb-2 px-3");
         let aElementID = "sizeStockDelete-" + dataVariantID + "-" + sizeStock;
         let urunSizeStockDeleteAElement = createAElement(
@@ -551,15 +622,17 @@ document.addEventListener("DOMContentLoaded", () => {
             "form-label",
             "",
             "",
-            null
+            "&nbsp;"
         );
 
         urunSizeStockDeleteDiv.appendChild(urunSizeStockDeleteAElementLabel);
         urunSizeStockDeleteDiv.appendChild(urunSizeStockDeleteAElement);
 
-        findDiv.appendChild(urunSizeDiv);
-        findDiv.appendChild(urunStockDiv);
-        findDiv.appendChild(urunSizeStockDeleteDiv);
+        urunSizeStockGeneralDiv.appendChild(urunSizeDiv);
+        urunSizeStockGeneralDiv.appendChild(urunStockDiv);
+        urunSizeStockGeneralDiv.appendChild(urunSizeStockDeleteDiv);
+
+        findDiv.appendChild(urunSizeStockGeneralDiv);
 
         if (varianSizeStockInfo.hasOwnProperty(dataVariantID)) {
             varianSizeStockInfo[dataVariantID]["size_stock"] = Number(
@@ -567,13 +640,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         } else {
             varianSizeStockInfo[dataVariantID] = { size_stock: 1 };
-
-            // varianSizeStockInfo.push({
-            //     dataVariantID: { size_stock: 1 },
-            // });
         }
-
-        console.log(varianSizeStockInfo);
     }
 
     // *Shoes Size icin otomatik olarak numara olusturma fonksiyonu
@@ -607,7 +674,9 @@ document.addEventListener("DOMContentLoaded", () => {
         let label = document.createElement("label");
         label.className = className;
         label.textContent = textContent;
-        label.innerHTML = innerHTML;
+        if (innerHTML) {
+            label.innerHTML = innerHTML;
+        }
         label.setAttribute("for", forAttr);
 
         return label;
