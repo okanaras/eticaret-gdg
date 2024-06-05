@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\Product;
+use Illuminate\Support\Str;
 use App\Models\ProductTypes;
+use Illuminate\Http\Request;
 use App\Services\BrandService;
 use App\Services\CategoryService;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class ProductController extends Controller
 {
@@ -26,5 +28,18 @@ class ProductController extends Controller
         $types = ProductTypes::all();
 
         return view('admin.product.create_edit', compact('categories', 'brands', 'types'));
+    }
+
+    public function checkSlug(Request $request)
+    {
+        $check = Product::query()->where('slug', Str::slug($request->slug))->first();
+
+        return response()
+            ->json()
+            ->setData($check)
+            ->setStatusCode(200)
+            ->setCharset('utf-8')
+            ->header('Content-Type', 'application.json')
+            ->setEncodingOptions(JSON_UNESCAPED_UNICODE);
     }
 }
