@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+    let btnSubmit = document.querySelector("#btnSubmit");
+    let gdgForm = document.querySelector("#gdgForm");
     let addVariant = document.querySelector("#addVariant");
     let variants = document.querySelector("#variants");
     let typeID = document.querySelector("#type_id");
@@ -36,31 +38,33 @@ document.addEventListener("DOMContentLoaded", () => {
         3: standartSize,
     };
 
+    // *btnSubmit e tiklanildiginda
+    btnSubmit.addEventListener('click', () => {
+        let result = validateForm();
+        let isValid = result.isValid;
+        let message = result.message;
+
+        if (isValid) {
+            gdgForm.submit();
+        } else {
+            message = message != null ? message : 'Lutfen gerekli alanlari doldurunuz.';
+            toastr.error(message, 'Uyari!');
+        }
+    });
+
     // *Varyant ekle butonuna basildigindaki olaylar...
     addVariant.addEventListener("click", () => {
         let row = createDiv("row variant", "row-" + varianCount);
         let row2 = createDiv("row");
 
         let variantDeleteDiv = createDiv("col-md-12 mb-1");
-        let variantDeleteAElement = createAElement(
-            null,
-            "btn-delete-variant btn btn-danger col-md-3",
-            "javascript:void(0)",
-            ["data-variant-id", varianCount],
-            "Variant Kaldir"
-        );
+        let variantDeleteAElement = createAElement(null, "btn-delete-variant btn btn-danger col-md-3", "javascript:void(0)", ["data-variant-id", varianCount], "Variant Kaldir");
 
         let urunAdiID = "name-" + varianCount;
         let urunAdiNameAttr = "variant[" + varianCount + "][name]";
         let urunAdiDiv = createDiv("col-md-4 mb-4");
         let urunAdiLabel = createLabel("form-label", urunAdiID, "Urun Adi");
-        let urunAdiInput = createInput(
-            "form-control",
-            urunAdiID,
-            "off",
-            "Urun Adi",
-            urunAdiNameAttr
-        );
+        let urunAdiInput = createInput("form-control", urunAdiID, "off", "Urun Adi", urunAdiNameAttr);
 
         urunAdiDiv.appendChild(urunAdiLabel);
         urunAdiDiv.appendChild(urunAdiInput);
@@ -68,18 +72,8 @@ document.addEventListener("DOMContentLoaded", () => {
         let urunVariantNameID = "variant_name-" + varianCount;
         let urunVariantNameAttr = "variant[" + varianCount + "][variant_name]";
         let urunVariantNameDiv = createDiv("col-md-4 mb-4");
-        let urunVariantNameLabel = createLabel(
-            "form-label",
-            urunVariantNameID,
-            "Urun Varyant Adi"
-        );
-        let urunVariantNameInput = createInput(
-            "form-control",
-            urunAdiID,
-            "off",
-            "Urun Varyant Adi",
-            urunVariantNameAttr
-        );
+        let urunVariantNameLabel = createLabel("form-label", urunVariantNameID, "Urun Varyant Adi");
+        let urunVariantNameInput = createInput("form-control", urunVariantNameID, "off", "Urun Varyant Adi", urunVariantNameAttr);
 
         urunVariantNameDiv.appendChild(urunVariantNameLabel);
         urunVariantNameDiv.appendChild(urunVariantNameInput);
@@ -88,106 +82,47 @@ document.addEventListener("DOMContentLoaded", () => {
         let urunSlugNameAttr = "variant[" + varianCount + "][slug]";
         let urunSlugDiv = createDiv("col-md-4 mb-4");
         let urunSlugLabel = createLabel("form-label", urunSlugID, "Slug");
-        let urunSlugInput = createInput(
-            "form-control",
-            urunSlugID,
-            "off",
-            "Slug",
-            urunSlugNameAttr
-        );
+        let urunSlugInput = createInput("form-control", urunSlugID, "off", "Slug", urunSlugNameAttr);
 
         urunSlugDiv.appendChild(urunSlugLabel);
         urunSlugDiv.appendChild(urunSlugInput);
 
         let urunAdditionalPriceID = "additional_price-" + varianCount;
-        let urunAdditionalPriceNameAttr =
-            "variant[" + varianCount + "][additional_price]";
+        let urunAdditionalPriceNameAttr = "variant[" + varianCount + "][additional_price]";
         let urunAdditionalPriceDiv = createDiv("col-md-6 mb-4");
-        let urunAdditionalPriceLabel = createLabel(
-            "form-label",
-            urunAdditionalPriceID,
-            "Fiyat"
-        );
-        let urunAdditionalPriceInput = createInput(
-            "form-control",
-            urunAdditionalPriceID,
-            "off",
-            "Fiyat",
-            urunAdditionalPriceNameAttr
-        );
+        let urunAdditionalPriceLabel = createLabel("form-label", urunAdditionalPriceID, "Fiyat");
+        let urunAdditionalPriceInput = createInput("form-control additional-price-input", urunAdditionalPriceID, "off", "Fiyat", urunAdditionalPriceNameAttr, ["data-variant-id", varianCount]);
 
         urunAdditionalPriceDiv.appendChild(urunAdditionalPriceLabel);
         urunAdditionalPriceDiv.appendChild(urunAdditionalPriceInput);
 
         let urunFinalPriceID = "final_price-" + varianCount;
-        let urunFinalPriceNameAttr =
-            "variant[" + varianCount + "][final_price]";
+        let urunFinalPriceNameAttr = "variant[" + varianCount + "][final_price]";
         let urunFinalPriceDiv = createDiv("col-md-6 mb-4");
-        let urunFinalPriceLabel = createLabel(
-            "form-label",
-            urunFinalPriceID,
-            "Son Fiyat"
-        );
-        let urunFinalPriceInput = createInput(
-            "form-control",
-            urunFinalPriceID,
-            "off",
-            "Son Fiyat",
-            urunFinalPriceNameAttr
-        );
+        let urunFinalPriceLabel = createLabel("form-label", urunFinalPriceID, "Son Fiyat");
+        let getPrice = document.querySelector("#price").value;
+        let urunFinalPriceInput = createInput("form-control readonly", urunFinalPriceID, "off", "Son Fiyat", urunFinalPriceNameAttr, ["readonly", ""], null, getPrice);
 
         urunFinalPriceDiv.appendChild(urunFinalPriceLabel);
         urunFinalPriceDiv.appendChild(urunFinalPriceInput);
 
         let urunExtraDescriptionID = "extra_description-" + varianCount;
-        let urunExtraDescriptionNameAttr =
-            "variant[" + varianCount + "][extra_description]";
+        let urunExtraDescriptionNameAttr = "variant[" + varianCount + "][extra_description]";
         let urunExtraDescriptionDiv = createDiv("col-md-12 mb-4");
-        let urunExtraDescriptionLabel = createLabel(
-            "form-label",
-            urunExtraDescriptionID,
-            "Ekstra Aciklama"
-        );
-        let urunExtraDescriptionInput = createInput(
-            "form-control",
-            urunExtraDescriptionID,
-            "off",
-            "Ekstra Aciklama",
-            urunExtraDescriptionNameAttr
-        );
+        let urunExtraDescriptionLabel = createLabel("form-label", urunExtraDescriptionID, "Ekstra Aciklama");
+        let urunExtraDescriptionInput = createInput("form-control", urunExtraDescriptionID, "off", "Ekstra Aciklama", urunExtraDescriptionNameAttr);
 
         urunExtraDescriptionDiv.appendChild(urunExtraDescriptionLabel);
         urunExtraDescriptionDiv.appendChild(urunExtraDescriptionInput);
 
         let urunPublishDateID = "publish_date-" + varianCount;
-        let urunPublishDateNameAttr =
-            "variant[" + varianCount + "][publish_date]";
+        let urunPublishDateNameAttr = "variant[" + varianCount + "][publish_date]";
         let urunPublishDateDiv = createDiv("col-md-12 mb-4");
-        let urunPublishDateDiv2 = createDiv(
-            "input-group flatpickr flatpickr-date"
-        );
-        let urunPublishDateLabel = createLabel(
-            "form-label",
-            urunPublishDateID,
-            "Yayimlanma Tarihi"
-        );
-        let urunPublishDateInput = createInput(
-            "form-control",
-            urunAdiID,
-            "off",
-            "Yayimlanma Tarihi",
-            urunPublishDateNameAttr,
-            ["data-input", ""]
-        );
-        let urunPublishDateSpan = createSpan(
-            "input-group-text input-group-addon",
-            "",
-            ["data-toggle", ""]
-        );
-        let urunPublishDateIElemant = createIElement("", [
-            "data-feather",
-            "calendar",
-        ]);
+        let urunPublishDateDiv2 = createDiv("input-group flatpickr flatpickr-date");
+        let urunPublishDateLabel = createLabel("form-label", urunPublishDateID, "Yayimlanma Tarihi");
+        let urunPublishDateInput = createInput("form-control", urunAdiID, "off", "Yayimlanma Tarihi", urunPublishDateNameAttr, ["data-input", ""]);
+        let urunPublishDateSpan = createSpan("input-group-text input-group-addon", "", ["data-toggle", ""]);
+        let urunPublishDateIElemant = createIElement("", ["data-feather", "calendar"]);
 
         urunPublishDateDiv.appendChild(urunPublishDateLabel);
         urunPublishDateSpan.appendChild(urunPublishDateIElemant);
@@ -198,53 +133,24 @@ document.addEventListener("DOMContentLoaded", () => {
         let urunPStatusID = "p_status-" + varianCount;
         let urunPStatusNameAttr = "variant[" + varianCount + "][p_status]";
         let urunPStatusDiv = createDiv("col-md-6 mb-4");
-        let urunPStatusLabel = createLabel(
-            "form-check-label",
-            urunPStatusID,
-            "Aktif mi?"
-        );
-        let urunPStatusInput = createInput(
-            "form-check-input me-2",
-            urunPStatusID,
-            "",
-            "",
-            urunPStatusNameAttr,
-            null,
-            (type = "checkbox")
-        );
+        let urunPStatusLabel = createLabel("form-check-label", urunPStatusID, "Aktif mi?");
+        let urunPStatusInput = createInput("form-check-input me-2", urunPStatusID, "", "", urunPStatusNameAttr, null, (type = "checkbox"));
 
         urunPStatusDiv.appendChild(urunPStatusInput);
         urunPStatusDiv.appendChild(urunPStatusLabel);
 
         let urunAddSizeDiv = createDiv("row");
         let urunAddSizeSpan = createSpan("ms-2", "Beden Ekle", null);
-        let urunAddSizeIElement = createIElement("add-size", [
-            "data-feather",
-            "plus-circle",
-        ]);
-        let urunAddSizeAElement = createAElement(
-            null,
-            "btn-add-size col-md-12",
-            "javascript:void",
-            ["data-variant-id", varianCount]
-        );
+        let urunAddSizeIElement = createIElement("add-size", ["data-feather", "plus-circle"]);
+        let urunAddSizeAElement = createAElement(null, "btn-add-size col-md-12", "javascript:void", ["data-variant-id", varianCount]);
 
-        let urunAddSizeIElementImage = createIElement("add-size", [
-            "data-feather",
-            "image",
-        ]);
+        let urunAddSizeIElementImage = createIElement("add-size", ["data-feather", "image",]);
         let urunAddSizeAElementImageSetAttribute = [];
-        urunAddSizeAElementImageSetAttribute.push({
-            "data-variant-id": varianCount,
-        });
+        urunAddSizeAElementImageSetAttribute.push({ "data-variant-id": varianCount });
         let dataInputAttr = "data-input-" + varianCount;
         let dataPreviewAttr = "data-preview-" + varianCount;
-        urunAddSizeAElementImageSetAttribute.push({
-            "data-input": dataInputAttr,
-        });
-        urunAddSizeAElementImageSetAttribute.push({
-            "data-preview": dataPreviewAttr,
-        });
+        urunAddSizeAElementImageSetAttribute.push({ "data-input": dataInputAttr, });
+        urunAddSizeAElementImageSetAttribute.push({ "data-preview": dataPreviewAttr, });
 
         let imageDataInputElementNameAttr = "image[" + varianCount + "][]";
         let imageDataInputElement = createInput(
@@ -341,7 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // * document.click actions
+    // * document body click actions
     document.body.addEventListener("click", (event) => {
         let element = event.target;
 
@@ -469,16 +375,12 @@ document.addEventListener("DOMContentLoaded", () => {
             let dataUrl = element.getAttribute("data-url") + ",";
             let dataImageIndex = element.getAttribute("data-image-index");
 
-            let dataInputFind = document.querySelector(
-                "#data-input-" + variantID
-            );
+            let dataInputFind = document.querySelector("#data-input-" + variantID);
             let dataInputValue = dataInputFind.value;
             dataInputValue = dataInputValue.replace(dataUrl, "");
             dataInputFind.value = dataInputValue;
 
-            let findImageContainer = document.querySelector(
-                "#image-container-" + variantID + "-" + dataImageIndex
-            );
+            let findImageContainer = document.querySelector("#image-container-" + variantID + "-" + dataImageIndex);
             findImageContainer.remove();
 
             // update index
@@ -518,6 +420,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // * document body input actions
     document.body.addEventListener("input", (event) => {
         let element = event.target;
         let requiredFieldStatus = true;
@@ -551,6 +454,16 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             productVariantTab.setAttribute("disabled", "");
         }
+
+        if (element.classList.contains("additional-price-input")) {
+            let variantID = element.getAttribute("data-variant-id");
+            let findFinalPriceElement = document.querySelector(
+                "#final_price-" + variantID
+            );
+            let priceValue = document.querySelector("#price").value;
+            let finalPrice = Number(priceValue) - Number(element.value);
+            findFinalPriceElement.value = finalPrice;
+        }
     });
 
     // * UpdateVariantIndexes
@@ -574,20 +487,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 element.setAttribute("name", "variant[" + index + "][name]");
             });
 
-            variant
-                .querySelectorAll('[for^="variant_name-"]')
-                .forEach((element) => {
-                    element.setAttribute("for", "variant_name-" + index);
-                });
-            variant
-                .querySelectorAll('[id^="variant_name-"]')
-                .forEach((element) => {
-                    element.id = "variant_name-" + index;
-                    element.setAttribute(
-                        "name",
-                        "variant[" + index + "][variant_name]"
-                    );
-                });
+            variant.querySelectorAll('[for^="variant_name-"]').forEach((element) => {
+                element.setAttribute("for", "variant_name-" + index);
+            });
+            variant.querySelectorAll('[id^="variant_name-"]').forEach((element) => {
+                element.id = "variant_name-" + index;
+                element.setAttribute(
+                    "name",
+                    "variant[" + index + "][variant_name]"
+                );
+            });
 
             variant.querySelectorAll('[for^="slug-"]').forEach((element) => {
                 element.setAttribute("for", "slug-" + index);
@@ -597,71 +506,53 @@ document.addEventListener("DOMContentLoaded", () => {
                 element.setAttribute("name", "variant[" + index + "][slug]");
             });
 
-            variant
-                .querySelectorAll('[for^="additional_price-"]')
-                .forEach((element) => {
-                    element.setAttribute("for", "additional_price-" + index);
-                });
-            variant
-                .querySelectorAll('[id^="additional_price-"]')
-                .forEach((element) => {
-                    element.id = "additional_price-" + index;
-                    element.setAttribute(
-                        "name",
-                        "variant[" + index + "][additional_price]"
-                    );
-                });
+            variant.querySelectorAll('[for^="additional_price-"]').forEach((element) => {
+                element.setAttribute("for", "additional_price-" + index);
+            });
+            variant.querySelectorAll('[id^="additional_price-"]').forEach((element) => {
+                element.id = "additional_price-" + index;
+                element.setAttribute(
+                    "name",
+                    "variant[" + index + "][additional_price]"
+                );
+            });
 
-            variant
-                .querySelectorAll('[for^="final_price-"]')
-                .forEach((element) => {
-                    element.setAttribute("for", "final_price-" + index);
-                });
-            variant
-                .querySelectorAll('[id^="final_price-"]')
-                .forEach((element) => {
-                    element.id = "final_price-" + index;
-                    element.setAttribute(
-                        "name",
-                        "variant[" + index + "][final_price]"
-                    );
-                });
+            variant.querySelectorAll('[for^="final_price-"]').forEach((element) => {
+                element.setAttribute("for", "final_price-" + index);
+            });
+            variant.querySelectorAll('[id^="final_price-"]').forEach((element) => {
+                element.id = "final_price-" + index;
+                element.setAttribute(
+                    "name",
+                    "variant[" + index + "][final_price]"
+                );
+            });
 
-            variant
-                .querySelectorAll('[for^="extra_description-"]')
-                .forEach((element) => {
-                    element.setAttribute("for", "extra_description-" + index);
-                });
-            variant
-                .querySelectorAll('[id^="extra_description-"]')
-                .forEach((element) => {
-                    element.id = "extra_description-" + index;
-                    element.setAttribute(
-                        "name",
-                        "variant[" + index + "][extra_description]"
-                    );
-                });
+            variant.querySelectorAll('[for^="extra_description-"]').forEach((element) => {
+                element.setAttribute("for", "extra_description-" + index);
+            });
+            variant.querySelectorAll('[id^="extra_description-"]').forEach((element) => {
+                element.id = "extra_description-" + index;
+                element.setAttribute(
+                    "name",
+                    "variant[" + index + "][extra_description]"
+                );
+            });
 
-            variant
-                .querySelectorAll('[for^="publish_date-"]')
-                .forEach((element) => {
-                    element.setAttribute("for", "publish_date-" + index);
-                });
-            variant
-                .querySelectorAll('[id^="publish_date-"]')
-                .forEach((element) => {
-                    element.id = "publish_date-" + index;
-                    element.setAttribute(
-                        "name",
-                        "variant[" + index + "][publish_date]"
-                    );
-                });
+            variant.querySelectorAll('[for^="publish_date-"]').forEach((element) => {
+                element.setAttribute("for", "publish_date-" + index);
+            });
+            variant.querySelectorAll('[id^="publish_date-"]').forEach((element) => {
+                element.id = "publish_date-" + index;
+                element.setAttribute(
+                    "name",
+                    "variant[" + index + "][publish_date]"
+                );
+            });
 
-            variant
-                .querySelectorAll('[for^="p_status-"]')
-                .forEach((element) => {
-                    element.setAttribute("for", "p_status-" + index);
-                });
+            variant.querySelectorAll('[for^="p_status-"]').forEach((element) => {
+                element.setAttribute("for", "p_status-" + index);
+            });
             variant.querySelectorAll('[id^="p_status-"]').forEach((element) => {
                 element.id = "p_status-" + index;
                 element.setAttribute(
@@ -676,6 +567,28 @@ document.addEventListener("DOMContentLoaded", () => {
             variant.querySelectorAll('[id^="size-"]').forEach((element) => {
                 element.id = "size-" + index;
                 element.setAttribute("name", "variant[" + index + "][size]");
+            });
+
+
+            variant.querySelectorAll('[id^="sizeDiv"]').forEach((element) => {
+                element.id = "sizeDiv" + index;
+            });
+            variant.querySelectorAll('[id^="sizeStockDeleteGeneral-"]').forEach((element) => {
+                let forAttr = element.getAttribute("id");
+                let split = forAttr.split("-");
+                let stockID = split[2];
+                let oldVariantID = split[1];
+                element.id = "sizeStockDeleteGeneral-" + index + '-' + stockID;
+                element.classList.remove('size-stock-' + oldVariantID);
+                element.classList.add('size-stock-' + index);
+
+                element.querySelectorAll('[for^="size-"]').forEach((element) => {
+                    element.setAttribute("for", "size-" + index + '-' + stockID);
+                });
+                element.querySelectorAll('[id^="size-"]').forEach((element) => {
+                    element.setAttribute("id", "size-" + index + '-' + stockID);
+                    element.setAttribute("name", "variant[" + index + '][size][' + stockID + ']');
+                });
             });
 
             variant.querySelectorAll('[for^="stock-"]').forEach((element) => {
@@ -699,6 +612,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 let imageID = split[2];
                 element.id = "radio-" + index + "-" + imageID;
                 element.setAttribute("name", "variant[" + index + "][radio]");
+            });
+
+            variant.querySelectorAll('[id^="data-input-"]').forEach((element) => {
+                element.id = "data-input-" + index;
+                element.setAttribute("name", "image[" + index + "]");
             });
         });
 
@@ -742,12 +660,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
             });
 
-            variant
-                .querySelectorAll('[id^="sizeStockDelete-"]')
-                .forEach((element) => {
-                    element.id = "sizeStockDelete-" + id;
-                    element.setAttribute("data-size-stock-id", id);
-                });
+            variant.querySelectorAll('[id^="sizeStockDelete-"]').forEach((element) => {
+                element.id = "sizeStockDelete-" + id;
+                element.setAttribute("data-size-stock-id", id);
+            });
         });
 
         let sizeStock = --varianSizeStockInfo[variantID]["size_stock"];
@@ -860,6 +776,146 @@ document.addEventListener("DOMContentLoaded", () => {
         return numbers;
     }
 
+    function validateForm() {
+        let isValid = true;
+        let message = null;
+
+        let nameInput = document.querySelector('#name');
+        let priceInput = document.querySelector('#price');
+        let typeSelect = document.querySelector('#type_id');
+        let brandSelect = document.querySelector('#brand_id');
+        let categorySelect = document.querySelector('#category_id');
+
+
+        // nameInput bos veya null ise
+        if (nameInput.value.trim() === '' || nameInput.value.trim() == null) {
+            isValid = false;
+            nameInput.classList.add('is-invalid')
+        } else {
+            nameInput.classList.remove('is-invalid')
+        }
+
+        // priceInput bos veya null ise
+        if (priceInput.value.trim() === '' || priceInput.value.trim() == null || isNaN(priceInput.value) || priceInput.value < 1) {
+            isValid = false;
+            priceInput.classList.add('is-invalid')
+        } else {
+            priceInput.classList.remove('is-invalid')
+        }
+
+        // typeSelect value -1 ise
+        if (typeSelect.value.trim() === '-1') {
+            isValid = false;
+            typeSelect.classList.add('is-invalid')
+        } else {
+            typeSelect.classList.remove('is-invalid')
+        }
+
+        // brandSelect value -1 ise
+        if (brandSelect.value.trim() === '-1') {
+            isValid = false;
+            brandSelect.classList.add('is-invalid')
+        } else {
+            brandSelect.classList.remove('is-invalid')
+        }
+
+        // categorySelect value -1 ise
+        if (categorySelect.value.trim() === '-1') {
+            isValid = false;
+            categorySelect.classList.add('is-invalid')
+        } else {
+            categorySelect.classList.remove('is-invalid')
+        }
+
+
+
+        // variants
+        let variants = document.querySelectorAll('.row.variant');
+
+        if (variants.length < 1) {
+            isValid = false;
+            message = 'En az 1 varyant eklemelisiniz.'
+        }
+        variants = [...variants].reverse();
+        variants.forEach((variant, index) => {
+
+            let variantNameInput = variant.querySelector(`#variant_name-${index}`);
+
+
+
+            let slugInput = variant.querySelector(`#slug-${index}`);
+            let finalPriceInput = variant.querySelector(`#final_price-${index}`);
+            let imageDataInput = variant.querySelector(`#data-input-${index}`);
+
+            let sizeInputs = variant.querySelectorAll(`[id^="size-${index}"]`);
+            let stockInputs = variant.querySelectorAll(`[id^="stock-${index}"]`);
+
+            // variantNameInput bos veya null ise
+            if (variantNameInput.value.trim() === '' || variantNameInput.value.trim() == null) {
+                isValid = false;
+                variantNameInput.classList.add('is-invalid')
+            } else {
+                variantNameInput.classList.remove('is-invalid')
+            }
+
+            // slugInput bos veya null ise
+            if (slugInput.value.trim() === '' || slugInput.value.trim() == null) {
+                isValid = false;
+                slugInput.classList.add('is-invalid')
+            } else {
+                slugInput.classList.remove('is-invalid')
+            }
+
+            // finalPriceInput bos veya null ise
+            if (finalPriceInput.value.trim() === '' || finalPriceInput.value.trim() == null) {
+                isValid = false;
+                finalPriceInput.classList.add('is-invalid')
+            } else {
+                finalPriceInput.classList.remove('is-invalid')
+            }
+
+            // imageDataInput bos veya null ise
+            if (imageDataInput.value.trim() === '' || imageDataInput.value.trim() == null) {
+                isValid = false;
+                imageDataInput.classList.add('is-invalid')
+                message = 'Lutfen varyantlara gorsel seciniz!';
+            } else {
+                imageDataInput.classList.remove('is-invalid')
+            }
+
+            if (sizeInputs.length < 1) {
+                isValid = false;
+                message = 'Lutfen varyantlara beden ekleyiniz!';
+            }
+
+
+            console.log(sizeInputs);
+            console.log(stockInputs);
+
+            // sizeInputs value -1 ise
+            sizeInputs.forEach((input, index) => {
+                if (input.value.trim() === '-1') {
+                    isValid = false;
+                    input.classList.add('is-invalid')
+                } else {
+                    input.classList.remove('is-invalid')
+                }
+            });
+
+            // stockInputs value -1 ise
+            stockInputs.forEach((input, index) => {
+                if (input.value.trim() === '' || input.value.trim() == null) {
+                    isValid = false;
+                    input.classList.add('is-invalid')
+                } else {
+                    input.classList.remove('is-invalid')
+                }
+            });
+        });
+
+        return { isValid, message };
+    }
+
     // *element olusturma fonksiyonlari start
     function createDiv(className, id = null) {
         let div = document.createElement("div");
@@ -912,14 +968,15 @@ document.addEventListener("DOMContentLoaded", () => {
         return iElement;
     }
 
-    function createInput(
-        className,
-        id,
-        autocomplete,
+    function createInput(className, id, autocomplete,
         placeholder,
+
+
+
         nameAttr,
         setAttribute = null,
-        type = "text"
+        type = "text",
+        value = null
     ) {
         let input = document.createElement("input");
         input.type = type;
@@ -933,16 +990,12 @@ document.addEventListener("DOMContentLoaded", () => {
             input.setAttribute(setAttribute[0], setAttribute[1]);
         }
 
+        input.value = value;
+
         return input;
     }
 
-    function createSelect(
-        className = null,
-        id = null,
-        nameAttr = null,
-        setAttribute = null,
-        options = null
-    ) {
+    function createSelect(className = null, id = null, nameAttr = null, setAttribute = null, options = null) {
         let select = document.createElement("select");
         select.className = className;
 

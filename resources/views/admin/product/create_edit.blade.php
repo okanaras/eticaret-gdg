@@ -210,33 +210,6 @@
 
 @push('js')
     <script src="{{ asset('assets/vendors/flatpickr/flatpickr.min.js') }}"></script>
-    <script src="{{ asset('vendor/laravel-filemanager/js/stand-alone-button.js') }}"></script>
-
     <script src="{{ asset('assets/js/product/gdg-variant.js') }}"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            let btnSubmit = document.querySelector('#btnSubmit');
-            let gdgForm = document.querySelector('#gdgForm');
-            let name = document.querySelector('#name');
-
-            btnSubmit.addEventListener('click', () => {
-                if (name.value.trim().length < 1) {
-                    toastr.warning('Lutfen Urun adini yaziniz!',
-                        'Uyari!');
-                } else {
-                    gdgForm.submit();
-                }
-            });
-
-
-            if ($('.flatpickr-date').length) {
-                flatpickr(".flatpickr-date", {
-                    wrap: true,
-                    enableTime: true,
-                    dateFormat: "Y-m-d H:i",
-                });
-            }
-        });
-    </script>
+    <script src="{{ asset('vendor/laravel-filemanager/js/stand-alone-button.js') }}"></script>
 @endpush
