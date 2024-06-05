@@ -253,7 +253,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "off",
             "",
             imageDataInputElementNameAttr,
-            null
+            null,
+            "hidden"
         );
         let imageDataPreviewElement = createDiv("col-md-12", dataPreviewAttr);
 
@@ -267,6 +268,13 @@ document.addEventListener("DOMContentLoaded", () => {
         let urunAddSizeAElementDiv = createDiv("col-md-12");
         urunAddSizeAElementImage.appendChild(urunAddSizeIElementImage);
         urunAddSizeAElementDiv.appendChild(urunAddSizeAElementImage);
+
+        let variantFeatureSpan = createSpan(
+            "form-label d-block my-3",
+            "Varyant Icin One Cikarilan Gorsel Secin",
+            null
+        );
+        urunAddSizeAElementDiv.appendChild(variantFeatureSpan);
 
         urunAddSizeAElement.appendChild(urunAddSizeIElement);
         urunAddSizeAElement.appendChild(urunAddSizeSpan);
@@ -333,7 +341,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // *Size Stock ekletme
+    // * document.click actions
     document.body.addEventListener("click", (event) => {
         let element = event.target;
 
@@ -402,10 +410,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 target_input.dispatchEvent(new Event("change"));
 
                 // clear previous preview
-                target_preview.innerHtml = "";
+                target_preview.innerHTML = "";
 
                 // set or change the preview image src
-                items.forEach(function (item) {
+                items.forEach(function (item, index) {
+                    let container = document.createElement("div");
+                    container.className = "image-container";
+                    container.id = "image-container-" + variantID + "-" + index;
+
                     let radio = document.createElement("input");
                     radio.type = "radio";
                     radio.setAttribute(
@@ -413,17 +425,89 @@ document.addEventListener("DOMContentLoaded", () => {
                         "variant[" + variantID + "][image]"
                     );
                     radio.setAttribute("value", item.url);
+                    radio.id = "radio-" + variantID + "-" + index;
+
+                    if (index == 0) {
+                        radio.checked = true;
+                    }
+
+                    let iElement = document.createElement("i");
+                    iElement.setAttribute("data-feather", "x");
+                    iElement.setAttribute("data-url", item.url);
+                    iElement.setAttribute("data-variant-id", variantID);
+                    iElement.setAttribute("data-image-index", index);
+                    iElement.className = "delete-variant-image";
+
+                    let label = document.createElement("label");
+                    label.setAttribute(
+                        "for",
+                        "radio-" + variantID + "-" + index
+                    );
 
                     let img = document.createElement("img");
                     img.setAttribute("style", "height: 5rem");
                     img.setAttribute("src", item.thumb_url);
-                    target_preview.appendChild(radio);
-                    target_preview.appendChild(img);
+
+                    label.appendChild(img);
+                    container.appendChild(radio);
+                    container.appendChild(label);
+                    container.appendChild(iElement);
+
+                    target_preview.appendChild(container);
                 });
 
                 // trigger change event
                 target_preview.dispatchEvent(new Event("change"));
+
+                // yukardaki iElement i sonradan olustrudugumuz icin bruda cagirmamiz gerekli
+                feather.replace();
             };
+        }
+
+        if (element.classList.contains("delete-variant-image")) {
+            let variantID = element.getAttribute("data-variant-id");
+            let dataUrl = element.getAttribute("data-url") + ",";
+            let dataImageIndex = element.getAttribute("data-image-index");
+
+            let dataInputFind = document.querySelector(
+                "#data-input-" + variantID
+            );
+            let dataInputValue = dataInputFind.value;
+            dataInputValue = dataInputValue.replace(dataUrl, "");
+            dataInputFind.value = dataInputValue;
+
+            let findImageContainer = document.querySelector(
+                "#image-container-" + variantID + "-" + dataImageIndex
+            );
+            findImageContainer.remove();
+
+            // update index
+            let dataPreview = document.querySelector(
+                "#data-preview-" + variantID
+            );
+            let imageContainers =
+                dataPreview.querySelectorAll(".image-container");
+
+            imageContainers.forEach((container, index) => {
+                let varianIndex = variantID + "-" + index;
+                container.id = "image-container-" + varianIndex;
+
+                container
+                    .querySelectorAll('[id^="radio-"]')
+                    .forEach((element) => {
+                        element.id = "radio-" + varianIndex;
+                    });
+
+                container
+                    .querySelectorAll('[for^="radio-"]')
+                    .forEach((element) => {
+                        element.setAttribute("for", "radio-" + varianIndex);
+                    });
+
+                container.querySelectorAll("svg").forEach((element) => {
+                    element.setAttribute("data-image-index", index);
+                });
+            });
         }
 
         if (element.classList.contains("btn-add-size")) {
@@ -600,6 +684,21 @@ document.addEventListener("DOMContentLoaded", () => {
             variant.querySelectorAll('[id^="stock-"]').forEach((element) => {
                 element.id = "stock-" + index;
                 element.setAttribute("name", "variant[" + index + "][stock]");
+            });
+
+            variant.querySelectorAll('[for^="radio-"]').forEach((element) => {
+                let forAttr = element.getAttribute("for");
+                let split = forAttr.split("-");
+                let imageID = split[2];
+
+                element.setAttribute("for", "radio-" + index + "-" + imageID);
+            });
+            variant.querySelectorAll('[id^="radio-"]').forEach((element) => {
+                let forAttr = element.getAttribute("id");
+                let split = forAttr.split("-");
+                let imageID = split[2];
+                element.id = "radio-" + index + "-" + imageID;
+                element.setAttribute("name", "variant[" + index + "][radio]");
             });
         });
 
@@ -906,5 +1005,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         return aElement;
     }
+
     // !element olusturma fonksiyonlari end
 });

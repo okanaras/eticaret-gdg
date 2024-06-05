@@ -6,6 +6,60 @@
 
 @push('css')
     <link rel="stylesheet" href="{{ asset('assets/vendors/flatpickr/flatpickr.min.css') }}">
+    <style>
+        .image-container {
+            position: relative;
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .image-container img {
+            height: 5rem;
+            border: 2px solid transparent;
+            border-radius: 5px;
+            transition: border 0.3s ease;
+            cursor: pointer;
+        }
+
+        .image-container input[type='radio'] {
+            display: none;
+        }
+
+        .image-container input[type='radio']:checked+label img {
+            border: 3px solid #007bff;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        }
+
+        .image-container label:after {
+            content: '\2714';
+            font-size: 16px;
+            color: white;
+            background-color: #007bff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            /*display: flex;*/
+            align-items: center;
+            justify-content: center;
+            padding: 2px;
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            display: none;
+        }
+
+        .image-container input[type='radio']:checked+label::after {
+            display: flex;
+        }
+
+        .delete-variant-image {
+            position: absolute;
+            right: 3px;
+            top: 3px;
+        }
+    </style>
 @endpush
 
 
