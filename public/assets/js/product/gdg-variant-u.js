@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
         row.appendChild(urunAddSizeGeneralDiv);
 
         let hr2 = createElement('hr', 'my-5');
-        row.appendChild(hr);
+        row.appendChild(hr2);
 
         variants.insertAdjacentElement("afterbegin", row);
         varianCount++;
