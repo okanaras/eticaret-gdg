@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Requests\ProductStoreRequest;
 use App\Models\Product;
 use Illuminate\Support\Str;
 use App\Models\ProductTypes;
@@ -28,6 +29,10 @@ class ProductController extends Controller
         $types = ProductTypes::all();
 
         return view('admin.product.create_edit', compact('categories', 'brands', 'types'));
+    }
+
+    public function store(ProductStoreRequest $request)
+    {
     }
 
     public function checkSlug(Request $request)

@@ -11,8 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let productVariantTab = document.querySelector("#productVariantTab"); // control
 
-    let varianCount = 0;
-    let varianSizeStockInfo = [];
     const sizeDivKey = "sizeDiv";
     const requiredFields = {
         name: { type: "input", },
@@ -30,12 +28,14 @@ document.addEventListener('DOMContentLoaded', () => {
     /** Btn Submit **/
     btnSubmit.addEventListener('click', () => {
         let { isValid, message } = validateForm();
+        gdgForm.submit();
 
-        if (isValid) {
-            gdgForm.submit();
-        } else {
-            toastr.error(message || 'Lutfen gerekli alanlari doldurunuz.', 'Uyari!');
-        }
+
+        // if (isValid) {
+        //     gdgForm.submit();
+        // } else {
+        //     toastr.error(message || 'Lutfen gerekli alanlari doldurunuz.', 'Uyari!');
+        // }
     });
 
     /** Varyant ekle butonuna basildigindaki olaylar... **/
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         let urunAddSizeIElementImage = createElement('i', 'add-size', { 'data-feather': 'image' });
-        let imageDataInputElement = createInput("form-control", `data-input-${varianCount}`, '', `image[${varianCount}][]`, 'hidden');
+        let imageDataInputElement = createInput("form-control", `data-input-${varianCount}`, '', `image[${varianCount}]`, 'hidden');
         let imageDataPreviewElement = createDiv("col-md-12", `data-preview-${varianCount}`);
 
         let urunAddSizeAElementImage = createElement('a', "btn btn-info btn-add-image mb-4", { 'href': 'javascript:void', "data-variant-id": varianCount, "data-input": `data-input-${varianCount}`, "data-preview": `data-preview-${varianCount}` });
