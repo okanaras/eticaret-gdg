@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         3: ["standart"]
     };
 
-    /** BTNSUBMIT **/
+    /** Btn Submit **/
     btnSubmit.addEventListener('click', () => {
         let { isValid, message } = validateForm();
 
@@ -51,12 +51,16 @@ document.addEventListener('DOMContentLoaded', () => {
         varianDeleteDiv.appendChild(variantDeleteAElement);
         varianDeleteDiv.appendChild(hr);
 
+
+        let inputName = document.querySelector('#name');
+        let nameSlug = generateSlug(inputName.value);
+
         // variant form elemanlarini arr icinde obje seklinde tuttuk
         let fields = [
             { id: 'name', label: 'Urun Adi', className: 'variant-product-name', colClass: 'col-md-4 mb-4' },
             { id: 'variant_name', label: 'Urun Varyant Adi', className: 'variant-name', colClass: 'col-md-4 mb-4' },
-            { id: 'slug', label: 'Slug', className: 'product-slug', colClass: 'col-md-4 mb-4' },
-            { id: 'additional_price', label: 'Fiyat', className: 'additional-price-input', colClass: 'col-md-6 mb-4', dataAttr: { 'data-variant-id': varianCount } },
+            { id: 'slug', label: 'Slug', className: 'product-slug', colClass: 'col-md-4 mb-4', value: nameSlug },
+            { id: 'additional_price', label: 'Fiyat', className: 'additional-price-input', colClass: 'col-md-6 mb-4', dataAttr: { 'data-variant-id': varianCount }, type: 'number' },
             { id: 'final_price', label: 'Son Fiyat', className: 'readonly', colClass: 'col-md-6 mb-4', readonly: true, value: document.querySelector("#price").value },
             { id: 'extra_description', label: 'Ekstra Aciklama', className: '', colClass: 'col-md-12 mb-4' },
             { id: 'publish_date', label: 'Yayimlanma Tarihi', className: '', colClass: 'col-md-12 mb-4', date: true },
@@ -65,13 +69,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         fields.forEach(field => {
             let colDiv = createDiv(field.colClass);
-            colDiv.appendChild(createLabel('form-label', `${field.id}-${varianCount}`));
+            colDiv.appendChild(createLabel(`form-label`, `${field.id}-${varianCount}`, field.label));
             let input;
             if (field.checkbox) {
-                input = createInput('form-check-input me-2', `${field.id}-${varianCount}`, '', `variant[${varianCount}][${field.id}]`, 'checkbox');
+                input = createInput(`form-check-input me-2 ${field.className}`, `${field.id}-${varianCount}`, '', `variant[${varianCount}][${field.id}]`, 'checkbox');
                 colDiv.appendChild(input);
             } else if (field.date) {
-                input = createInput('form-control-input me-2', `${field.id}-${varianCount}`, field.label, `variant[${varianCount}][${field.id}]`);
+                input = createInput(`form-control ${field.className}`, `${field.id}-${varianCount}`, field.label, `variant[${varianCount}][${field.id}]`);
+                input.setAttribute('data-input', '');
                 let span = createElement('span', 'input-group-text input-group-addon', { 'data-toggle': '' });
                 span.innerHTML = '<i data-feather="calendar"></i>';
                 let dateDiv = createDiv('input-group flatpickr flatpickr-date');
@@ -79,9 +84,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 dateDiv.appendChild(span);
                 colDiv.appendChild(dateDiv);
             } else {
-                input = createInput('form-control', `${field.id}-${varianCount}`, field.label, `variant[${varianCount}][${field.id}]`, field.type || 'text', field.value || '');
+                input = createInput(`form-control ${field.className}`, `${field.id}-${varianCount}`, field.label, `variant[${varianCount}][${field.id}]`, field.type || 'text', field.value || '');
                 if (field.dataAttr) Object.entries(field.dataAttr).forEach(([key, value]) => input.setAttribute(key, value));
-                if (field.readonly) { input.readonly = true; input.classList.add('readonly'); }
+                if (field.readonly) { input.readOnly = true; input.classList.add('readonly'); }
                 colDiv.appendChild(input);
             }
             row.appendChild(colDiv);
@@ -94,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let urunAddSizeAElement = createElement('a', "btn-add-size col-md-12", { 'href': 'javascript:void', 'data-variant-id': varianCount });
         urunAddSizeAElement.appendChild(urunAddSizeIElement);
         urunAddSizeAElement.appendChild(urunAddSizeSpan);
-
 
 
         let urunAddSizeIElementImage = createElement('i', 'add-size', { 'data-feather': 'image' });
@@ -137,7 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /** Urun bilgileri tab'inda urun turu degistiginde varyant ekleme tabindaki size ve stock alanlarini temizleme **/
     typeID.addEventListener("change", () => {
-        document.querySelector(`[id^=${sizeDivKey}]`).forEach(div => div.innerHTML = "");
+        document.querySelectorAll(`[id^=${sizeDivKey}]`).forEach(div => div.innerHTML = "");
+
 
         // // NOT : her div'in id'si 'SizeKey+VariantCount' (SizeKey0, SizeKey1, SizeKey2...) oldugundan bulma islemi basarili gerceklesmekte
         // for (let i = 0; i <= varianCount; i++) {
@@ -185,10 +190,51 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (element.classList.contains("delete-variant-image")) {
-            deleteVarianImage(element);
+            deleteVariantImage(element);
         }
 
 
+    });
+
+    document.body.addEventListener("input", (event) => {
+        let element = event.target;
+
+        checkRequiredFieldForProductVariantTab();
+
+        if (element.classList.contains("additional-price-input")) {
+            calculateFinalPrice(element);
+        }
+
+        if (element.id === 'name') {
+            changeNameForSlug(element);
+        }
+
+        if (element.classList.contains("variant-product-name")) {
+            changeVariantProductNameForSlug(element);
+        }
+
+        if (element.classList.contains("variant-name")) {
+            changeVariantNameForSlug(element);
+        }
+    });
+
+    /** document body focusout actions **/
+    document.body.addEventListener('focusout', (event) => {
+        let element = event.target;
+
+        if (element.classList.contains('product-slug')) {
+            let slug = generateSlug(element.value);
+            validateSlug(element, slug);
+
+        }
+
+        if (element.classList.contains('variant-product-name') || element.classList.contains('variant-name')) {
+            let variantID = element.id.split('-')[1];
+            let slugInput = document.querySelector(`#slug-${variantID}`);
+
+            let slug = generateSlug(slugInput.value);
+            validateSlug(element, slug);
+        }
     });
 
     /** Update Variant Indexes **/
@@ -197,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
         allVariants = [...allVariants].reverse();
 
         const attributesToUpdate = [
-            { selector: '[data-variant-id]', attr: '[data-variant-id]', prefix: '' },
+            { selector: '[data-variant-id]', attr: 'data-variant-id', prefix: '' },
             { selector: '[for^="name-"]', attr: 'for', prefix: 'name-' },
             { selector: '[id^="name-"]', attr: 'id', prefix: 'name-', name: true },
             { selector: '[for^="variant_name-"]', attr: 'for', prefix: 'variant_name-' },
@@ -251,6 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (name) {
                             element.setAttribute('name', `${name === true ? `variant[${index}][${prefix.slice(0, -1)}]` : `${name}[${index}]`}`);
                         }
+
                     }
                 });
             });
@@ -260,24 +307,181 @@ document.addEventListener('DOMContentLoaded', () => {
         varianCount--;
     }
 
-    /** document body focusout actions **/
-    document.body.addEventListener('focusout', (event) => {
-        let element = event.target;
+    /** Size Stock Actions **/
+    function btnAddSizeAction(element) {
+        let dataVariantID = element.getAttribute("data-variant-id");
+        let sizeStock = varianSizeStockInfo[dataVariantID]?.size_stock || 0;
+        let productSize = sizes[typeID.value];
+        let options = ["Beden Secebilirsiniz", ...productSize];
 
-        if (element.classList.contains('product-slug')) {
-            let slug = generateSlug(element.value);
-            validateSlug(element, slug);
+        let divID = `${sizeDivKey}${dataVariantID}`;
+        let findDiv = document.querySelector(`#${divID}`);
 
-        }
+        let urunSizeID = `size-${dataVariantID}-${sizeStock}`;
+        let urunSizeDiv = createDiv("col-md-5 mb-2 px-3");
+        let urunSizeLabel = createLabel("form-label", urunSizeID, "Beden");
 
-        if (element.classList.contains('variant-product-name') || element.classList.contains('variant-name')) {
-            let variantID = element.id.split('-')[1];
-            let slugInput = document.querySelector(`#slug-${variantID}`);
+        let urunSizeSelect = createSelect("form-control", urunSizeID, `variant[${dataVariantID}][size][${sizeStock}]`, options);
 
-            let slug = generateSlug(slugInput.value);
-            validateSlug(element, slug);
-        }
-    });
+        urunSizeDiv.appendChild(urunSizeLabel);
+        urunSizeDiv.appendChild(urunSizeSelect);
+
+        let urunStockID = `stock-${dataVariantID}-${sizeStock}`;
+        let urunStockDiv = createDiv("col-md-5 mb-2 px-3");
+        let urunStockLabel = createLabel("form-label", urunStockID, "Stock Sayisi");
+        let urunStockInput = createInput("form-control", urunStockID, "Stock Sayisi", `variant[${dataVariantID}][stock][${sizeStock}]`, 'number');
+
+        urunStockDiv.appendChild(urunStockLabel);
+        urunStockDiv.appendChild(urunStockInput);
+
+        let generalDivID = `sizeStockDeleteGeneral-${dataVariantID}-${sizeStock}`;
+        let urunSizeStockGeneralDivClass = `row mx-0 size-stock-${dataVariantID}`;
+        let urunSizeStockGeneralDiv = createDiv(urunSizeStockGeneralDivClass, generalDivID);
+
+        let urunSizeStockDeleteDiv = createDiv("col-md-2 mb-2 px-3");
+        let aElementID = `sizeStockDelete-${dataVariantID}-${sizeStock}`;
+        let urunSizeStockDeleteAElement = createElement('a', "btn btn-danger w-100 btn-size-stock-delete", { 'id': aElementID, 'href': "javascript:void", "data-size-stock-id": `${dataVariantID}-${sizeStock}` });
+        urunSizeStockDeleteAElement.textContent = 'Beden Sil';
+
+        let urunSizeStockDeleteAElementLabel = createLabel("form-label d-block");
+        urunSizeStockDeleteAElementLabel.innerHTML = "&nbsp;";
+
+        urunSizeStockDeleteDiv.appendChild(urunSizeStockDeleteAElementLabel);
+        urunSizeStockDeleteDiv.appendChild(urunSizeStockDeleteAElement);
+
+        urunSizeStockGeneralDiv.appendChild(urunSizeDiv);
+        urunSizeStockGeneralDiv.appendChild(urunStockDiv);
+        urunSizeStockGeneralDiv.appendChild(urunSizeStockDeleteDiv);
+
+        findDiv.appendChild(urunSizeStockGeneralDiv);
+
+        varianSizeStockInfo[dataVariantID] = { 'size_stock': sizeStock + 1 };
+    }
+
+    /** Open File Manager Func **/
+    function openFileManager(element) {
+        var options = {
+            filebrowserImageBrowseUrl: "/admin/gdg-filemanager?type=Images",
+            filebrowserImageUploadUrl: "/admin/gdg-filemanager/upload?type=Images&_token=",
+            filebrowserBrowseUrl: "/admin/gdg-filemanager?type=Files",
+            filebrowserUploadUrl: "/admin/gdg-filemanager/upload?type=Files&_token=",
+            type: "file",
+        };
+
+        var route_prefix = options && options.prefix ? options.prefix : "/admin/gdg-filemanager";
+        var target_input = document.getElementById(element.getAttribute("data-input"));
+        var target_preview = document.getElementById(element.getAttribute("data-preview"));
+        let variantID = element.getAttribute("data-variant-id");
+        var file_path = "";
+
+        window.open(route_prefix + "?type=" + options.type || "file", "FileManager", "width=900,height=600");
+
+        window.SetUrl = function (items) {
+            file_path = items.map(function (item) {
+                return item.url;
+            }).join(",");
+
+            // set the value of the desired input to image url
+            target_input.value = file_path;
+            target_input.dispatchEvent(new Event("change"));
+
+            // clear previous preview
+            target_preview.innerHTML = "";
+
+            // set or change the preview image src
+            items.forEach(function (item, index) {
+                let container = createDiv("image-container", `image-container-${variantID}-${index}`);
+
+                let radio = createInput('', `radio-${variantID}-${index}`, '', `variant[${variantID}][image]`, 'radio', item.url);
+
+                if (index === 0) radio.checked = true;
+
+
+                let iElement = createElement('i', 'delete-variant-image', { "data-feather": "x", "data-url": item.url, "data-variant-id": variantID, "data-image-index": index });
+
+                let label = createLabel('', `radio-${variantID}-${index}`);
+
+                let img = createElement('img', '', { style: 'height: 5rem', src: item.thumb_url });
+
+                label.appendChild(img);
+                container.appendChild(radio);
+                container.appendChild(label);
+                container.appendChild(iElement);
+
+                target_preview.appendChild(container);
+
+                // yukardaki iElement i sonradan olustrudugumuz icin bruda cagirmamiz gerekli
+                feather.replace();
+            });
+
+            target_preview.dispatchEvent(new Event("change"));
+        };
+    }
+
+    /** Delete Varyant Image Func **/
+    function deleteVariantImage(element) {
+        let variantID = element.getAttribute("data-variant-id");
+        let dataUrl = element.getAttribute("data-url") + ",";
+        let dataImageIndex = element.getAttribute("data-image-index");
+
+        let dataInputFind = document.querySelector(`#data-input-${variantID}`);
+        dataInputFind.value = dataInputFind.value.replace(dataUrl, "");
+
+        let findImageContainer = document.querySelector(`#image-container-${variantID}-${dataImageIndex}`);
+        findImageContainer.remove();
+
+
+        // update index
+        let dataPreview = document.querySelector(`#data-preview-${variantID}`);
+        let imageContainers = dataPreview.querySelectorAll(".image-container");
+
+        imageContainers.forEach((container, index) => {
+            let variantIndex = variantID + "-" + index;
+            container.id = "image-container-" + variantIndex;
+
+            container.querySelectorAll('[id^="radio-"]').forEach(element => element.id = `radio-${variantIndex}`);
+            container.querySelectorAll('[for^="radio-"]').forEach(element => element.setAttribute('for', ("radio-" + variantIndex)));
+            container.querySelectorAll('svg').forEach(element => element.setAttribute('data-image-index', index));
+        });
+    }
+
+    /** Update Size Stock Indexes **/
+    function updateSizeStockIndexes(dataSizeStockID) {
+        let [variantID, sizeStockID] = dataSizeStockID.split('-');
+        let allSizeStock = document.querySelectorAll(`.row.size-stock-${variantID}`);
+
+        allSizeStock.forEach((variant, index) => {
+            let id = `${variantID}-${index}`;
+            variant.id = `sizeStockDeleteGeneral-${id}`;
+
+            variant.querySelectorAll('[for^="size-"]').forEach((element) => element.setAttribute("for", "size-" + id));
+
+            variant.querySelectorAll('[id^="size-"]').forEach((element) => {
+                element.id = "size-" + id;
+                element.setAttribute(
+                    "name",
+                    "variant[" + variantID + "][size][" + index + "]"
+                );
+            });
+
+            variant.querySelectorAll('[for^="stock-"]').forEach((element) => element.setAttribute("for", "stock-" + id));
+
+            variant.querySelectorAll('[id^="stock-"]').forEach((element) => {
+                element.id = "stock-" + id;
+                element.setAttribute(
+                    "name",
+                    "variant[" + variantID + "][stock][" + index + "]"
+                );
+            });
+
+            variant.querySelectorAll('[id^="sizeStockDelete-"]').forEach((element) => {
+                element.id = "sizeStockDelete-" + id;
+                element.setAttribute("data-size-stock-id", id);
+            });
+
+        });
+    }
+
     /** Slug Validate **/
     function validateSlug(element, slug) {
         let response = checkSlug(slug);
@@ -287,33 +491,163 @@ document.addEventListener('DOMContentLoaded', () => {
             element.classList.add('is-invalid');
         }
     }
+    /** Generate Slug Func **/
+    function generateSlug(slug) {
+        const turkishMap = {
+            'ç': 'c', 'ğ': 'g', 'ş': 's', 'ü': 'u', 'ö': 'o', 'ı': 'i',
+            'İ': 'i', 'Ç': 'c', 'Ğ': 'g', 'Ş': 's', 'Ü': 'u', 'Ö': 'o'
+        };
 
+        slug = slug.toLowerCase().replace(/[çşğüöıİÇŞĞÜÖ]/g, match => {
+            return turkishMap[match];
+        });
 
-    //END
+        slug = slug.replace(/[\s\W-]+/g, '-').replace(/^-+|-+$/g, '');
 
-    /** document body input actions, funcs START **/
-    document.body.addEventListener("input", (event) => {
-        let element = event.target;
+        return slug;
+    }
 
-        checkRequiredFieldForProductVariantTab();
+    /** Slug Check **/
+    function checkSlug(slug) {
+        let json = { slug };
+        return axios.post(checkSlugRoute, json);
+    }
 
-        if (element.classList.contains("additional-price-input")) {
-            calculateFinalPrice(element);
+    /** validateForm Func **/
+    function validateForm() {
+        let isValid = true;
+        let message = null;
+
+        let nameInput = document.querySelector('#name');
+        let priceInput = document.querySelector('#price');
+        let typeSelect = document.querySelector('#type_id');
+        let brandSelect = document.querySelector('#brand_id');
+        let categorySelect = document.querySelector('#category_id');
+
+        // nameInput bos veya null ise
+        if (!nameInput.value.trim()) {
+            isValid = false;
+            nameInput.classList.add('is-invalid')
+        } else {
+            nameInput.classList.remove('is-invalid')
         }
 
-        if (element.id === 'name') {
-            changeNameForSlug(element);
+        // priceInput bos veya null ise
+        if (!priceInput.value.trim() || isNaN(priceInput.value) || priceInput.value < 1) {
+            isValid = false;
+            priceInput.classList.add('is-invalid')
+        } else {
+            priceInput.classList.remove('is-invalid')
         }
 
-        if (element.classList.contains("variant-product-name")) {
-            changeVariantProductNameForSlug(element);
+        // typeSelect value -1 ise
+        if (typeSelect.value === '-1') {
+            isValid = false;
+            typeSelect.classList.add('is-invalid')
+        } else {
+            typeSelect.classList.remove('is-invalid')
         }
 
-        if (element.classList.contains("variant-name")) {
-            changeVariantNameForSlug(element);
+        // brandSelect value -1 ise
+        if (brandSelect.value === '-1') {
+            isValid = false;
+            brandSelect.classList.add('is-invalid')
+        } else {
+            brandSelect.classList.remove('is-invalid')
         }
-    });
-    /** Son Fiyat Hesaplama Fonk **/
+
+        // categorySelect value -1 ise
+        if (categorySelect.value === '-1') {
+            isValid = false;
+            categorySelect.classList.add('is-invalid')
+        } else {
+            categorySelect.classList.remove('is-invalid')
+        }
+
+
+        // variants
+        let variantElements = document.querySelectorAll('.row.variant');
+
+        if (variantElements.length < 1) {
+            isValid = false;
+            message = 'En az 1 varyant eklemelisiniz.'
+        }
+        // variantElements = [...variantElements].reverse();
+
+        variantElements.forEach((variant, index) => {
+
+            let variantNameInput = variant.querySelector(`#variant_name-${index}`);
+            let slugInput = variant.querySelector(`#slug-${index}`);
+            let finalPriceInput = variant.querySelector(`#final_price-${index}`);
+            let imageDataInput = variant.querySelector(`#data-input-${index}`);
+
+            // variantNameInput bos veya null ise
+            if (!variantNameInput.value.trim()) {
+                isValid = false;
+                variantNameInput.classList.add('is-invalid')
+            } else {
+                variantNameInput.classList.remove('is-invalid')
+            }
+
+            // slugInput bos veya null ise
+            if (!slugInput.value.trim()) {
+                isValid = false;
+                slugInput.classList.add('is-invalid')
+            } else {
+                slugInput.classList.remove('is-invalid')
+            }
+
+            // finalPriceInput bos veya null ise
+            if (!finalPriceInput.value.trim()) {
+                isValid = false;
+                finalPriceInput.classList.add('is-invalid')
+            } else {
+                finalPriceInput.classList.remove('is-invalid')
+            }
+
+            // imageDataInput bos veya null ise
+            if (!imageDataInput.value.trim()) {
+                isValid = false;
+                imageDataInput.classList.add('is-invalid')
+                message = 'Lutfen varyantlara gorsel seciniz!';
+            } else {
+                imageDataInput.classList.remove('is-invalid')
+            }
+
+            let sizeInputs = variant.querySelectorAll(`[id^="size-${index}"]`);
+            let stockInputs = variant.querySelectorAll(`[id^="stock-${index}"]`);
+
+            if (sizeInputs.length < 1) {
+                isValid = false;
+                message = 'Lutfen varyantlara beden ekleyiniz!';
+            }
+
+            // sizeInputs value -1 ise
+            sizeInputs.forEach((input, index) => {
+                if (input.value === '-1') {
+                    isValid = false;
+                    input.classList.add('is-invalid')
+                } else {
+                    input.classList.remove('is-invalid')
+                }
+            });
+
+            // stockInputs value -1 ise
+            stockInputs.forEach((input, index) => {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('is-invalid')
+                } else {
+                    input.classList.remove('is-invalid')
+                }
+            });
+        });
+
+        return { isValid, message };
+
+    }
+
+    /** Tab Change Requireds **/
     function checkRequiredFieldForProductVariantTab() {
         let requiredFieldStatus = true;
         for (const [key, properties] of Object.entries(requiredFields)) {
@@ -345,13 +679,15 @@ document.addEventListener('DOMContentLoaded', () => {
             productVariantTab.setAttribute("disabled", "");
         }
     }
+
+    /** Son Fiyat Hesaplama Fonk **/
     function calculateFinalPrice(element) {
         let variantID = element.getAttribute("data-variant-id");
         let findFinalPriceElement = document.querySelector(`#final_price-${variantID}`);
         let priceValue = document.querySelector("#price").value;
-        let finalPrice = Number(priceValue) - Number(element.value);
-        findFinalPriceElement.value = finalPrice;
+        findFinalPriceElement.value = Number(priceValue) + Number(element.value);
     }
+
     /** Name Inputu Degistigi Zaman Slug Fonk **/
     function changeNameForSlug(element) {
         let slugInputs = document.querySelectorAll('.product-slug');
@@ -367,6 +703,7 @@ document.addEventListener('DOMContentLoaded', () => {
             slugInput.value = generateSlug(slug);
         });
     }
+
     /** Variant Product Name Inputu Degistigi Zaman Slug Fonk **/
     function changeVariantProductNameForSlug(element) {
         let variantID = element.id.split("-")[1];
@@ -381,6 +718,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         slugInput.value = generateSlug(slug);
     }
+
     /** Variant Name Inputu Degistigi Zaman Slug Fonk **/
     function changeVariantNameForSlug(element) {
         let variantID = element.id.split("-")[1];
@@ -397,7 +735,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         slugInput.value = generateSlug(slug);
     }
-    /** document body input actions, funcs END **/
 
     /** CREATE ELEMENTS **/
     const createElement = (tag, className = '', attrs = {}) => {
@@ -415,14 +752,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const createLabel = (className, forAttr, textContent = '') => {
         let label = createElement('label', className, { for: forAttr });
         label.textContent = textContent;
-        // innetHTML kontrol
-        return label
+        return label;
     };
 
     const createSelect = (className, id, name, options = []) => {
         let select = createElement('select', className, { id, name });
         options.forEach(opt => {
-            let option = createElement('optian', '', { value: opt === 'Beden Secebilirsiniz' ? '-1' : opt })
+            let option = createElement('option', '', { value: opt === 'Beden Secebilirsiniz' ? '-1' : opt })
             option.textContent = opt;
             select.appendChild(option);
         });
