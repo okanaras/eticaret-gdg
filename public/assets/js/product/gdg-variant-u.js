@@ -393,30 +393,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // set or change the preview image src
             selectedVariantImage(items, variantID, target_preview);
-            // items.forEach(function (item, index) {
-            //     let container = createDiv("image-container", `image-container-${variantID}-${index}`);
-
-            //     let radio = createInput('', `radio-${variantID}-${index}`, '', `variant[${variantID}][image]`, 'radio', item.url || item);
-
-            //     if (index === 0) radio.checked = true;
-
-
-            //     let iElement = createElement('i', 'delete-variant-image', { "data-feather": "x", "data-url": item.url, "data-variant-id": variantID, "data-image-index": index });
-
-            //     let label = createLabel('', `radio-${variantID}-${index}`);
-
-            //     let img = createElement('img', '', { style: 'height: 5rem', src: item.thumb_url });
-
-            //     label.appendChild(img);
-            //     container.appendChild(radio);
-            //     container.appendChild(label);
-            //     container.appendChild(iElement);
-
-            //     target_preview.appendChild(container);
-
-            //     // yukardaki iElement i sonradan olustrudugumuz icin bruda cagirmamiz gerekli
-            //     feather.replace();
-            // });
 
             target_preview.dispatchEvent(new Event("change"));
         };
@@ -462,6 +438,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             let target_preview = document.querySelector(`#data-preview-${oldImage.index}`);
+
+            console.log(oldImages);
+            console.log(finalImages);
             if (oldImages.length) {
                 selectedVariantImage(finalImages, oldImage.index, target_preview);
             }
@@ -786,6 +765,31 @@ document.addEventListener('DOMContentLoaded', () => {
         slugInput.value = generateSlug(slug);
     }
 
+    /** Hatalari Goster Fonk **/
+    function showErrors() {
+        for (const key in displayErrors) {
+            let uKey = key;
+            if (displayErrors.hasOwnProperty(key)) {
+                if (key.includes('.')) {
+                    uKey = key.split('.');
+                    uKey = uKey[(uKey.length - 1)];
+                    uKey = uKey + ']';
+                }
+
+                let element = document.querySelector(`[name$="${uKey}"]`);
+
+                console.log(uKey);
+                if (element && key.indexOf('image') < 0) {
+                    element.classList.add('is-invalid');
+                    let errorDiv = createDiv('invalid-feedback d-block');
+                    errorDiv.textContent = displayErrors[key][0];
+                    element.parentElement.appendChild(errorDiv);
+                }
+
+            }
+        }
+    }
+
     /** CREATE ELEMENTS **/
     const createElement = (tag, className = '', attrs = {}) => {
         let el = document.createElement(tag);
@@ -817,5 +821,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // yukardakiler olusturulmadan bu calistigi icin en altta aldik
     oldVariantImageViewer(oldImages);
-
+    showErrors();
 });

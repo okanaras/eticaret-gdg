@@ -80,10 +80,13 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="productVariantTab" data-bs-toggle="tab" href="#product-variant"
-                            role="tab" aria-controls="product-variant" aria-selected="false" disabled="">Urun Varyant
-                            Ekleme <i class="ms-1 text-primary" style="width: 18px" data-feather="info"
-                                data-bs-toggle="tooltip" data-bs-placement="top"
-                                data-bs-title="Zorunlu alanlari doldurduktan sonra varyant girisi yapabilirsiniz!"></i></a>
+                            role="tab" aria-controls="product-variant" aria-selected="false" disabled="">
+                            Urun Varyant Ekleme
+                            <i class="ms-1 text-primary" style="width: 18px" data-feather="info" data-bs-toggle="tooltip"
+                                data-bs-placement="top"
+                                data-bs-title="Zorunlu alanlari doldurduktan sonra varyant girisi yapabilirsiniz!">
+                            </i>
+                        </a>
                     </li>
                 </ul>
                 <div class="tab-content border border-top-0 p-3" id="myTabContent">
@@ -94,18 +97,12 @@
                                 <label for="name" class="form-label">Urun Adi <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="name" autocomplete="off"
                                     placeholder="Urun Adi" name="name" value="{{ old('name') }}" required>
-                                @error('name')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
                             </div>
 
                             <div class="col-md-6 mb-4">
                                 <label for="price" class="form-label">Fiyat <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="price" placeholder="Fiyat" name="price"
                                     value="{{ old('price') }}" required>
-                                @error('price')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
                             </div>
 
                             <div class="col-md-4 mb-4">
@@ -120,9 +117,6 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('type_id')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
                             </div>
 
                             <div class="col-md-4 mb-4">
@@ -136,9 +130,6 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('brand_id')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
                             </div>
 
                             <div class="col-md-4 mb-4">
@@ -153,9 +144,6 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('category_id')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
                             </div>
 
                             <div class="col-md-6 mb-4">
@@ -163,10 +151,6 @@
                                 <textarea class="form-control" name="short_description" id="short_description" rows="7">
                                     {{ old('short_description') }}
                                 </textarea>
-
-                                @error('short_description')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
                             </div>
 
                             <div class="col-md-6 mb-4">
@@ -174,10 +158,6 @@
                                 <textarea class="form-control" name="description" id="description" rows="3">
                                     {{ old('description') }}
                                 </textarea>
-
-                                @error('description')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
                             </div>
 
                             <div class="col-md-4 mb-4">
@@ -442,6 +422,16 @@
                     index: "{{ $index }}"
                 });
             @endforeach
+        @endif
+
+        @if (old('name') && is_null(old('variant')))
+            toastr.error('En az 1 adet varyant eklemelisiniz!', 'Uyari');
+        @endif
+
+        var displayErrors = {};
+        @if ($errors->any())
+            displayErrors = @json($errors->toArray());
+            // console.log(displayErrors);
         @endif
     </script>
     {{-- <script src="{{ asset('assets/js/product/gdg-variant.js') }}"></script> --}}
