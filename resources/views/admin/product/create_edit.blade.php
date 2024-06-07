@@ -428,11 +428,19 @@
             @endforeach
         @endif
 
+        var oldImages = [];
         @if (old('variant'))
+            flatpickr(".flatpickr-date", {
+                wrap: true,
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+            });
+
             @foreach (old('variant') as $index => $variant)
-                let images = oldVariantImagePrepare("{{ old('image')[$index] }}");
-                let target_view = document.querySelector('#data-preview-{{ $index }}');
-                selectedVariantImage(images, {{ $index }}, target_preview)
+                oldImages.push({
+                    images: "{{ old('image')[$index] }}",
+                    index: "{{ $index }}"
+                });
             @endforeach
         @endif
     </script>

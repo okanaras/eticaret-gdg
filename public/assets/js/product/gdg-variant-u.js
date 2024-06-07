@@ -140,7 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
             enableTime: true,
             dateFormat: "Y-m-d H:i",
         });
-
     });
 
     /** Urun bilgileri tab'inda urun turu degistiginde varyant ekleme tabindaki size ve stock alanlarini temizleme **/
@@ -438,7 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let label = createLabel('', `radio-${variantID}-${index}`);
 
-            let img = createElement('img', '', { style: 'height: 5rem', src: item.thumb_url });
+            let img = createElement('img', '', { style: 'height: 5rem', src: item.url });
 
             label.appendChild(img);
             container.appendChild(radio);
@@ -453,13 +452,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /** gorselleri virgule gore ayirip hazirlama **/
-    function oldVariantImagePrepare(images) {
-        let finalImages = [];
-        images = images.split(',');
-        images.forEach((item, index) => {
-            finalImages.push({ url: item });
+    function oldVariantImageViewer(oldImages) {
+
+        oldImages.forEach((oldImage, index) => {
+            let finalImages = [];
+            let images = oldImage.images.split(',');
+            images.forEach((item, index) => {
+                finalImages.push({ url: item });
+            });
+
+            let target_preview = document.querySelector(`#data-preview-${oldImage.index}`);
+            if (oldImages.length) {
+                selectedVariantImage(finalImages, oldImage.index, target_preview);
+            }
         });
-        return finalImages;
     }
 
     /** Delete Varyant Image Func **/
@@ -808,4 +814,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         return select;
     };
+
+    // yukardakiler olusturulmadan bu calistigi icin en altta aldik
+    oldVariantImageViewer(oldImages);
+
 });
