@@ -413,11 +413,28 @@
     <script src="{{ asset('assets/js/axios/dist/axios.min.js') }}"></script>
     <script>
         var checkSlugRoute = "{{ route('admin.product.check-slug') }}";
+
         @php($arr = old('variant') ?? [])
         var varianCount = Number('{{ count($arr) }}');
-        var varianSizeStockInfo = [{
-            'size_stock': {{ }}
-        }];
+        var varianSizeStockInfo = [];
+
+        @if (old('variant') && isset(old('variant')['size']))
+            @foreach (old('variant') as $index => $variant)
+                let index = Number('{{ $index }}');
+                let sizeStock = Number('{{ count(old('variant.' . $index . '.size')) }}');
+                varianSizeStockInfo[index] = {
+                    size_stock: sizeStock
+                };
+            @endforeach
+        @endif
+
+        @if (old('variant'))
+            @foreach (old('variant') as $index => $variant)
+                let images = oldVariantImagePrepare("{{ old('image')[$index] }}");
+                let target_view = document.querySelector('#data-preview-{{ $index }}');
+                selectedVariantImage(images, {{ $index }}, target_preview)
+            @endforeach
+        @endif
     </script>
     {{-- <script src="{{ asset('assets/js/product/gdg-variant.js') }}"></script> --}}
     <script src="{{ asset('assets/js/product/gdg-variant-u.js') }}"></script>

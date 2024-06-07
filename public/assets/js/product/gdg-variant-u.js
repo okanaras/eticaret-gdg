@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+
     // * axios setup
     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     axios.defaults.headers.common['Content-Type'] = 'application/json';
@@ -19,6 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
         brand_id: { type: "select", },
         category_id: { type: "select", },
     };
+
+    checkRequiredFieldForProductVariantTab();
+
     const sizes = {
         1: ["XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL", "5XL"],
         2: Array.from({ length: 31 }, (_, i) => i + 20),
@@ -389,33 +393,73 @@ document.addEventListener('DOMContentLoaded', () => {
             target_preview.innerHTML = "";
 
             // set or change the preview image src
-            items.forEach(function (item, index) {
-                let container = createDiv("image-container", `image-container-${variantID}-${index}`);
+            selectedVariantImage(items, variantID, target_preview);
+            // items.forEach(function (item, index) {
+            //     let container = createDiv("image-container", `image-container-${variantID}-${index}`);
 
-                let radio = createInput('', `radio-${variantID}-${index}`, '', `variant[${variantID}][image]`, 'radio', item.url);
+            //     let radio = createInput('', `radio-${variantID}-${index}`, '', `variant[${variantID}][image]`, 'radio', item.url || item);
 
-                if (index === 0) radio.checked = true;
+            //     if (index === 0) radio.checked = true;
 
 
-                let iElement = createElement('i', 'delete-variant-image', { "data-feather": "x", "data-url": item.url, "data-variant-id": variantID, "data-image-index": index });
+            //     let iElement = createElement('i', 'delete-variant-image', { "data-feather": "x", "data-url": item.url, "data-variant-id": variantID, "data-image-index": index });
 
-                let label = createLabel('', `radio-${variantID}-${index}`);
+            //     let label = createLabel('', `radio-${variantID}-${index}`);
 
-                let img = createElement('img', '', { style: 'height: 5rem', src: item.thumb_url });
+            //     let img = createElement('img', '', { style: 'height: 5rem', src: item.thumb_url });
 
-                label.appendChild(img);
-                container.appendChild(radio);
-                container.appendChild(label);
-                container.appendChild(iElement);
+            //     label.appendChild(img);
+            //     container.appendChild(radio);
+            //     container.appendChild(label);
+            //     container.appendChild(iElement);
 
-                target_preview.appendChild(container);
+            //     target_preview.appendChild(container);
 
-                // yukardaki iElement i sonradan olustrudugumuz icin bruda cagirmamiz gerekli
-                feather.replace();
-            });
+            //     // yukardaki iElement i sonradan olustrudugumuz icin bruda cagirmamiz gerekli
+            //     feather.replace();
+            // });
 
             target_preview.dispatchEvent(new Event("change"));
         };
+    }
+
+    /** Secili Varyant Gorseli **/
+    function selectedVariantImage(items, variantID, target_preview) {
+        // set or change the preview image src
+        items.forEach(function (item, index) {
+            let container = createDiv("image-container", `image-container-${variantID}-${index}`);
+
+            let radio = createInput('', `radio-${variantID}-${index}`, '', `variant[${variantID}][image]`, 'radio', item.url || item);
+
+            if (index === 0) radio.checked = true;
+
+
+            let iElement = createElement('i', 'delete-variant-image', { "data-feather": "x", "data-url": item.url, "data-variant-id": variantID, "data-image-index": index });
+
+            let label = createLabel('', `radio-${variantID}-${index}`);
+
+            let img = createElement('img', '', { style: 'height: 5rem', src: item.thumb_url });
+
+            label.appendChild(img);
+            container.appendChild(radio);
+            container.appendChild(label);
+            container.appendChild(iElement);
+
+            target_preview.appendChild(container);
+
+            // yukardaki iElement i sonradan olustrudugumuz icin bruda cagirmamiz gerekli
+            feather.replace();
+        });
+    }
+
+    /** gorselleri virgule gore ayirip hazirlama **/
+    function oldVariantImagePrepare(images) {
+        let finalImages = [];
+        images = images.split(',');
+        images.forEach((item, index) => {
+            finalImages.push({ url: item });
+        });
+        return finalImages;
     }
 
     /** Delete Varyant Image Func **/
@@ -567,12 +611,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // variants
         let variantElements = document.querySelectorAll('.row.variant');
+        variantElements = [...variantElements].reverse();
 
         if (variantElements.length < 1) {
             isValid = false;
             message = 'En az 1 varyant eklemelisiniz.'
         }
-        // variantElements = [...variantElements].reverse();
 
         variantElements.forEach((variant, index) => {
 
