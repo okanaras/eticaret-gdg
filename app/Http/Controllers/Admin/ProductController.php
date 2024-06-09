@@ -2,27 +2,30 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\ProductStoreRequest;
+use Exception;
 use App\Models\Product;
-use App\Models\ProductImages;
 use Illuminate\Support\Str;
+use App\Models\ProductsMain;
 use App\Models\ProductTypes;
 use Illuminate\Http\Request;
 use App\Services\BrandService;
+use App\Services\ProductService;
 use App\Services\CategoryService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\ProductsMain;
-use App\Models\SizeStock;
-use Carbon\Carbon;
+use App\Http\Requests\ProductStoreRequest;
 
 class ProductController extends Controller
 {
-    public function __construct(public BrandService $brandService, public CategoryService $categoryService)
+    public function __construct(public BrandService $brandService, public CategoryService $categoryService, public ProductService $productService)
     {
     }
     public function index()
     {
-        return view('admin.product.index');
+        $productsMain = ProductsMain::all();
+
+        return view('admin.product.index')->with('products', $productsMain);
     }
 
     public function create()
@@ -37,57 +40,20 @@ class ProductController extends Controller
 
     public function store(ProductStoreRequest $request)
     {
-        $validated = $request->all();
+        DB::beginTransaction();
+        try {
+            $this->productService->store($request);
+            DB::commit();
+        } catch (Exception $exception) {
+            DB::rollBack();
 
-        $productsMain = ProductsMain::create([
-            'category_id' => $validated['category_id'],
-            'brand_id' => $validated['brand_id'],
-            'type_id' => $validated['type_id'],
-            'name' => $validated['name'],
-            'price' => $validated['price'],
-            'short_description' => $validated['short_description'],
-            'description' => $validated['description'],
-            'status' => isset($validated['status']) && $validated['status'] ? 1 : 0,
-        ]);
-
-
-
-        foreach ($validated['variant'] as $variant) {
-            $product =  Product::create([
-                'main_product_id' => $productsMain->id,
-                'name' => $variant['name'],
-                'variant_name' => $variant['variant_name'],
-                'slug' => Str::slug($variant['slug']),
-                'additional_price' => $variant['additional_price'],
-                'final_price' => str_replace(',', '', number_format(($validated['price'] + $variant['additional_price']), 2)),
-                'extra_description' => $variant['extra_description'],
-                'status' => isset($variant['p_status']) && $variant['p_status'] == '1' ? 1 : 0,
-                'publish_date' => isset($variant['publish_date']) ? Carbon::parse($variant['publish_date'])->toDateTimeString() : null
-            ]);
-
-
-
-            $images = explode(',', $variant['image']);
-            foreach ($images as $image) {
-                ProductImages::create([
-                    'product_id' => $product->id,
-                    'path' => $image,
-                    'is_featured' => ($variant['featured_image'] == $image) ? 1 : 0,
-                ]);
-            }
-
-
-            foreach ($variant['size'] as $index => $size) {
-                SizeStock::create([
-                    'product_id' => $product->id,
-                    'size' => $size,
-                    'stock' => $variant['stock'][$index],
-                    'remaining_stock' => $variant['stock'][$index],
-                ]);
-            }
+            Log::error('Alinan Hata: ' . $exception->getMessage(), [$exception->getTraceAsString()]);
+            // toast($exception->getMessage(), 'Error');
+            return redirect()->back()->withInput();
         }
 
-        dd('islem tamam');
+        toast('Urun kaydedildi.', 'success');
+        return redirect()->route('admin.product.index');
     }
 
     public function checkSlug(Request $request)

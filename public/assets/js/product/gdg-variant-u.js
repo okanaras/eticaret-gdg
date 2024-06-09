@@ -384,6 +384,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return item.url;
             }).join(",");
 
+            file_path = `${file_path},`;
+
             // set the value of the desired input to image url
             target_input.value = file_path;
             target_input.dispatchEvent(new Event("change"));
@@ -433,15 +435,14 @@ document.addEventListener('DOMContentLoaded', () => {
         oldImages.forEach((oldImage, index) => {
             let finalImages = [];
             let images = oldImage.images.split(',');
+            images.pop();
             images.forEach((item, index) => {
                 finalImages.push({ url: item });
             });
 
             let target_preview = document.querySelector(`#data-preview-${oldImage.index}`);
 
-            console.log(oldImages);
-            console.log(finalImages);
-            if (oldImage.length) {
+            if (oldImages.length) {
                 selectedVariantImage(finalImages, oldImage.index, target_preview);
             }
         });
@@ -778,7 +779,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 let element = document.querySelector(`[name$="${uKey}"]`);
 
-                console.log(uKey);
+
                 if (element && key.indexOf('image') < 0) {
                     element.classList.add('is-invalid');
                     let errorDiv = createDiv('invalid-feedback d-block');

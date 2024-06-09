@@ -17,49 +17,26 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Logo</th>
-                            <th>Sira Numarasi</th>
-                            <th>Marka Adi</th>
-                            <th>Slug</th>
+                            <th>Ad</th>
+                            <th>Fiyat</th>
+                            <th>Kategori</th>
+                            <th>Marka</th>
+                            <th>Urun Turu</th>
                             <th>Durum</th>
-                            <th>One Cikarilma Durumu</th>
                             <th>Islemler</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($brands as $brand)
+                        @foreach ($products as $product)
                             <tr>
-                                <td>{{ $brand->id }}</td>
-                                <td><img src="{{ asset($brand->logo) }}" alt="{{ $brand->name }}" width="100">
-                                </td>
-                                <td>{{ $brand->order }}</td>
-                                <td>{{ $brand->name }}</td>
-                                <td>{{ $brand->slug }}</td>
-                                <td>
-                                    @if ($brand->status)
-                                        <a href="javascript:void(0)" class="btn btn-inverse-success btn-change-status"
-                                            data-id="{{ $brand->id }}" data-name="{{ $brand->name }}">Aktif</a>
-                                    @else
-                                        <a href="javascript:void(0)" class="btn btn-inverse-danger btn-change-status"
-                                            data-id="{{ $brand->id }}" data-name="{{ $brand->name }}">Pasif</a>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if ($brand->is_featured)
-                                        <a href="javascript:void(0)" class="btn btn-inverse-success btn-change-is-featured"
-                                            data-id="{{ $brand->id }}" data-name="{{ $brand->name }}">Evet</a>
-                                    @else
-                                        <a href="javascript:void(0)" class="btn btn-inverse-danger btn-change-is-featured"
-                                            data-id="{{ $brand->id }}" data-name="{{ $brand->name }}">Hayir</a>
-                                    @endif
-                                </td>
-                                <td>
-                                    <a href="{{ route('admin.brand.edit', ['brand' => $brand->id]) }}"><i
-                                            data-feather="edit" class="text-warning"></i></a>
-                                    <a href="javascript:void(0)"><i data-feather="trash"
-                                            class="text-danger btn-delete-brand" data-id="{{ $brand->id }}"
-                                            data-name="{{ $brand->name }}"></i></a>
-                                </td>
+                                <td>{{ $product->id }}</td>
+                                <td>{{ $product->name }}</td>
+                                <td>{{ number_format($product->price, 2) }}</td>
+                                <td>{{ $product->category->name }}</td>
+                                <td>{{ $product->brand->name }}</td>
+                                <td>{{ $product->type->name }}</td>
+                                <td>{{ $product->status }}</td>
+                                <td></td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -70,7 +47,7 @@
                 </form>
 
                 <div class="col-6 mx-auto mt-3">
-                    {{ $brands->links() }}
+                    {{-- {{ $brands->links() }} --}}
                 </div>
             </div>
         </div>
