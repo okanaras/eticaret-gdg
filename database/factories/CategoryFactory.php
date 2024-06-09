@@ -17,7 +17,7 @@ class CategoryFactory extends Factory
      */
     public function definition(): array
     {
-        $name = fake('tr')->title();
+        $name = fake()->text(14);
         return [
             // factory de fake data olusturururz, seeder da factory cagirilir veya manuel veri doldururuz. Seeder lari ise databaseSeeder da $this->call([CategorySeeder::class,]); ile cagiririz.
 

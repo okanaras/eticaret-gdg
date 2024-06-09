@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'final_price', label: 'Son Fiyat', className: 'readonly', colClass: 'col-md-6 mb-4', readonly: true, value: document.querySelector("#price").value },
             { id: 'extra_description', label: 'Ekstra Aciklama', className: '', colClass: 'col-md-12 mb-4' },
             { id: 'publish_date', label: 'Yayimlanma Tarihi', className: '', colClass: 'col-md-12 mb-4', date: true },
-            { id: 'p_status', label: 'Aktif mi?', className: '', colClass: 'col-md-6 mb-4', checkbox: true },
+            { id: 'p_status', label: 'Aktif mi?', className: '', colClass: 'col-md-6 mb-4', checkbox: true, value: 1 },
         ];
 
         fields.forEach(field => {
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
             colDiv.appendChild(createLabel(`form-label`, `${field.id}-${varianCount}`, field.label));
             let input;
             if (field.checkbox) {
-                input = createInput(`form-check-input me-2 ${field.className}`, `${field.id}-${varianCount}`, '', `variant[${varianCount}][${field.id}]`, 'checkbox');
+                input = createInput(`form-check-input me-2 ${field.className}`, `${field.id}-${varianCount}`, '', `variant[${varianCount}][${field.id}]`, 'checkbox', field.value || '');
                 colDiv.appendChild(input);
             } else if (field.date) {
                 input = createInput(`form-control ${field.className}`, `${field.id}-${varianCount}`, field.label, `variant[${varianCount}][${field.id}]`);

@@ -48,8 +48,12 @@ class ProductStoreRequest extends FormRequest
 
     public function prepareForValidation()
     {
-        foreach ($this->variant as $key => $variant) {
-            $this->merge([('variant.' . $key . 'slug') => Str::slug($variant['slug'])]);
+        $variants = $this->input('variant', []);
+
+        foreach ($variants as &$variant) {
+            $variant['slug'] = Str::slug($variant['slug']);
         }
+
+        $this->merge(['variant' => $variants]);
     }
 }

@@ -37,8 +37,7 @@ class ProductController extends Controller
 
     public function store(ProductStoreRequest $request)
     {
-        $validated = $request->validated();
-        // dd($validated);
+        $validated = $request->all();
 
         $productsMain = ProductsMain::create([
             'category_id' => $validated['category_id'],
@@ -48,7 +47,7 @@ class ProductController extends Controller
             'price' => $validated['price'],
             'short_description' => $validated['short_description'],
             'description' => $validated['description'],
-            'status' => isset($validated['status']) ? 1 : 0,
+            'status' => isset($validated['status']) && $validated['status'] ? 1 : 0,
         ]);
 
 
@@ -60,9 +59,9 @@ class ProductController extends Controller
                 'variant_name' => $variant['variant_name'],
                 'slug' => Str::slug($variant['slug']),
                 'additional_price' => $variant['additional_price'],
-                'final_price' => number_format(($validated['price'] + $variant['additional_price']), 2),
+                'final_price' => str_replace(',', '', number_format(($validated['price'] + $variant['additional_price']), 2)),
                 'extra_description' => $variant['extra_description'],
-                'status' => isset($variant['status']) ? 1 : 0,
+                'status' => isset($variant['p_status']) && $variant['p_status'] == '1' ? 1 : 0,
                 'publish_date' => isset($variant['publish_date']) ? Carbon::parse($variant['publish_date'])->toDateTimeString() : null
             ]);
 

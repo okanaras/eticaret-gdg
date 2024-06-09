@@ -162,7 +162,7 @@
 
                             <div class="col-md-4 mb-4">
                                 <input type="checkbox" class="form-check-input" id="status" name="status"
-                                    {{ old('status') ? 'checked' : '' }}>
+                                    value="1" {{ old('status') ? 'checked' : '' }}>
                                 <label class="form-check-label ps-1" for="status">
                                     Aktif mi?
                                 </label>
@@ -266,7 +266,7 @@
                                                 class="form-check-input me-2 @error('variant.' . $index . '.p_status') is-invalid @enderror"
                                                 id="p_status-{{ $index }}" placeholder=""
                                                 name="variant[{{ $index }}][p_status]" type="checkbox"
-                                                value=""
+                                                value="1"
                                                 {{ old('variant.' . $index . '.p_status') !== null ? 'checked' : '' }}>
                                         </div>
                                         <div class="row" id="">
