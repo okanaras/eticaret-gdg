@@ -287,8 +287,8 @@
                                                 </a>
                                             </div>
                                             <input class="form-control" id="data-input-{{ $index }}"
-                                                placeholder="" name="image[{{ $index }}]" type="hidden"
-                                                value="{{ old('image')[$index] }}">
+                                                placeholder="" name="variant[{{ $index }}][image]" type="hidden"
+                                                value="{{ old('variant.' . $index . '.image') }}">
                                             <div class="col-md-12" id="data-preview-{{ $index }}"></div>
                                             <a class="btn-add-size col-md-12" href="javascript:void"
                                                 data-variant-id="{{ $index }}">
@@ -418,7 +418,7 @@
 
             @foreach (old('variant') as $index => $variant)
                 oldImages.push({
-                    images: "{{ old('image')[$index] }}",
+                    images: "{{ old('variant.' . $index . '.image') }}",
                     index: "{{ $index }}"
                 });
             @endforeach

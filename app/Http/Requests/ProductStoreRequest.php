@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Str;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ProductStoreRequest extends FormRequest
@@ -32,15 +33,23 @@ class ProductStoreRequest extends FormRequest
             "variant" => ['required', 'array', 'min:1'],
             "variant.*.name" => ['sometimes', 'nullable', 'string', 'max:255'],
             "variant.*.variant_name" => ['required', 'string', 'min:1', 'max:255'],
+            "variant.*.slug" => ['required', 'string', 'min:1', 'max:255', 'unique:products,slug'],
             "variant.*.additional_price" => ['sometimes', 'nullable', 'numeric', 'min:1'],
             "variant.*.extra_description" => ['sometimes', 'nullable', 'string', 'min:1'],
             "variant.*.publish_date" => ['sometimes', 'nullable', 'date', 'min:1'],
+            "variant.*.featured_image" => ['required', 'string', 'min:1'],
             "variant.*.image" => ['required', 'string', 'min:1'],
-            "image.*" => ['required', 'string', 'min:1'],
             "variant.*.size" => ['required', 'array', 'min:1'],
             "variant.*.size.*" => ['required', 'string', 'min:1'],
             "variant.*.stock" => ['required', 'array', 'min:1'],
             "variant.*.stock.*" => ['required', 'integer', 'min:1'],
         ];
+    }
+
+    public function prepareForValidation()
+    {
+        foreach ($this->variant as $key => $variant) {
+            $this->merge([('variant.' . $key . 'slug') => Str::slug($variant['slug'])]);
+        }
     }
 }

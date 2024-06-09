@@ -7,5 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class SizeStock extends Model
 {
-    use HasFactory;
+    protected $table = 'size_stock';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'product_id',
+        'size',
+        'stock',
+        'remaining_stock',
+    ];
 }

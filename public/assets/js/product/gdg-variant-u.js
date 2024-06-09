@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         let urunAddSizeIElementImage = createElement('i', 'add-size', { 'data-feather': 'image' });
-        let imageDataInputElement = createInput("form-control", `data-input-${varianCount}`, '', `image[${varianCount}]`, 'hidden');
+        let imageDataInputElement = createInput("form-control", `data-input-${varianCount}`, '', `variant[${varianCount}][image]`, 'hidden');
         let imageDataPreviewElement = createDiv("col-md-12", `data-preview-${varianCount}`);
 
         let urunAddSizeAElementImage = createElement('a', "btn btn-info btn-add-image mb-4", { 'href': 'javascript:void', "data-variant-id": varianCount, "data-input": `data-input-${varianCount}`, "data-preview": `data-preview-${varianCount}` });
@@ -404,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
         items.forEach(function (item, index) {
             let container = createDiv("image-container", `image-container-${variantID}-${index}`);
 
-            let radio = createInput('', `radio-${variantID}-${index}`, '', `variant[${variantID}][image]`, 'radio', item.url || item);
+            let radio = createInput('', `radio-${variantID}-${index}`, '', `variant[${variantID}][featured_image]`, 'radio', item.url || item);
 
             if (index === 0) radio.checked = true;
 
@@ -441,7 +441,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             console.log(oldImages);
             console.log(finalImages);
-            if (oldImages.length) {
+            if (oldImage.length) {
                 selectedVariantImage(finalImages, oldImage.index, target_preview);
             }
         });
