@@ -51,7 +51,7 @@ class ProductService
 
         $createdImages = [];
         foreach ($images as $image) {
-            $createdImages[] =  $this->productImageService->prepareData($image, $featuredImagePath, $productID);
+            $createdImages[] =  $this->productImageService->prepareData($image, $featuredImagePath, $productID)->store();
         }
 
         return $createdImages;

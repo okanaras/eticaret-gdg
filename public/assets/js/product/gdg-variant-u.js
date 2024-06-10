@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /** old'tan gelene gore varyant olusturma **/
-    function createVariant(variant = {}, isInitialize = false) {
+    function createVariant(variant = {}, isEdit = false) {
         let row = createDiv('row variant', `row-${variantCount}`);
         let row2 = createDiv('row');
 
@@ -216,7 +216,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         let urunAddSizeIElementImage = createElement('i', 'add-size', { 'data-feather': 'image' });
-        let imageDataInputElement = createInput("form-control", `data-input-${variantCount}`, '', `variant[${variantCount}][image]`, 'hidden', variant.image || '');
+        let images = variant.image || variant.variant_images || '';
+        if (isEdit && variant.variant_images) {
+            images = '';
+            variant.variant_images.forEach(item => {
+                //todo kontrol bendeki bu calismadi en sonda 2 tane virgul koyuyor
+                images = images + item.path + ',';
+            });
+        }
+        let imageDataInputElement = createInput("form-control", `data-input-${variantCount}`, '', `variant[${variantCount}][image]`, 'hidden', images);
         let imageDataPreviewElement = createDiv("col-md-12", `data-preview-${variantCount}`);
 
         let urunAddSizeAElementImage = createElement('a', "btn btn-info btn-add-image mb-4", { 'href': 'javascript:void', "data-variant-id": variantCount, "data-input": `data-input-${variantCount}`, "data-preview": `data-preview-${variantCount}` });
@@ -246,19 +254,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             if (!isObjectEmpty(variant) && variant.hasOwnProperty('size') && variant.size && variant.hasOwnProperty('stock') && variant.stock) {
-                variant.size.forEach((size, index) => {
-                    let btnAddSizeElement = document.querySelector(`[data-variant-id="${variantCount}"]`);
-                    let stock = variant.stock[index];
+                setSizeStock(variant);
+            } else if (!isObjectEmpty(variant) && variant.hasOwnProperty('size_stock') && variant.size_stock) {
+                setSizeStock(variant, true);
 
-                    btnAddSizeAction(btnAddSizeElement, size, stock);
-                });
             }
 
             if (!isObjectEmpty(variant) && variant.hasOwnProperty('image') && variant.image && variant.image.length) {
-                oldVariantImageViewer(variant.image, variantCount);
+                oldVariantImageViewer(variant.image, variant.featured_image, variantCount, false);
+            } else if (!isObjectEmpty(variant) && variant.hasOwnProperty('variant_images') && variant.variant_images) {
+                oldVariantImageViewer(variant.variant_images, '', variantCount, true);
             }
         } catch (exception) {
-            console.log(variant);
+            console.log('catch start', variant);
+            console.log(exception, 'catch end');
         }
 
         variantCount++;
@@ -438,7 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let radio = createInput('', `radio-${variantID}-${index}`, '', `variant[${variantID}][featured_image]`, 'radio', item.url || item);
 
-            if (index === 0) radio.checked = true;
+            if (item.is_featured || index === 0) radio.checked = true;
 
 
             let iElement = createElement('i', 'delete-variant-image', { "data-feather": "x", "data-url": item.url, "data-variant-id": variantID, "data-image-index": index });
@@ -460,22 +469,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /** gorselleri virgule gore ayirip hazirlama **/
-    function oldVariantImageViewer(oldImages = '', index) {
-        if (oldImages.length && oldImages !== '') {
+    function oldVariantImageViewer(oldImages = '', featuredImagePath = '', index, isEdit = false) {
 
-            let finalImages = [];
+
+        let finalImages = [];
+        let target_preview = document.querySelector(`#data-preview-${index}`);
+
+        if (oldImages.length && oldImages !== '' && !isEdit) {
             let images = oldImages.split(',');
             images.pop();
             images.forEach((item, index) => {
-                finalImages.push({ url: item });
+                finalImages.push({ url: item, is_featured: item === featuredImagePath });
             });
 
-            let target_preview = document.querySelector(`#data-preview-${index}`);
+        } else if (isEdit) {
 
-            if (oldImages.length) {
-                selectedVariantImage(finalImages, index, target_preview);
-            }
+            oldImages.forEach((item, index) => {
+                finalImages.push({ url: item.path, is_featured: Boolean(item.is_featured) });
+            });
+        } else {
+
         }
+
+        if (finalImages.length) selectedVariantImage(finalImages, index, target_preview);
     }
 
     /** Delete Varyant Image Func **/
@@ -824,7 +840,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /** Initialize Value Func **/
     function initializeValue() {
         if (typeof initializeData !== 'undefined' && initializeData !== null) {
-            console.log(initializeData);
+
             initializeData = Object.entries(initializeData);
 
             initializeData.forEach(([index, variant]) => {
@@ -838,13 +854,42 @@ document.addEventListener('DOMContentLoaded', () => {
         return Object.entries(object).length === 0;
     }
 
-    /** Edit icin Data Prepare **/
-    function prepareEditInitializeData() {
-        if (typeof productData !== 'undefined') {
+    /** Set Size Stock  **/
+    function setSizeStock(variant, isEdit = false) {
+        let btnAddSizeElement = document.querySelector(`[data-variant-id="${variantCount}"]`);
+        if (!isEdit) {
+            variant.size.forEach((size, index) => {
+                let stock = variant.stock[index];
+
+                btnAddSizeAction(btnAddSizeElement, size, stock);
+            });
+        } else {
+            variant.size_stock.forEach((item, index) => {
+                let stock = item.stock;
+                let size = item.size;
+
+                btnAddSizeAction(btnAddSizeElement, size, stock);
+            });
+        }
+    }
+
+    /** Set Variant Image  **/
+    function setVariantImage(variant, isEdit = false) {
+        if (!isEdit) {
+            oldVariantImageViewer(variant.image, variantCount);
+        } else {
+        }
+    }
+
+    /** Data Prepare **/
+    function prepareInitializeData() {
+        if (initializeData) {
+            initializeValue();
+        } else if (typeof productData !== 'undefined') {
             let variants = productData.variants;
 
-            variants.forEach((item, index) => {
-
+            variants.forEach((variant, index) => {
+                createVariant(variant, true);
             });
         }
     }
@@ -884,7 +929,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // yukardakiler olusturulmadan bu calistigi icin en altta aldik
     showErrors();
-    initializeValue();
-    prepareEditInitializeData();
+    prepareInitializeData();
 
 });

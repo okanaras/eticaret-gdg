@@ -53,7 +53,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.check'])->gro
         Route::get('/create', [AdminProductController::class, 'create'])->name('create');
         Route::post('/create', [AdminProductController::class, 'store']);
         Route::get('/edit/{products_main}', [AdminProductController::class, 'edit'])->name('edit');
-        Route::post('/edit', [AdminProductController::class, 'update']);
+        Route::post('/edit/{products_main}', [AdminProductController::class, 'update']);
         Route::post('/check-slug', [AdminProductController::class, 'checkSlug'])->name('check-slug');
     });
 

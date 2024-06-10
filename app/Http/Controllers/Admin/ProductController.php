@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductStoreRequest;
+use App\Http\Requests\ProductUpdateRequest;
 
 class ProductController extends Controller
 {
@@ -68,9 +69,16 @@ class ProductController extends Controller
             'variants.variantImages',
             'variants.sizeStock',
         ])->toArray();
+
+        // dd($product);
         // dd($productsMain->toArray());
 
         return view('admin.product.create_edit', compact('product', 'categories', 'brands', 'types'));
+    }
+
+    public function update(ProductUpdateRequest $request)
+    {
+        dd($request->all());
     }
 
     public function checkSlug(Request $request)

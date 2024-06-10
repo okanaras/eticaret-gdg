@@ -1,7 +1,12 @@
 @extends('layouts.admin')
 
+@php
+    if (isset($product)) {
+        $product = (object) $product;
+    }
+@endphp
 
-@section('title', 'Urun Ekleme')
+@section('title', 'Urun ' . isset($product) ? 'Guncelleme' : 'Ekleme')
 
 
 @push('css')
@@ -67,12 +72,12 @@
     <div class="card">
         <div class="card-body">
 
-            <h6 class="card-title">Urun Ekleme</h6>
-            <form class="forms-sample" action="" method="POST" id="gdgForm" enctype="multipart/form-data">
+            <h6 class="card-title">Urun {{ isset($product) ? 'Guncelleme' : 'Ekleme' }}</h6>
+            <form class="forms-sample"
+                action="{{ isset($product) ? route('admin.product.edit', ['products_main' => $product->id]) : route('admin.product.create') }}"
+                method="POST" id="gdgForm" enctype="multipart/form-data">
                 @csrf
-                @isset($brand)
-                    @method('PUT')
-                @endisset
+
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
                         <a class="nav-link active" id="home-tab" data-bs-toggle="tab" href="#product-info" role="tab"
@@ -96,13 +101,14 @@
                             <div class="col-md-6 mb-4">
                                 <label for="name" class="form-label">Urun Adi <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="name" autocomplete="off"
-                                    placeholder="Urun Adi" name="name" value="{{ old('name') }}" required>
+                                    placeholder="Urun Adi" name="name"
+                                    value="{{ isset($product) ? $product->name : old('name') }}" required>
                             </div>
 
                             <div class="col-md-6 mb-4">
                                 <label for="price" class="form-label">Fiyat <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="price" placeholder="Fiyat" name="price"
-                                    value="{{ old('price') }}" required>
+                                    value="{{ isset($product) ? $product->price : old('price') }}" required>
                             </div>
 
                             <div class="col-md-4 mb-4">
@@ -112,7 +118,7 @@
                                     <option selected='selected' value="-1">Urun Turu Seciniz</option>
                                     @foreach ($types as $type)
                                         <option value="{{ $type->id }}"
-                                            {{ $type->id == old('type_id') ? 'selected' : '' }}>
+                                            {{ $type->id == (isset($product) ? $product->type_id : old('type_id')) ? 'selected' : '' }}>
                                             {{ $type->name }}
                                         </option>
                                     @endforeach
@@ -125,7 +131,7 @@
                                     <option selected='selected' value="-1">Marka Seciniz</option>
                                     @foreach ($brands as $brand)
                                         <option value="{{ $brand->id }}"
-                                            {{ $brand->id == old('brand_id') ? 'selected' : '' }}>
+                                            {{ $brand->id == (isset($product) ? $product->brand_id : old('brand_id')) ? 'selected' : '' }}>
                                             {{ $brand->name }}
                                         </option>
                                     @endforeach
@@ -139,7 +145,7 @@
                                     <option selected='selected' value="-1">Kategori Seciniz</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}"
-                                            {{ $category->id == old('category_id') ? 'selected' : '' }}>
+                                            {{ $category->id == (isset($product) ? $product->category_id : old('category_id')) ? 'selected' : '' }}>
                                             {{ $category->name }}
                                         </option>
                                     @endforeach
@@ -149,20 +155,21 @@
                             <div class="col-md-6 mb-4">
                                 <label for="short_description" class="form-label">Kisa Aciklama</label>
                                 <textarea class="form-control" name="short_description" id="short_description" rows="7">
-                                    {{ old('short_description') }}
+                                    {{ isset($product) ? $product->short_description : old('short_description') }}
                                 </textarea>
                             </div>
 
                             <div class="col-md-6 mb-4">
                                 <label for="description" class="form-label">Aciklama</label>
                                 <textarea class="form-control" name="description" id="description" rows="3">
-                                    {{ old('description') }}
+                                    {{ isset($product) ? $product->description : old('description') }}
                                 </textarea>
                             </div>
 
                             <div class="col-md-4 mb-4">
                                 <input type="checkbox" class="form-check-input" id="status" name="status"
-                                    value="1" {{ old('status') ? 'checked' : '' }}>
+                                    value="1"
+                                    {{ (isset($product) ? $product->status : old('status')) ? 'checked' : '' }}>
                                 <label class="form-check-label ps-1" for="status">
                                     Aktif mi?
                                 </label>
@@ -212,6 +219,7 @@
         var displayErrors = {};
         @if ($errors->any())
             displayErrors = @json($errors->toArray());
+            console.log(displayErrors);
         @endif
     </script>
     {{-- <script src="{{ asset('assets/js/product/gdg-variant.js') }}"></script> --}}
