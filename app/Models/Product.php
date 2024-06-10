@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
 {
-    use HasFactory;
     protected $fillable = [
         'main_product_id',
         'name',
@@ -19,4 +19,14 @@ class Product extends Model
         'status',
         'publish_date',
     ];
+
+
+    public function variantImages(): HasMany
+    {
+        return $this->hasMany(ProductImages::class);
+    }
+    public function sizeStock(): HasMany
+    {
+        return $this->hasMany(SizeStock::class);
+    }
 }

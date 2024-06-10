@@ -198,10 +198,12 @@
     <script src="{{ asset('assets/js/axios/dist/axios.min.js') }}"></script>
     <script>
         var checkSlugRoute = "{{ route('admin.product.check-slug') }}";
-        var initializeData = @json(old('variant'));
 
-        var variantCount = 0;
-        var variantSizeStockInfo = [];
+        @if (isset($product))
+            var productData = @json($product);
+        @endif
+
+        var initializeData = @json(old('variant'));
 
         @if (old('name') && is_null(old('variant')))
             toastr.error('En az 1 adet varyant eklemelisiniz!', 'Uyari');

@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     axios.defaults.headers.common['Content-Type'] = 'application/json';
 
+    var variantCount = 0;
+    var variantSizeStockInfo = [];
+
     let btnSubmit = document.querySelector("#btnSubmit");
     let gdgForm = document.querySelector("#gdgForm");
     let addVariant = document.querySelector("#addVariant");
@@ -172,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'final_price', label: 'Son Fiyat', className: 'readonly', colClass: 'col-md-6 mb-4', readonly: true, value: variant.final_price || document.querySelector("#price").value },
             { id: 'extra_description', label: 'Ekstra Aciklama', className: '', colClass: 'col-md-12 mb-4', value: variant.extra_description || '' },
             { id: 'publish_date', label: 'Yayimlanma Tarihi', className: '', colClass: 'col-md-12 mb-4', date: true, value: variant.publish_date || '' },
-            { id: 'p_status', label: 'Aktif mi?', className: '', colClass: 'col-md-6 mb-4', checkbox: true, value: 1, checked: variant.p_status || false },
+            { id: 'p_status', label: 'Aktif mi?', className: '', colClass: 'col-md-6 mb-4', checkbox: true, value: 1, checked: variant.status || variant.p_status || false },
         ];
 
         fields.forEach(field => {
@@ -835,6 +838,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return Object.entries(object).length === 0;
     }
 
+    /** Edit icin Data Prepare **/
+    function prepareEditInitializeData() {
+        if (typeof productData !== 'undefined') {
+            let variants = productData.variants;
+
+            variants.forEach((item, index) => {
+
+            });
+        }
+    }
+
     /** CREATE ELEMENTS **/
     const createElement = (tag, className = '', attrs = {}) => {
         let el = document.createElement(tag);
@@ -871,6 +885,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // yukardakiler olusturulmadan bu calistigi icin en altta aldik
     showErrors();
     initializeValue();
-    // oldVariantImageViewer(oldImages);
+    prepareEditInitializeData();
 
 });

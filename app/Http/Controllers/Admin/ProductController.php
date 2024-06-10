@@ -56,6 +56,23 @@ class ProductController extends Controller
         return redirect()->route('admin.product.index');
     }
 
+    public function edit(Request $request, ProductsMain $productsMain)
+    {
+        $categories = $this->categoryService->getAllCategories();
+        $brands = $this->brandService->getAll();
+
+        $types = ProductTypes::all();
+
+        $product = $productsMain->load([
+            'variants',
+            'variants.variantImages',
+            'variants.sizeStock',
+        ])->toArray();
+        // dd($productsMain->toArray());
+
+        return view('admin.product.create_edit', compact('product', 'categories', 'brands', 'types'));
+    }
+
     public function checkSlug(Request $request)
     {
         $check = Product::query()->where('slug', Str::slug($request->slug))->first();
