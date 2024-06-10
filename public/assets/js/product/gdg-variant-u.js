@@ -44,102 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /** Varyant ekle butonuna basildigindaki olaylar... **/
     addVariant.addEventListener("click", () => {
-        let row = createDiv('row variant', `row-${varianCount}`);
-        let row2 = createDiv('row');
-
-        // variant delete div olustrduk ve icerisine a butonunu ekledim
-        let varianDeleteDiv = createDiv('col-md-12 mb-1');
-        let variantDeleteAElement = createElement('a', 'btn-delete-variant btn btn-danger col-md-3', { 'href': 'javascript:void(0)', 'data-variant-id': varianCount });
-        variantDeleteAElement.textContent = 'Variant Kaldir';
-        let hr = createElement('hr', 'my-2');
-        varianDeleteDiv.appendChild(variantDeleteAElement);
-        varianDeleteDiv.appendChild(hr);
-
-
-        let inputName = document.querySelector('#name');
-        let nameSlug = generateSlug(inputName.value);
-
-        // variant form elemanlarini arr icinde obje seklinde tuttuk
-        let fields = [
-            { id: 'name', label: 'Urun Adi', className: 'variant-product-name', colClass: 'col-md-4 mb-4' },
-            { id: 'variant_name', label: 'Urun Varyant Adi', className: 'variant-name', colClass: 'col-md-4 mb-4' },
-            { id: 'slug', label: 'Slug', className: 'product-slug', colClass: 'col-md-4 mb-4', value: nameSlug },
-            { id: 'additional_price', label: 'Fiyat', className: 'additional-price-input', colClass: 'col-md-6 mb-4', dataAttr: { 'data-variant-id': varianCount }, type: 'number' },
-            { id: 'final_price', label: 'Son Fiyat', className: 'readonly', colClass: 'col-md-6 mb-4', readonly: true, value: document.querySelector("#price").value },
-            { id: 'extra_description', label: 'Ekstra Aciklama', className: '', colClass: 'col-md-12 mb-4' },
-            { id: 'publish_date', label: 'Yayimlanma Tarihi', className: '', colClass: 'col-md-12 mb-4', date: true },
-            { id: 'p_status', label: 'Aktif mi?', className: '', colClass: 'col-md-6 mb-4', checkbox: true, value: 1 },
-        ];
-
-        fields.forEach(field => {
-            let colDiv = createDiv(field.colClass);
-            colDiv.appendChild(createLabel(`form-label`, `${field.id}-${varianCount}`, field.label));
-            let input;
-            if (field.checkbox) {
-                input = createInput(`form-check-input me-2 ${field.className}`, `${field.id}-${varianCount}`, '', `variant[${varianCount}][${field.id}]`, 'checkbox', field.value || '');
-                colDiv.appendChild(input);
-            } else if (field.date) {
-                input = createInput(`form-control ${field.className}`, `${field.id}-${varianCount}`, field.label, `variant[${varianCount}][${field.id}]`);
-                input.setAttribute('data-input', '');
-                let span = createElement('span', 'input-group-text input-group-addon', { 'data-toggle': '' });
-                span.innerHTML = '<i data-feather="calendar"></i>';
-                let dateDiv = createDiv('input-group flatpickr flatpickr-date');
-                dateDiv.appendChild(input);
-                dateDiv.appendChild(span);
-                colDiv.appendChild(dateDiv);
-            } else {
-                input = createInput(`form-control ${field.className}`, `${field.id}-${varianCount}`, field.label, `variant[${varianCount}][${field.id}]`, field.type || 'text', field.value || '');
-                if (field.dataAttr) Object.entries(field.dataAttr).forEach(([key, value]) => input.setAttribute(key, value));
-                if (field.readonly) { input.readOnly = true; input.classList.add('readonly'); }
-                colDiv.appendChild(input);
-            }
-            row.appendChild(colDiv);
-        });
-
-        let urunAddSizeDiv = createDiv("row");
-        let urunAddSizeSpan = createElement('span', "ms-2");
-        urunAddSizeSpan.textContent = 'Beden Ekle';
-        let urunAddSizeIElement = createElement('i', "add-size", { 'data-feather': 'plus-circle' });
-        let urunAddSizeAElement = createElement('a', "btn-add-size col-md-12", { 'href': 'javascript:void', 'data-variant-id': varianCount });
-        urunAddSizeAElement.appendChild(urunAddSizeIElement);
-        urunAddSizeAElement.appendChild(urunAddSizeSpan);
-
-
-        let urunAddSizeIElementImage = createElement('i', 'add-size', { 'data-feather': 'image' });
-        let imageDataInputElement = createInput("form-control", `data-input-${varianCount}`, '', `variant[${varianCount}][image]`, 'hidden');
-        let imageDataPreviewElement = createDiv("col-md-12", `data-preview-${varianCount}`);
-
-        let urunAddSizeAElementImage = createElement('a', "btn btn-info btn-add-image mb-4", { 'href': 'javascript:void', "data-variant-id": varianCount, "data-input": `data-input-${varianCount}`, "data-preview": `data-preview-${varianCount}` });
-        urunAddSizeAElementImage.textContent = "Gorsel Ekle ";
-        let urunAddSizeAElementDiv = createDiv("col-md-12");
-
-        urunAddSizeAElementImage.appendChild(urunAddSizeIElementImage);
-        urunAddSizeAElementDiv.appendChild(urunAddSizeAElementImage);
-
-        urunAddSizeDiv.appendChild(urunAddSizeAElementDiv);
-        urunAddSizeDiv.appendChild(imageDataInputElement);
-        urunAddSizeDiv.appendChild(imageDataPreviewElement);
-        urunAddSizeDiv.appendChild(urunAddSizeAElement);
-
-
-        let urunAddSizeGeneralDiv = createDiv("col-md-12 p-0 mb-3", sizeDivKey + varianCount);
-
-        row2.appendChild(varianDeleteDiv);
-        row.appendChild(row2);
-        row.appendChild(urunAddSizeDiv);
-        row.appendChild(urunAddSizeGeneralDiv);
-
-        let hr2 = createElement('hr', 'my-5');
-        row.appendChild(hr2);
-
-        variants.insertAdjacentElement("afterbegin", row);
-        varianCount++;
-        feather.replace();
-        flatpickr(".flatpickr-date", {
-            wrap: true,
-            enableTime: true,
-            dateFormat: "Y-m-d H:i",
-        });
+        createVariant()
     });
 
     /** Urun bilgileri tab'inda urun turu degistiginde varyant ekleme tabindaki size ve stock alanlarini temizleme **/
@@ -148,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         // // NOT : her div'in id'si 'SizeKey+VariantCount' (SizeKey0, SizeKey1, SizeKey2...) oldugundan bulma islemi basarili gerceklesmekte
-        // for (let i = 0; i <= varianCount; i++) {
+        // for (let i = 0; i <= variantCount; i++) {
         //     let findDiv = document.querySelector("#" + sizeDivKey + i);
 
         //     if (findDiv) {
@@ -240,6 +145,128 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    /** old'tan gelene gore varyant olusturma **/
+    function createVariant(variant = {}, isInitialize = false) {
+        let row = createDiv('row variant', `row-${variantCount}`);
+        let row2 = createDiv('row');
+
+        // variant delete div olustrduk ve icerisine a butonunu ekledim
+        let varianDeleteDiv = createDiv('col-md-12 mb-1');
+        let variantDeleteAElement = createElement('a', 'btn-delete-variant btn btn-danger col-md-3', { 'href': 'javascript:void(0)', 'data-variant-id': variantCount });
+        variantDeleteAElement.textContent = 'Variant Kaldir';
+        let hr = createElement('hr', 'my-2');
+        varianDeleteDiv.appendChild(variantDeleteAElement);
+        varianDeleteDiv.appendChild(hr);
+        row.appendChild(varianDeleteDiv);
+
+
+        let inputName = document.querySelector('#name');
+        let nameSlug = generateSlug(inputName.value);
+
+        // variant form elemanlarini arr icinde obje seklinde tuttuk
+        let fields = [
+            { id: 'name', label: 'Urun Adi', className: 'variant-product-name', colClass: 'col-md-4 mb-4', value: variant.name || '' },
+            { id: 'variant_name', label: 'Urun Varyant Adi', className: 'variant-name', colClass: 'col-md-4 mb-4', value: variant.variant_name || '' },
+            { id: 'slug', label: 'Slug', className: 'product-slug', colClass: 'col-md-4 mb-4', value: variant.slug || nameSlug },
+            { id: 'additional_price', label: 'Fiyat', className: 'additional-price-input', colClass: 'col-md-6 mb-4', dataAttr: { 'data-variant-id': variantCount }, type: 'number', value: variant.additional_price || '' },
+            { id: 'final_price', label: 'Son Fiyat', className: 'readonly', colClass: 'col-md-6 mb-4', readonly: true, value: variant.final_price || document.querySelector("#price").value },
+            { id: 'extra_description', label: 'Ekstra Aciklama', className: '', colClass: 'col-md-12 mb-4', value: variant.extra_description || '' },
+            { id: 'publish_date', label: 'Yayimlanma Tarihi', className: '', colClass: 'col-md-12 mb-4', date: true, value: variant.publish_date || '' },
+            { id: 'p_status', label: 'Aktif mi?', className: '', colClass: 'col-md-6 mb-4', checkbox: true, value: 1, checked: variant.p_status || false },
+        ];
+
+        fields.forEach(field => {
+            let colDiv = createDiv(field.colClass);
+            colDiv.appendChild(createLabel(`form-label`, `${field.id}-${variantCount}`, field.label));
+            let input;
+            if (field.checkbox) {
+                input = createInput(`form-check-input me-2 ${field.className}`, `${field.id}-${variantCount}`, '', `variant[${variantCount}][${field.id}]`, 'checkbox', field.value || '');
+                if (field.checked) {
+                    input.checked = true;
+                }
+                colDiv.appendChild(input);
+            } else if (field.date) {
+                input = createInput(`form-control ${field.className}`, `${field.id}-${variantCount}`, field.label, `variant[${variantCount}][${field.id}]`, 'text', field.value || '');
+                input.setAttribute('data-input', '');
+                let span = createElement('span', 'input-group-text input-group-addon', { 'data-toggle': '' });
+                span.innerHTML = '<i data-feather="calendar"></i>';
+                let dateDiv = createDiv('input-group flatpickr flatpickr-date');
+                dateDiv.appendChild(input);
+                dateDiv.appendChild(span);
+                colDiv.appendChild(dateDiv);
+            } else {
+                input = createInput(`form-control ${field.className}`, `${field.id}-${variantCount}`, field.label, `variant[${variantCount}][${field.id}]`, field.type || 'text', field.value || '');
+                if (field.dataAttr) Object.entries(field.dataAttr).forEach(([key, value]) => input.setAttribute(key, value));
+                if (field.readonly) { input.readOnly = true; input.classList.add('readonly'); }
+                colDiv.appendChild(input);
+            }
+            row.appendChild(colDiv);
+        });
+
+        let urunAddSizeDiv = createDiv("row");
+        let urunAddSizeSpan = createElement('span', "ms-2");
+        urunAddSizeSpan.textContent = 'Beden Ekle';
+        let urunAddSizeIElement = createElement('i', "add-size", { 'data-feather': 'plus-circle' });
+        let urunAddSizeAElement = createElement('a', "btn-add-size col-md-12", { 'href': 'javascript:void', 'data-variant-id': variantCount });
+        urunAddSizeAElement.appendChild(urunAddSizeIElement);
+        urunAddSizeAElement.appendChild(urunAddSizeSpan);
+
+
+        let urunAddSizeIElementImage = createElement('i', 'add-size', { 'data-feather': 'image' });
+        let imageDataInputElement = createInput("form-control", `data-input-${variantCount}`, '', `variant[${variantCount}][image]`, 'hidden', variant.image || '');
+        let imageDataPreviewElement = createDiv("col-md-12", `data-preview-${variantCount}`);
+
+        let urunAddSizeAElementImage = createElement('a', "btn btn-info btn-add-image mb-4", { 'href': 'javascript:void', "data-variant-id": variantCount, "data-input": `data-input-${variantCount}`, "data-preview": `data-preview-${variantCount}` });
+        urunAddSizeAElementImage.textContent = "Gorsel Ekle ";
+        let urunAddSizeAElementDiv = createDiv("col-md-12");
+
+        urunAddSizeAElementImage.appendChild(urunAddSizeIElementImage);
+        urunAddSizeAElementDiv.appendChild(urunAddSizeAElementImage);
+
+        urunAddSizeDiv.appendChild(urunAddSizeAElementDiv);
+        urunAddSizeDiv.appendChild(imageDataInputElement);
+        urunAddSizeDiv.appendChild(imageDataPreviewElement);
+        urunAddSizeDiv.appendChild(urunAddSizeAElement);
+
+
+        let urunAddSizeGeneralDiv = createDiv("col-md-12 p-0 mb-3", sizeDivKey + variantCount);
+
+        // row2.appendChild(varianDeleteDiv);
+        // row.appendChild(row2);
+        row.appendChild(urunAddSizeDiv);
+        row.appendChild(urunAddSizeGeneralDiv);
+
+        let hr2 = createElement('hr', 'my-5');
+        row.appendChild(hr2);
+
+        variants.insertAdjacentElement("afterbegin", row);
+
+        try {
+            if (!isObjectEmpty(variant) && variant.hasOwnProperty('size') && variant.size && variant.hasOwnProperty('stock') && variant.stock) {
+                variant.size.forEach((size, index) => {
+                    let btnAddSizeElement = document.querySelector(`[data-variant-id="${variantCount}"]`);
+                    let stock = variant.stock[index];
+
+                    btnAddSizeAction(btnAddSizeElement, size, stock);
+                });
+            }
+
+            if (!isObjectEmpty(variant) && variant.hasOwnProperty('image') && variant.image && variant.image.length) {
+                oldVariantImageViewer(variant.image, variantCount);
+            }
+        } catch (exception) {
+            console.log(variant);
+        }
+
+        variantCount++;
+        feather.replace();
+        flatpickr(".flatpickr-date", {
+            wrap: true,
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+        });
+    }
+
     /** Update Variant Indexes **/
     function updateVariantIndexes() {
         let allVariants = document.querySelectorAll(".row.variant");
@@ -307,13 +334,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         });
 
-        varianCount--;
+        variantCount--;
     }
 
     /** Size Stock Actions **/
-    function btnAddSizeAction(element) {
+    function btnAddSizeAction(element, sizeValue = null, stockValue = null) {
         let dataVariantID = element.getAttribute("data-variant-id");
-        let sizeStock = varianSizeStockInfo[dataVariantID]?.size_stock || 0;
+        let sizeStock = variantSizeStockInfo[dataVariantID]?.size_stock || 0;
         let productSize = sizes[typeID.value];
         let options = ["Beden Secebilirsiniz", ...productSize];
 
@@ -324,7 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let urunSizeDiv = createDiv("col-md-5 mb-2 px-3");
         let urunSizeLabel = createLabel("form-label", urunSizeID, "Beden");
 
-        let urunSizeSelect = createSelect("form-control", urunSizeID, `variant[${dataVariantID}][size][${sizeStock}]`, options);
+        let urunSizeSelect = createSelect("form-control", urunSizeID, `variant[${dataVariantID}][size][${sizeStock}]`, options, sizeValue || null);
 
         urunSizeDiv.appendChild(urunSizeLabel);
         urunSizeDiv.appendChild(urunSizeSelect);
@@ -332,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let urunStockID = `stock-${dataVariantID}-${sizeStock}`;
         let urunStockDiv = createDiv("col-md-5 mb-2 px-3");
         let urunStockLabel = createLabel("form-label", urunStockID, "Stock Sayisi");
-        let urunStockInput = createInput("form-control", urunStockID, "Stock Sayisi", `variant[${dataVariantID}][stock][${sizeStock}]`, 'number');
+        let urunStockInput = createInput("form-control", urunStockID, "Stock Sayisi", `variant[${dataVariantID}][stock][${sizeStock}]`, 'number', stockValue || null);
 
         urunStockDiv.appendChild(urunStockLabel);
         urunStockDiv.appendChild(urunStockInput);
@@ -358,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         findDiv.appendChild(urunSizeStockGeneralDiv);
 
-        varianSizeStockInfo[dataVariantID] = { 'size_stock': sizeStock + 1 };
+        variantSizeStockInfo[dataVariantID] = { 'size_stock': sizeStock + 1 };
     }
 
     /** Open File Manager Func **/
@@ -430,22 +457,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /** gorselleri virgule gore ayirip hazirlama **/
-    function oldVariantImageViewer(oldImages) {
+    function oldVariantImageViewer(oldImages = '', index) {
+        if (oldImages.length && oldImages !== '') {
 
-        oldImages.forEach((oldImage, index) => {
             let finalImages = [];
-            let images = oldImage.images.split(',');
+            let images = oldImages.split(',');
             images.pop();
             images.forEach((item, index) => {
                 finalImages.push({ url: item });
             });
 
-            let target_preview = document.querySelector(`#data-preview-${oldImage.index}`);
+            let target_preview = document.querySelector(`#data-preview-${index}`);
 
             if (oldImages.length) {
-                selectedVariantImage(finalImages, oldImage.index, target_preview);
+                selectedVariantImage(finalImages, index, target_preview);
             }
-        });
+        }
     }
 
     /** Delete Varyant Image Func **/
@@ -791,6 +818,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    /** Initialize Value Func **/
+    function initializeValue() {
+        if (typeof initializeData !== 'undefined' && initializeData !== null) {
+            console.log(initializeData);
+            initializeData = Object.entries(initializeData);
+
+            initializeData.forEach(([index, variant]) => {
+                createVariant(variant, true);
+            });
+        }
+    }
+
+    /** Obje mi? **/
+    function isObjectEmpty(object) {
+        return Object.entries(object).length === 0;
+    }
+
     /** CREATE ELEMENTS **/
     const createElement = (tag, className = '', attrs = {}) => {
         let el = document.createElement(tag);
@@ -810,10 +854,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return label;
     };
 
-    const createSelect = (className, id, name, options = []) => {
+    const createSelect = (className, id, name, options = [], selectedOption = false) => {
         let select = createElement('select', className, { id, name });
         options.forEach(opt => {
-            let option = createElement('option', '', { value: opt === 'Beden Secebilirsiniz' ? '-1' : opt })
+            let attrs = { value: opt === 'Beden Secebilirsiniz' ? '-1' : opt };
+            if (selectedOption && opt == selectedOption) {
+                attrs.selected = '';
+            }
+            let option = createElement('option', '', attrs)
             option.textContent = opt;
             select.appendChild(option);
         });
@@ -821,6 +869,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // yukardakiler olusturulmadan bu calistigi icin en altta aldik
-    oldVariantImageViewer(oldImages);
     showErrors();
+    initializeValue();
+    // oldVariantImageViewer(oldImages);
+
 });

@@ -180,202 +180,7 @@
                         </a>
                         <hr class="my-3">
                         <div id="variants">
-                            @if (old('variant'))
-                                @foreach (old('variant') as $index => $variant)
-                                    <div class="row variant" id="row-{{ $index }}">
-                                        <div class="col-md-4 mb-4" id="">
-                                            <label class="form-label" for="name-{{ $index }}">Urun Adi</label>
-                                            <input
-                                                class="form-control variant-product-name @error('variant.' . $index . '.name') is-invalid @enderror"
-                                                id="name-{{ $index }}" placeholder="Urun Adi"
-                                                name="variant[{{ $index }}][name]" type="text"
-                                                value="{{ old('variant.' . $index . '.name') }}">
-                                        </div>
 
-                                        <div class="col-md-4 mb-4" id="">
-                                            <label class="form-label" for="variant_name-{{ $index }}">
-                                                Urun Varyant Adi
-                                            </label>
-                                            <input
-                                                class="form-control variant-name @error('variant.' . $index . '.variant_name') is-invalid @enderror"
-                                                id="variant_name-{{ $index }}" placeholder="Urun Varyant Adi"
-                                                name="variant[{{ $index }}][variant_name]" type="text"
-                                                value="{{ old('variant.' . $index . '.variant_name') }}">
-                                        </div>
-
-                                        <div class="col-md-4 mb-4" id="">
-                                            <label class="form-label" for="slug-{{ $index }}">Slug</label>
-                                            <input
-                                                class="form-control product-slug @error('variant.' . $index . '.slug') is-invalid @enderror"
-                                                id="slug-{{ $index }}" placeholder="Slug"
-                                                name="variant[{{ $index }}][slug]" type="text"
-                                                value="{{ old('variant.' . $index . '.slug') }}">
-                                        </div>
-
-                                        <div class="col-md-6 mb-4" id="">
-                                            <label class="form-label"
-                                                for="additional_price-{{ $index }}">Fiyat</label>
-                                            <input
-                                                class="form-control additional-price-input @error('variant.' . $index . '.additional_price') is-invalid @enderror"
-                                                id="additional_price-{{ $index }}" placeholder="Fiyat"
-                                                name="variant[{{ $index }}][additional_price]" type="number"
-                                                value="{{ old('variant.' . $index . '.additional_price') }}"
-                                                data-variant-id="{{ $index }}">
-                                        </div>
-
-                                        <div class="col-md-6 mb-4" id="">
-                                            <label class="form-label" for="final_price-{{ $index }}">Son
-                                                Fiyat</label>
-                                            <input
-                                                class="form-control readonly @error('variant.' . $index . '.final_price') is-invalid @enderror"
-                                                id="final_price-{{ $index }}" placeholder="Son Fiyat"
-                                                name="variant[{{ $index }}][final_price]" type="text"
-                                                value="{{ old('variant.' . $index . '.final_price') }}" readonly="">
-                                        </div>
-
-                                        <div class="col-md-12 mb-4" id="">
-                                            <label class="form-label" for="extra_description-{{ $index }}">Ekstra
-                                                Aciklama</label>
-                                            <input
-                                                class="form-control @error('variant.' . $index . '.extra_description') is-invalid @enderror"
-                                                id="extra_description-{{ $index }}" placeholder="Ekstra Aciklama"
-                                                name="variant[{{ $index }}][extra_description]" type="text"
-                                                value="{{ old('variant.' . $index . '.extra_description') }}">
-                                        </div>
-
-                                        <div class="col-md-12 mb-4" id="">
-                                            <label class="form-label" for="publish_date-{{ $index }}">Yayimlanma
-                                                Tarihi</label>
-                                            <div class="input-group flatpickr flatpickr-date" id="">
-                                                <input
-                                                    class="form-control flatpickr-input @error('variant.' . $index . '.publish_date') is-invalid @enderror"
-                                                    id="publish_date-{{ $index }}" placeholder="Yayimlanma Tarihi"
-                                                    name="variant[{{ $index }}][publish_date]" type="text"
-                                                    value="{{ old('variant.' . $index . '.publish_date') }}"
-                                                    data-input="" readonly="readonly">
-
-                                                <span class="input-group-text input-group-addon" data-toggle="">
-                                                    <i data-feather="calendar"></i>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 mb-4" id="">
-                                            <label class="form-label me-2" for="p_status-{{ $index }}">Aktif
-                                                mi?</label>
-                                            <input
-                                                class="form-check-input me-2 @error('variant.' . $index . '.p_status') is-invalid @enderror"
-                                                id="p_status-{{ $index }}" placeholder=""
-                                                name="variant[{{ $index }}][p_status]" type="checkbox"
-                                                value="1"
-                                                {{ old('variant.' . $index . '.p_status') !== null ? 'checked' : '' }}>
-                                        </div>
-                                        <div class="row" id="">
-                                            <div class="col-md-12 mb-1" id="">
-                                                <a class="btn-delete-variant btn btn-danger col-md-3"
-                                                    href="javascript:void(0)"
-                                                    data-variant-id="{{ $index }}">Variant Kaldir</a>
-                                                <hr class="my-2">
-                                            </div>
-                                        </div>
-                                        <div class="row" id="">
-                                            <div class="col-md-12" id="">
-                                                <a class="btn btn-info btn-add-image mb-4" href="javascript:void"
-                                                    data-variant-id="{{ $index }}"
-                                                    data-input="data-input-{{ $index }}"
-                                                    data-preview="data-preview-{{ $index }}">Gorsel Ekle <i
-                                                        class="add-size" data-feather="image"></i>
-                                                </a>
-                                            </div>
-                                            <input class="form-control" id="data-input-{{ $index }}"
-                                                placeholder="" name="variant[{{ $index }}][image]" type="hidden"
-                                                value="{{ old('variant.' . $index . '.image') }}">
-                                            <div class="col-md-12" id="data-preview-{{ $index }}"></div>
-                                            <a class="btn-add-size col-md-12" href="javascript:void"
-                                                data-variant-id="{{ $index }}">
-                                                <i class="add-size" data-feather="plus-circle"></i>
-                                                <span class="ms-2">Beden Ekle</span>
-                                            </a>
-                                        </div>
-                                        <div class="col-md-12 p-0 mb-3" id="sizeDiv{{ $index }}">
-                                            @if (old('variant.' . $index . '.size') || old('variant.' . $index . '.stock'))
-                                                @foreach (old('variant.' . $index . '.size') as $sizeIndex => $size)
-                                                    <div class="row mx-0 size-stock-{{ $index }}"
-                                                        id="sizeStockDeleteGeneral-{{ $index }}-{{ $sizeIndex }}">
-                                                        <div class="col-md-5 mb-2 px-3" id="">
-                                                            <label class="form-label"
-                                                                for="size-{{ $index }}-{{ $sizeIndex }}">Beden</label>
-                                                            <select class="form-control"
-                                                                id="size-{{ $index }}-{{ $sizeIndex }}"
-                                                                name="variant[{{ $index }}][size][{{ $sizeIndex }}]">
-
-                                                                <option class="" value="-1">
-                                                                    Beden Secebilirsiniz
-                                                                </option>
-                                                                @if (old('type_id') == 1)
-                                                                    @php
-                                                                        $sizes = [
-                                                                            'XS',
-                                                                            'S',
-                                                                            'M',
-                                                                            'L',
-                                                                            'XL',
-                                                                            'XXL',
-                                                                            '3XL',
-                                                                            '4XL',
-                                                                            '5XL',
-                                                                        ];
-                                                                    @endphp
-                                                                @elseif (old('type_id') == 2)
-                                                                    @php
-                                                                        $sizes = [];
-                                                                        for ($i = 20; $i < 51; $i++) {
-                                                                            $sizes[] = $i;
-                                                                        }
-                                                                    @endphp
-                                                                @elseif (old('type_id') == 3)
-                                                                    @php
-                                                                        $sizes = ['standart'];
-                                                                    @endphp
-                                                                @endif
-                                                                @foreach ($sizes as $iSize)
-                                                                    <option value="{{ $iSize }}"
-                                                                        {{ old('variant.' . $index . '.size.' . $sizeIndex) == $iSize ? 'selected' : '' }}>
-                                                                        {{ $iSize }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-5 mb-2 px-3" id="">
-                                                            <label class="form-label"
-                                                                for="stock-{{ $index }}-{{ $sizeIndex }}">
-                                                                Stock Sayisi
-                                                            </label>
-                                                            <input class="form-control"
-                                                                id="stock-{{ $index }}-{{ $sizeIndex }}"
-                                                                placeholder="Stock Sayisi"
-                                                                name="variant[{{ $index }}][stock][{{ $sizeIndex }}]"
-                                                                type="number"
-                                                                value="{{ old('variant.' . $index . '.stock.' . $sizeIndex) }}">
-
-                                                        </div>
-                                                        <div class="col-md-2 mb-2 px-3" id="">
-                                                            <label class="form-label d-block"
-                                                                for="undefined">&nbsp;</label>
-                                                            <a class="btn btn-danger w-100 btn-size-stock-delete"
-                                                                id="sizeStockDelete-{{ $index }}-{{ $sizeIndex }}"
-                                                                href="javascript:void"
-                                                                data-size-stock-id="{{ $index }}-{{ $sizeIndex }}">
-                                                                Beden Sil
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                            @endif
-                                        </div>
-                                        <hr class="my-5">
-                                    </div>
-                                @endforeach
-                            @endif
                         </div>
                     </div>
                 </div>
@@ -393,36 +198,10 @@
     <script src="{{ asset('assets/js/axios/dist/axios.min.js') }}"></script>
     <script>
         var checkSlugRoute = "{{ route('admin.product.check-slug') }}";
+        var initializeData = @json(old('variant'));
 
-        @php($arr = old('variant') ?? [])
-        var varianCount = Number('{{ count($arr) }}');
-        var varianSizeStockInfo = [];
-
-        @if (old('variant') && isset(old('variant')['size']))
-            @foreach (old('variant') as $index => $variant)
-                let index = Number('{{ $index }}');
-                let sizeStock = Number('{{ count(old('variant.' . $index . '.size')) }}');
-                varianSizeStockInfo[index] = {
-                    size_stock: sizeStock
-                };
-            @endforeach
-        @endif
-
-        var oldImages = [];
-        @if (old('variant'))
-            flatpickr(".flatpickr-date", {
-                wrap: true,
-                enableTime: true,
-                dateFormat: "Y-m-d H:i",
-            });
-
-            @foreach (old('variant') as $index => $variant)
-                oldImages.push({
-                    images: "{{ old('variant.' . $index . '.image') }}",
-                    index: "{{ $index }}"
-                });
-            @endforeach
-        @endif
+        var variantCount = 0;
+        var variantSizeStockInfo = [];
 
         @if (old('name') && is_null(old('variant')))
             toastr.error('En az 1 adet varyant eklemelisiniz!', 'Uyari');
@@ -431,7 +210,6 @@
         var displayErrors = {};
         @if ($errors->any())
             displayErrors = @json($errors->toArray());
-            // console.log(displayErrors);
         @endif
     </script>
     {{-- <script src="{{ asset('assets/js/product/gdg-variant.js') }}"></script> --}}
