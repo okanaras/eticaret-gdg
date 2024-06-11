@@ -3,8 +3,10 @@
 namespace App\Http\Requests;
 
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Illuminate\Contracts\Validation\ValidationRule;
+
 
 class ProductUpdateRequest extends FormRequest
 {
@@ -19,7 +21,7 @@ class ProductUpdateRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -46,8 +48,17 @@ class ProductUpdateRequest extends FormRequest
         ];
 
         foreach ($this->variant as $variantID => $variant) {
-            // $rules["variant.$variantID.slug"] = ['required', 'string', 'min:1', 'max:255', Rule::unique('products, slug')->ignore($variantID)];
-            $rules["variant.$variantID.slug"] = ['required', 'string', 'min:1', 'max:255', 'unique:products,slug,' . $variantID];
+            if (isset($variant['variant_index'])) {
+                $rules["variant.$variantID.slug"] = [
+                    'required',
+                    'string',
+                    'min:1',
+                    'max:255',
+                    Rule::unique('products', 'slug')->ignore($variant['variant_index'], 'id')
+                ];
+            } else {
+                $rules["variant.$variantID.slug"] = ['required', 'string', 'min:1', 'max:255', 'unique:products,slug'];
+            }
         }
 
         return $rules;

@@ -151,7 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
     /** old'tan gelene gore varyant olusturma **/
     function createVariant(variant = {}, isEdit = false) {
         let row = createDiv('row variant', `row-${variantCount}`);
-        let row2 = createDiv('row');
 
         // variant delete div olustrduk ve icerisine a butonunu ekledim
         let varianDeleteDiv = createDiv('col-md-12 mb-1');
@@ -206,6 +205,13 @@ document.addEventListener('DOMContentLoaded', () => {
             row.appendChild(colDiv);
         });
 
+        if (isEdit) {
+            var variantIDElement = createInput('', '', '', `variant[${variantCount}][variant_index]`, 'hidden', variant.id);
+            row.appendChild(variantIDElement);
+        } else {
+            console.log(variant, 'isEdit');
+        }
+
         let urunAddSizeDiv = createDiv("row");
         let urunAddSizeSpan = createElement('span', "ms-2");
         urunAddSizeSpan.textContent = 'Beden Ekle';
@@ -219,10 +225,8 @@ document.addEventListener('DOMContentLoaded', () => {
         let images = variant.image || variant.variant_images || '';
         if (isEdit && variant.variant_images) {
             images = '';
-            variant.variant_images.forEach(item => {
-                //todo kontrol bendeki bu calismadi en sonda 2 tane virgul koyuyor
-                images = images + item.path + ',';
-            });
+            //todo kontrol bendeki bu calismadi en sonda 2 tane virgul koyuyor
+            variant.variant_images.forEach(item => images = `${images}${item.path},`);
         }
         let imageDataInputElement = createInput("form-control", `data-input-${variantCount}`, '', `variant[${variantCount}][image]`, 'hidden', images);
         let imageDataPreviewElement = createDiv("col-md-12", `data-preview-${variantCount}`);
@@ -242,8 +246,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let urunAddSizeGeneralDiv = createDiv("col-md-12 p-0 mb-3", sizeDivKey + variantCount);
 
-        // row2.appendChild(varianDeleteDiv);
-        // row.appendChild(row2);
         row.appendChild(urunAddSizeDiv);
         row.appendChild(urunAddSizeGeneralDiv);
 
@@ -445,7 +447,8 @@ document.addEventListener('DOMContentLoaded', () => {
         items.forEach(function (item, index) {
             let container = createDiv("image-container", `image-container-${variantID}-${index}`);
 
-            let radio = createInput('', `radio-${variantID}-${index}`, '', `variant[${variantID}][featured_image]`, 'radio', item.url || item);
+            //!NOT: burayi degistirdim
+            let radio = createInput('', `radio-${variantID}-${index}`, '', `variant[${variantID}][featured_image]`, 'radio', item.url);
 
             if (item.is_featured || index === 0) radio.checked = true;
 
@@ -470,8 +473,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /** gorselleri virgule gore ayirip hazirlama **/
     function oldVariantImageViewer(oldImages = '', featuredImagePath = '', index, isEdit = false) {
-
-
         let finalImages = [];
         let target_preview = document.querySelector(`#data-preview-${index}`);
 
@@ -483,7 +484,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
         } else if (isEdit) {
-
             oldImages.forEach((item, index) => {
                 finalImages.push({ url: item.path, is_featured: Boolean(item.is_featured) });
             });
@@ -838,13 +838,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /** Initialize Value Func **/
-    function initializeValue() {
+    function initializeValue(isEdit = false) {
         if (typeof initializeData !== 'undefined' && initializeData !== null) {
 
             initializeData = Object.entries(initializeData);
-
             initializeData.forEach(([index, variant]) => {
-                createVariant(variant, true);
+                if (isEdit) {
+                    if (productData['variants'].hasOwnProperty(index) && productData['variants'][index].hasOwnProperty("id")) {
+                        variant.id = productData['variants'][index]['id'];
+                        createVariant(variant, true);
+                    } else {
+                        createVariant(variant, false);
+                    }
+                } else {
+                    createVariant(variant, false);
+                }
             });
         }
     }
@@ -883,7 +891,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /** Data Prepare **/
     function prepareInitializeData() {
-        if (initializeData) {
+        if (initializeData && typeof productData !== 'undefined') {
+            initializeValue(true);
+        } else if (initializeData) {
             initializeValue();
         } else if (typeof productData !== 'undefined') {
             let variants = productData.variants;

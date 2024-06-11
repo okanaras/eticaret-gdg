@@ -70,9 +70,6 @@ class ProductController extends Controller
             'variants.sizeStock',
         ])->toArray();
 
-        // dd($product);
-        // dd($productsMain->toArray());
-
         return view('admin.product.create_edit', compact('product', 'categories', 'brands', 'types'));
     }
 
