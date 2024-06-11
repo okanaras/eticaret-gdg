@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Product;
 use Illuminate\Support\Str;
 use App\Models\ProductsMain;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ProductService
 {
@@ -17,6 +18,22 @@ class ProductService
     public function store(): Product
     {
         return $this->product::create($this->preparedData);
+    }
+
+    public function update(): bool
+    {
+        return $this->product->update($this->preparedData);
+    }
+
+    public function setProduct(Product $product): self
+    {
+        $this->product = $product;
+        return $this;
+    }
+
+    public function getById(int $productID): Product|ModelNotFoundException
+    {
+        return $this->product::findOrFail($productID);
     }
 
     public function prepareData(array $variant, ProductsMain $productsMain): self

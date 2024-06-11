@@ -73,9 +73,10 @@ class ProductController extends Controller
         return view('admin.product.create_edit', compact('product', 'categories', 'brands', 'types'));
     }
 
-    public function update(ProductUpdateRequest $request)
+    public function update(ProductUpdateRequest $request, ProductsMain $productsMain)
     {
-        dd($request->all());
+        $this->productService->update($request, $productsMain);
+        dd('25');
     }
 
     public function checkSlug(Request $request)
