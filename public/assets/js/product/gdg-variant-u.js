@@ -808,24 +808,33 @@ document.addEventListener('DOMContentLoaded', () => {
     /** Hatalari Goster Fonk **/
     function showErrors() {
         for (const key in displayErrors) {
-            let uKey = key;
+            let nameAttribute = key;
             if (displayErrors.hasOwnProperty(key)) {
-                if (key.includes('.')) {
-                    uKey = key.split('.');
-                    uKey = uKey[(uKey.length - 1)];
-                    uKey = uKey + ']';
+
+                let explode = nameAttribute.split('.');
+                for (let i = 0; i < explode.length; i++) {
+                    if (i !== 0) explode[i] = `[${explode[i]}]`;
                 }
 
-                let element = document.querySelector(`[name$="${uKey}"]`);
+                nameAttribute = explode.join('');
 
+                let element = document.querySelector(`[name="${nameAttribute}"]`);
 
                 if (element && key.indexOf('image') < 0) {
                     element.classList.add('is-invalid');
                     let errorDiv = createDiv('invalid-feedback d-block');
                     errorDiv.textContent = displayErrors[key][0];
                     element.parentElement.appendChild(errorDiv);
-                }
+                } else if (element && key.indexOf('[image]')) {
+                    toastr.warning('Varyantlariniza en az 1 adet gorsel secmelisiniz!', "Uyari")
+                    element.parentElement.parentElement.classList.add("border", "border-danger");
+                    let divElement = createDiv('text-danger', '');
+                    divElement.textContent = 'Lutfen varyanta gorsel secin.';
 
+                    let [_, __, elementVariantID] = element.id.split('-');
+                    let findBtnAddImageElement = document.querySelector(`.btn-add-image[data-input="data-input-${elementVariantID}"]`)
+                    findBtnAddImageElement.insertAdjacentElement('afterend', divElement);
+                }
             }
         }
     }
@@ -931,7 +940,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // yukardakiler olusturulmadan bu calistigi icin en altta aldik
-    showErrors();
     prepareInitializeData();
+    showErrors();
 
 });
