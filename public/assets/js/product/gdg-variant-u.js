@@ -52,17 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /** Urun bilgileri tab'inda urun turu degistiginde varyant ekleme tabindaki size ve stock alanlarini temizleme **/
     typeID.addEventListener("change", () => {
+        if (typeof productData !== ' undiefined') {
+            toastr.info('Urun turu degisikligi sonrasi beden bilgilerini guncelleminiz gerekmektedir!', 'Uyari');
+        }
         document.querySelectorAll(`[id^=${sizeDivKey}]`).forEach(div => div.innerHTML = "");
-
-
-        // // NOT : her div'in id'si 'SizeKey+VariantCount' (SizeKey0, SizeKey1, SizeKey2...) oldugundan bulma islemi basarili gerceklesmekte
-        // for (let i = 0; i <= variantCount; i++) {
-        //     let findDiv = document.querySelector("#" + sizeDivKey + i);
-
-        //     if (findDiv) {
-        //         findDiv.innerHTML = "";
-        //     }
-        // }
     });
 
     /** document body click actions **/

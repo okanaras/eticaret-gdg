@@ -23,10 +23,20 @@ class SizeStockService
         return $this->sizeStock->update($this->preparedData);
     }
 
+    public function delete(): bool
+    {
+        return $this->sizeStock->delete();
+    }
+
     public function setSizeStock(SizeStock $sizeStock): self
     {
         $this->sizeStock = $sizeStock;
         return $this;
+    }
+
+    public function getByProductIdMultiple(int $productID)
+    {
+        return $this->sizeStock->query()->where('product_id', $productID)->get();
     }
 
     public function getByProductIdAndSize(int $productID, string|int $size): SizeStock|null
@@ -73,5 +83,14 @@ class SizeStockService
         ];
 
         return $this;
+    }
+
+    public function changedKeyDelete($oldKeys, $newKeys, $productID): void
+    {
+        $diffSizeKeys = array_diff($oldKeys, $newKeys);
+        foreach ($diffSizeKeys as $sizeKey) {
+            $sizeStockFind = $this->getByProductIdAndSize($productID, $sizeKey);
+            $this->setSizeStock($sizeStockFind)->delete();
+        }
     }
 }

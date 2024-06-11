@@ -49,6 +49,7 @@ class ProductService
     public function storeImages(string $images, string $featuredImagePath, int $productID): array
     {
         $images = explode(',', $images);
+        unset($images[(count($images) - 1)]);
 
         $createdImages = [];
         foreach ($images as $image) {
@@ -80,9 +81,14 @@ class ProductService
     public function updateSizeStock(array $variant)
     {
         $productID = $variant['variant_index'];
+        $sizeKeys = $this->sizeStockService->getByProductIdMultiple($productID)->pluck('size')->toArray();
+
+        $newSizeArr = [];
         foreach ($variant['size'] as $index => $size) {
             $sizeStockFind = $this->sizeStockService->getByProductIdAndSize($productID, $size);
+
             if ($sizeStockFind) {
+                $newSizeArr[] = $sizeStockFind->size;
                 $stock = $variant['stock'][$index];
                 $this->sizeStockService
                     ->setSizeStock($sizeStockFind)
@@ -93,6 +99,7 @@ class ProductService
                 $this->sizeStockService->prepareData($size, $stock, $productID)->store();
             }
         }
+        $this->sizeStockService->changedKeyDelete($sizeKeys, $newSizeArr, $productID);
     }
 
     public function update(Request $request, ProductsMain $productsMain): void
