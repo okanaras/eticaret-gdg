@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Traits\GdgException;
 use Exception;
 use App\Models\Product;
 use Illuminate\Support\Str;
@@ -11,14 +12,18 @@ use Illuminate\Http\Request;
 use App\Services\BrandService;
 use App\Services\ProductService;
 use App\Services\CategoryService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductStoreRequest;
 use App\Http\Requests\ProductUpdateRequest;
+use Throwable;
 
 class ProductController extends Controller
 {
+    use GdgException;
+
     public function __construct(public BrandService $brandService, public CategoryService $categoryService, public ProductService $productService)
     {
     }
@@ -49,7 +54,7 @@ class ProductController extends Controller
             DB::rollBack();
 
             Log::error('Alinan Hata: ' . $exception->getMessage(), [$exception->getTraceAsString()]);
-            // toast($exception->getMessage(), 'Error');
+            toast($exception->getMessage(), 'Error');
             return redirect()->back()->withInput();
         }
 
@@ -75,8 +80,26 @@ class ProductController extends Controller
 
     public function update(ProductUpdateRequest $request, ProductsMain $productsMain)
     {
-        $this->productService->update($request, $productsMain);
-        dd('25');
+        try {
+            $this->productService->update($request, $productsMain);
+
+            toast('Urun guncellendi', 'success');
+            return redirect()->route('admin.product.index');
+        } catch (Throwable $exception) {
+            return $this->exception($exception, 'admin.product.index', 'Urun guncellenemedi');
+        }
+    }
+
+    public function delete(ProductsMain $productsMain)
+    {
+        try {
+            $this->productService->productMainService->setProductMain($productsMain)->delete();
+
+            toast('Urun silindi', 'success');
+            return redirect()->back();
+        } catch (Throwable $exception) {
+            return $this->exception($exception, 'admin.product.index', 'Urun silinemedi');
+        }
     }
 
     public function checkSlug(Request $request)
@@ -86,6 +109,40 @@ class ProductController extends Controller
         return response()
             ->json()
             ->setData($check)
+            ->setStatusCode(200)
+            ->setCharset('utf-8')
+            ->header('Content-Type', 'application.json')
+            ->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+    }
+
+    public function changeStatus(Request $request): JsonResponse
+    {
+        $id = $request->id;
+
+        $productMain = $this->productService->productMainService->getById($id);
+
+        if (is_null($productMain)) {
+            return response()
+                ->json()
+                ->setData([
+                    'message' => 'Urun bulunamadi.'
+                ])
+                ->setStatusCode(404)
+                ->setCharset('utf-8')
+                ->header('Content-Type', 'application.json')
+                ->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+        }
+
+        $data = ['status' => !$productMain->status];
+        $this->productService
+            ->productMainService
+            ->setProductMain($productMain)
+            ->setPrepareData($data)
+            ->update();
+
+        return response()
+            ->json()
+            ->setData($productMain)
             ->setStatusCode(200)
             ->setCharset('utf-8')
             ->header('Content-Type', 'application.json')

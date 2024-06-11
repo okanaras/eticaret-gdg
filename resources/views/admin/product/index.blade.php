@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 
-@section('title', 'Marka Listesi')
+@section('title', 'Urun Listesi')
 
 
 @push('css')
@@ -11,7 +11,7 @@
 @section('body')
     <div class="card">
         <div class="card-body">
-            <h6 class="card-title">Marka Listesi</h6>
+            <h6 class="card-title">Urun Listesi</h6>
             <div class="table-responsive pt-3">
                 <table class="table table-bordered">
                     <thead>
@@ -81,7 +81,7 @@
                 let dataID = element.getAttribute('data-id');
                 let dataName = element.getAttribute('data-name');
 
-                if (element.classList.contains('btn-delete-brand')) {
+                if (element.classList.contains('btn-delete-product')) {
                     Swal.fire({
                         title: " '" + dataName + "' markasini silmek istediginize emin misiniz?",
                         showCancelButton: true,
@@ -91,8 +91,8 @@
                         /* Read more about isConfirmed, isDenied below */
                         if (result.isConfirmed) {
                             let route =
-                                '{{ route('admin.brand.destroy', ['brand' => ':brand']) }}'
-                            route = route.replace(':brand', dataID)
+                                '{{ route('admin.product.destroy', ['products_main' => ':product']) }}'
+                            route = route.replace(':product', dataID)
 
                             deleteForm.action = route;
 
@@ -129,13 +129,13 @@
                                 body: JSON.stringify(body)
                             }
 
-                            let route = "{{ route('admin.brand.change-status') }}";
+                            let route = "{{ route('admin.product.change-status') }}";
 
                             fetch(route, data)
                                 .then(response => {
                                     if (!response.ok) {
                                         toastr.error(
-                                            'Marka status guncellenemedi, hata alindi!',
+                                            'Urun status guncellenemedi, hata alindi!',
                                             'Hata');
                                         console.error(response);
                                     }
@@ -154,7 +154,7 @@
                                         element.classList.add('btn-inverse-danger');
                                     }
                                     toastr.success(
-                                        `Marka ${element.textContent.toLowerCase()} olarak guncellendi!`,
+                                        `Urun ${element.textContent.toLowerCase()} olarak guncellendi!`,
                                         'Basarili');
                                 })
 
@@ -166,65 +166,6 @@
 
                 }
 
-                if (element.classList.contains('btn-change-is-featured')) {
-                    Swal.fire({
-                        title: " '" + dataName +
-                            "' statusunu degistirmek istediginize emin misiniz?",
-                        showCancelButton: true,
-                        confirmButtonText: "Evet",
-                        cancelButtonText: "Hayir"
-                    }).then((result) => {
-                        /* Read more about isConfirmed, isDenied below */
-                        if (result.isConfirmed) {
-                            let body = {
-                                id: dataID
-                            };
-
-                            let data = {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                },
-                                body: JSON.stringify(body)
-                            }
-
-                            let route = "{{ route('admin.brand.change-is-featured') }}";
-
-                            fetch(route, data)
-                                .then(response => {
-                                    if (!response.ok) {
-                                        toastr.error(
-                                            'Marka onde cikarilma durumu guncellenemedi, hata alindi!',
-                                            'Hata');
-                                        console.error(response);
-                                    }
-
-                                    return response.json();
-                                })
-                                .then(data => {
-                                    element.textContent = data.is_featured ? "Evet" : "Hayir";
-
-                                    if (data.is_featured) {
-                                        element.classList.add('btn-inverse-success');
-                                        element.classList.remove('btn-inverse-danger');
-
-                                    } else {
-                                        element.classList.remove('btn-inverse-success');
-                                        element.classList.add('btn-inverse-danger');
-                                    }
-                                    toastr.success(
-                                        `Marka is featured ${element.textContent.toLowerCase()} olarak guncellendi!`,
-                                        'Basarili');
-                                })
-
-
-                        } else if (result.dismiss) {
-                            toastr.info("Herhangi bir islem gerceklestirilmedi!", 'Bilgi');
-                        }
-                    });
-
-                }
             });
         });
     </script>

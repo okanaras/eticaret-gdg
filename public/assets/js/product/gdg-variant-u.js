@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /** Urun bilgileri tab'inda urun turu degistiginde varyant ekleme tabindaki size ve stock alanlarini temizleme **/
     typeID.addEventListener("change", () => {
-        if (typeof productData !== ' undiefined') {
+        if (typeof productData !== 'undefined') {
             toastr.info('Urun turu degisikligi sonrasi beden bilgilerini guncelleminiz gerekmektedir!', 'Uyari');
         }
         document.querySelectorAll(`[id^=${sizeDivKey}]`).forEach(div => div.innerHTML = "");

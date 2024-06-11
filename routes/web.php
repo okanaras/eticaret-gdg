@@ -54,7 +54,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.check'])->gro
         Route::post('/create', [AdminProductController::class, 'store']);
         Route::get('/edit/{products_main}', [AdminProductController::class, 'edit'])->name('edit');
         Route::post('/edit/{products_main}', [AdminProductController::class, 'update']);
+        Route::delete('/delete/{products_main}', [AdminProductController::class, 'delete'])->name('destroy');
         Route::post('/check-slug', [AdminProductController::class, 'checkSlug'])->name('check-slug');
+        Route::post('/change-status', [AdminProductController::class, 'changeStatus'])->name('change-status');
     });
 
     Route::group(['prefix' => 'gdg-filemanager', 'middleware' => ['web', 'auth']], function () {
