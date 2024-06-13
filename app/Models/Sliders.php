@@ -15,12 +15,13 @@ class Sliders extends Model
      * @var array
      */
     protected $fillable = [
+        'name',
         'path',
         'status',
         'release_start',
         'release_finish',
         'order',
-        'row_1_text',,
+        'row_1_text',
         'row_1_color',
         'row_1_css',
         'row_2_text',

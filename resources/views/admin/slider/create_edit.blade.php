@@ -30,7 +30,7 @@
                 <div class="row">
 
                     <div class="mb-3">
-                        <input type="checkbox" class="form-check-input" id="status" name="status"
+                        <input type="checkbox" class="form-check-input" id="status" name="status" value="1"
                             {{ isset($slider) ? ($slider->status ? 'checked' : '') : (old('status') ? 'checked' : '') }}>
                         <label class="form-check-label" for="status">
                             Aktif mi?
@@ -40,7 +40,16 @@
                         @enderror
                     </div>
 
-                    <div class="mb-3">
+                    <div class="col-md-6 mb-3">
+                        <label for="name" class="form-label">Slider Adi</label>
+                        <input type="text" class="form-control" id="name" placeholder="Slider Adi" name="name"
+                            value="{{ isset($slider) ? $slider->name : old('name') }}">
+                        @error('name')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-6 mb-3">
                         <label for="order" class="form-label">Sira Numarasi</label>
                         <input type="number" class="form-control" id="order" placeholder="Sira Numarasi" name="order"
                             value="{{ isset($slider) ? $slider->order : old('order') }}">
@@ -81,22 +90,22 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="realease_start" class="form-label">Yayimlanma Tarihi</label>
+                        <label for="release_start" class="form-label">Yayimlanma Tarihi</label>
 
                         <div class="input-group flatpickr flatpickr-date">
-                            <input type="text" class="form-control flatpickr-input active" name="realease_start"
-                                id="realease_start" placeholder="Yayimlanma Tarihi" value="" data-input="">
+                            <input type="text" class="form-control flatpickr-input active" name="release_start"
+                                id="release_start" placeholder="Yayimlanma Tarihi" value="" data-input="">
                             <span class="input-group-text input-group-addon" data-toggle=""><i
                                     data-feather="calendar"></i></span>
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="realease_fibish" class="form-label">Bitis Tarihi</label>
+                        <label for="release_finish" class="form-label">Bitis Tarihi</label>
 
                         <div class="input-group flatpickr flatpickr-date">
-                            <input type="text" class="form-control flatpickr-input active" name="realease_fibish"
-                                id="realease_fibish" placeholder="Bitis Tarihi" value="" data-input="">
+                            <input type="text" class="form-control flatpickr-input active" name="release_finish"
+                                id="release_finish" placeholder="Bitis Tarihi" value="" data-input="">
                             <span class="input-group-text input-group-addon" data-toggle=""><i
                                     data-feather="calendar"></i></span>
                         </div>
@@ -116,7 +125,8 @@
 
                     <div class="col-md-6 mb-3">
                         <label for="row_1_css" class="form-label">1. Satir Yazi CSS</label>
-                        <textarea id="row_1_css" name="row_1_css" class="ace-editor w-100"></textarea>
+                        <input type="hidden" name="row_1_css">
+                        <textarea id="row_1_css" class="ace-editor w-100"></textarea>
 
                         @error('row_1_css')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -146,7 +156,8 @@
 
                     <div class="col-md-6 mb-3">
                         <label for="row_2_css" class="form-label">2. Satir Yazi CSS</label>
-                        <textarea id="row_2_css" name="row_2_css" class="ace-editor w-200"></textarea>
+                        <input type="hidden" name="row_2_css">
+                        <textarea id="row_2_css" class="ace-editor w-200"></textarea>
 
                         @error('row_2_css')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -184,7 +195,6 @@
                         @enderror
                     </div>
 
-
                     <div class="col-md-4 mb-3">
                         <label for="button_target" class="form-label">Button Yazi Renk Kodu</label>
                         <select name="button_target" id="button_target" class="form-select">
@@ -199,7 +209,9 @@
 
                     <div class="col-md-6 mb-3">
                         <label for="button_css" class="form-label">Button Yazi CSS</label>
-                        <textarea id="button_css" name="button_css" class="ace-editor w-200"></textarea>
+                        <input type="hidden" name="button_css">
+
+                        <textarea id="button_css" class="ace-editor w-200"></textarea>
 
                         @error('button_css')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -243,11 +255,16 @@
             let row2ColorInput = document.querySelector('#row_2_color');
             let buttonColorInput = document.querySelector('#button_color');
 
+            let row1CssInput = document.querySelector('[name="row_1_css"]');
+            let row2CssInput = document.querySelector('[name="row_2_css"]');
+            let buttonCssInput = document.querySelector('[name="button_css"]');
+
+
             // row 1
             const row1ColorButton = Pickr.create({
                 el: '#row_1_color_button',
                 theme: 'classic', // or 'monolith', or 'nano',
-                default: '#6571ff',
+                default: '{{ isset($slider) ? $slider->row_1_color : '' }}',
 
                 swatches: [
                     'rgba(244, 67, 54, 1)',
@@ -291,15 +308,17 @@
                 row1ColorInput.value = color.toHEXA().toString();
             });
 
-            var row_1_css = ace.edit("row_1_css");
-            row_1_css.setTheme("ace/theme/dracula");
-            row_1_css.getSession().setMode("ace/mode/scss");
-            row_1_css.setOption("showPrintMargin", false)
+            var row_1_css_editor = ace.edit("row_1_css");
+            row_1_css_editor.setTheme("ace/theme/dracula");
+            row_1_css_editor.getSession().setMode("ace/mode/scss");
+            row_1_css_editor.setOption("showPrintMargin", false)
 
+
+            // row 2
             const row2ColorButton = Pickr.create({
                 el: '#row_2_color_button',
                 theme: 'classic', // or 'monolith', or 'nano',
-                default: '#6571ff',
+                default: '{{ isset($slider) ? $slider->row_2_color : '' }}',
 
                 swatches: [
                     'rgba(244, 67, 54, 1)',
@@ -339,21 +358,20 @@
                 }
             });
 
-            // row 2
             row2ColorButton.on('save', (color, instance) => {
                 row2ColorInput.value = color.toHEXA().toString();
             });
 
-            var row_2_css = ace.edit("row_2_css");
-            row_2_css.setTheme("ace/theme/dracula");
-            row_2_css.getSession().setMode("ace/mode/scss");
-            row_2_css.setOption("showPrintMargin", false)
+            var row_2_css_editor = ace.edit("row_2_css");
+            row_2_css_editor.setTheme("ace/theme/dracula");
+            row_2_css_editor.getSession().setMode("ace/mode/scss");
+            row_2_css_editor.setOption("showPrintMargin", false)
 
             // button
             const buttonColorButton = Pickr.create({
                 el: '#button_text_color_button',
                 theme: 'classic', // or 'monolith', or 'nano',
-                default: '#6571ff',
+                default: '{{ isset($slider) ? $slider->button__color : '' }}',
 
                 swatches: [
                     'rgba(244, 67, 54, 1)',
@@ -397,10 +415,16 @@
                 buttonColorInput.value = color.toHEXA().toString();
             });
 
-            var button_css = ace.edit("button_css");
-            button_css.setTheme("ace/theme/dracula");
-            button_css.getSession().setMode("ace/mode/scss");
-            button_css.setOption("showPrintMargin", false)
+            var button_css_editor = ace.edit("button_css");
+            button_css_editor.setTheme("ace/theme/dracula");
+            button_css_editor.getSession().setMode("ace/mode/scss");
+            button_css_editor.setOption("showPrintMargin", false)
+
+            @isset($slider)
+                row_1_css_editor.setValue('{{ $slider->row_1_css }}');
+                row_2_css_editor.setValue('{{ $slider->row_2_css }}');
+                button_css_editor.setValue('{{ $slider->button_css }}');
+            @endisset
 
 
             // color picker - editor end
@@ -416,11 +440,26 @@
             let name = document.querySelector('#name');
 
             btnSubmit.addEventListener('click', () => {
-                if (name.value.trim().length < 1) {
-                    toastr.warning('Lutfen marka adini yaziniz!',
-                        'Uyari!');
+                row1CssInput.value = row_1_css_editor.getValue();
+                row2CssInput.value = row_2_css_editor.getValue();
+                buttonCssInput.value = button_css_editor.getValue();
+
+                let images = path.files;
+                if (!images.length) {
+                    toastr.warning('Slider icin gorsel secmediniz!', 'Uyari!');
                 } else {
-                    gdgForm.submit();
+                    let image = images[0];
+                    let validTypes = ['images/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+                    let maxSize = 2 * 1024 * 1024;
+
+                    if (!validTypes.includes(image.type)) {
+                        toastr.warning('Gorseliniz jpg, jpeg, png ya da webp turlerinde olmalidir!',
+                            'Uyari!');
+                    } else if (image.size > maxSize) {
+                        toastr.warning('Gorsel en fazla 2MB buyuklugunde olmalidir.!', 'Uyari!');
+                    } else {
+                        gdgForm.submit();
+                    }
                 }
             });
         });
