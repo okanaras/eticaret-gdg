@@ -32,6 +32,7 @@ class ProductMainService
             'category_id' => $data['category_id'],
             'brand_id' => $data['brand_id'],
             'type_id' => $data['type_id'],
+            'gender' => $data['gender'],
             'name' => $data['name'],
             'price' => $data['price'],
             'short_description' => $data['short_description'],

@@ -111,7 +111,20 @@
                                     value="{{ isset($product) ? $product->price : old('price') }}" required>
                             </div>
 
-                            <div class="col-md-4 mb-4">
+                            <div class="col-md-6 mb-4">
+                                <label for="gender" class="form-label">Cinsiyet <span class="text-danger">*</span></label>
+                                <select class="form-select" name="gender" id="gender" required>
+                                    <option selected='selected' value="-1">Cinsiyet Seciniz</option>
+                                    @foreach ($genders as $gender)
+                                        <option value="{{ $gender->value }}"
+                                            {{ (int) $gender->value === (isset($product) ? $product->gender : old('gender')) ? 'selected' : '' }}>
+                                            {{ getGender($gender) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
                                 <label for="type_id" class="form-label">Urun Turu <span
                                         class="text-danger">*</span></label>
                                 <select class="form-select" name="type_id" id="type_id" required>
@@ -125,7 +138,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-md-4 mb-4">
+                            <div class="col-md-6 mb-4">
                                 <label for="brand_id" class="form-label">Marka <span class="text-danger">*</span></label>
                                 <select class="form-select" name="brand_id" id="brand_id" required>
                                     <option selected='selected' value="-1">Marka Seciniz</option>
@@ -138,7 +151,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-md-4 mb-4">
+                            <div class="col-md-6 mb-4">
                                 <label for="category_id" class="form-label">Kategori <span
                                         class="text-danger">*</span></label>
                                 <select class="form-select" name="category_id" id="category_id" required>

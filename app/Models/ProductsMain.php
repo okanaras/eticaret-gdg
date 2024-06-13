@@ -17,11 +17,12 @@ class ProductsMain extends Model
         'category_id',
         'brand_id',
         'type_id',
+        'gender',
         'name',
         'price',
         'short_description',
         'description',
-        'status',
+        'status'
     ];
 
     public function category(): BelongsTo

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\GenderEnum;
 use App\Traits\GdgException;
 use Exception;
 use App\Models\Product;
@@ -38,10 +39,10 @@ class ProductController extends Controller
     {
         $categories = $this->categoryService->getAllCategories();
         $brands = $this->brandService->getAll();
-
         $types = ProductTypes::all();
+        $genders = GenderEnum::cases();
 
-        return view('admin.product.create_edit', compact('categories', 'brands', 'types'));
+        return view('admin.product.create_edit', compact('categories', 'brands', 'types', 'genders'));
     }
 
     public function store(ProductStoreRequest $request)
@@ -66,8 +67,9 @@ class ProductController extends Controller
     {
         $categories = $this->categoryService->getAllCategories();
         $brands = $this->brandService->getAll();
-
         $types = ProductTypes::all();
+        $genders = GenderEnum::cases();
+
 
         $product = $productsMain->load([
             'variants',
@@ -75,7 +77,7 @@ class ProductController extends Controller
             'variants.sizeStock',
         ])->toArray();
 
-        return view('admin.product.create_edit', compact('product', 'categories', 'brands', 'types'));
+        return view('admin.product.create_edit', compact('product', 'categories', 'brands', 'types', 'genders'));
     }
 
     public function update(ProductUpdateRequest $request, ProductsMain $productsMain)

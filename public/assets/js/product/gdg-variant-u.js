@@ -592,6 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let typeSelect = document.querySelector('#type_id');
         let brandSelect = document.querySelector('#brand_id');
         let categorySelect = document.querySelector('#category_id');
+        let genderSelect = document.querySelector('#gender');
 
         // nameInput bos veya null ise
         if (!nameInput.value.trim()) {
@@ -631,6 +632,14 @@ document.addEventListener('DOMContentLoaded', () => {
             categorySelect.classList.add('is-invalid')
         } else {
             categorySelect.classList.remove('is-invalid')
+        }
+
+        // genderSelect value -1 ise
+        if (genderSelect.value === '-1') {
+            isValid = false;
+            genderSelect.classList.add('is-invalid')
+        } else {
+            genderSelect.classList.remove('is-invalid')
         }
 
 
