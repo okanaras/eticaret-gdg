@@ -437,6 +437,7 @@
 
             let btnSubmit = document.querySelector('#btnSubmit');
             let gdgForm = document.querySelector('#gdgForm');
+            let path = document.querySelector('#path');
             let name = document.querySelector('#name');
 
             btnSubmit.addEventListener('click', () => {
@@ -445,9 +446,12 @@
                 buttonCssInput.value = button_css_editor.getValue();
 
                 let images = path.files;
-                if (!images.length) {
+
+                if (!name.value.length) {
+                    toastr.warning('Slider icin ad vermelisiniz!', 'Uyari!');
+                } else if (!images.length && !gdgForm.getAttribute('action').includes('edit')) {
                     toastr.warning('Slider icin gorsel secmediniz!', 'Uyari!');
-                } else {
+                } else if (images.length) {
                     let image = images[0];
                     let validTypes = ['images/jpeg', 'image/jpg', 'image/png', 'image/webp'];
                     let maxSize = 2 * 1024 * 1024;
@@ -460,6 +464,8 @@
                     } else {
                         gdgForm.submit();
                     }
+                } else {
+                    gdgForm.submit();
                 }
             });
         });

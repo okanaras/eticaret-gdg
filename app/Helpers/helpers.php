@@ -10,3 +10,12 @@ if (!function_exists('getGender')) {
         return $configText[$genderEnum->value] ?? 'Bulunamadi';
     }
 }
+
+if (!function_exists('pathEditor')) {
+    function pathEditor(string $path): string
+    {
+        $path = str_replace('storage', '', $path);
+
+        return 'public' . $path;
+    }
+}

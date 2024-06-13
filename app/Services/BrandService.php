@@ -44,6 +44,7 @@ class BrandService
 
         $logoPath = $this->uploadLogo($data['name']);
         if (!is_null($logoPath) || (is_null($logoPath) && is_null($this->brand->logo))) {
+            $this->deleteLogo();
             $data['logo'] = $logoPath;
         }
         $slug = $this->slugGenerate($data['name'], request()->slug);
@@ -118,20 +119,13 @@ class BrandService
         return $this->brand->delete();
     }
 
-    public function deleteLogo()
+    public function deleteLogo(): void
     {
         $logo = $this->brand->logo;
-        $path = is_null($logo) ? '' :  $this->pathEditor($logo);
+        $path = is_null($logo) ? '' :  pathEditor($logo);
 
         if (file_exists(storage_path('app/' . $path))) {
             $this->imageService->deleteImage($path);
         }
-    }
-
-    public function pathEditor(string $path): string
-    {
-        $path = str_replace('storage', '', $path);
-
-        return $path = 'public' . $path;
     }
 }

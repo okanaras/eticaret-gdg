@@ -56,16 +56,20 @@ class SlidersController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'path' => ['required', 'image', 'max:2048', 'mimes:jpg,jpeg,webp,png'],
+            'path' => ['nullable', 'sometimes', 'image', 'max:2048', 'mimes:jpg,jpeg,webp,png'],
             'order' => ['nullable', 'sometimes', 'integer']
         ]);
 
         try {
-            $this->sliderService->prepareData($request->all())->setSlider($slider)->update();
+            $this->sliderService
+                ->setSlider($slider)
+                ->prepareData($request->all())
+                ->update();
 
             toast('Slider guncellendi.', 'success');
             return redirect()->route('admin.slider.index');
         } catch (Throwable $th) {
+            dd($th->getMessage());
             return $this->exception($th, 'admin.slider.index', 'Slider guncellenemedi.');
         }
     }
