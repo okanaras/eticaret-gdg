@@ -115,7 +115,9 @@
                                 <label for="gender" class="form-label">Cinsiyet <span class="text-danger">*</span></label>
                                 <select class="form-select" name="gender" id="gender" required>
                                     <option selected='selected' value="-1">Cinsiyet Seciniz</option>
+                                    @php($genderFinal = [])
                                     @foreach ($genders as $gender)
+                                        @php($genderFinal[$gender->value] = $gender->name)
                                         <option value="{{ $gender->value }}"
                                             {{ (int) $gender->value === (isset($product) ? $product->gender : old('gender')) ? 'selected' : '' }}>
                                             {{ getGender($gender) }}
@@ -129,8 +131,10 @@
                                         class="text-danger">*</span></label>
                                 <select class="form-select" name="type_id" id="type_id" required>
                                     <option selected='selected' value="-1">Urun Turu Seciniz</option>
+                                    @php($productTypeSizeRange = [])
                                     @foreach ($types as $type)
-                                        <option value="{{ $type->id }}"
+                                        @php($productTypeSizeRange[$type->id] = explode(',', $type->size_range))
+                                        <option {{ $type->id == 4 ? 'is-child disabled' : '' }} value="{{ $type->id }}"
                                             {{ $type->id == (isset($product) ? $product->type_id : old('type_id')) ? 'selected' : '' }}>
                                             {{ $type->name }}
                                         </option>
@@ -218,6 +222,8 @@
     <script src="{{ asset('assets/js/axios/dist/axios.min.js') }}"></script>
     <script>
         var checkSlugRoute = "{{ route('admin.product.check-slug') }}";
+        var genderFinal = @json($genderFinal);
+        const sizes = @json($productTypeSizeRange);
 
         @if (isset($product))
             var productData = @json($product);

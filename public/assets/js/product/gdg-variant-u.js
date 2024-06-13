@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let addVariant = document.querySelector("#addVariant");
     let variants = document.querySelector("#variants");
     let typeID = document.querySelector("#type_id");
+    let gender = document.querySelector("#gender");
 
     let productVariantTab = document.querySelector("#productVariantTab"); // control
 
@@ -26,11 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     checkRequiredFieldForProductVariantTab();
 
-    const sizes = {
-        1: ["XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL", "5XL"],
-        2: Array.from({ length: 31 }, (_, i) => i + 20),
-        3: ["standart"]
-    };
+    // const sizes = {
+    //     1: ["XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL", "5XL"],
+    //     2: Array.from({ length: 31 }, (_, i) => i + 20),
+    //     3: ["standart"],
+    //     4: Array.from({ length: 22 }, (_, i) => 56 + i * 6),
+    // };
 
     /** Btn Submit **/
     btnSubmit.addEventListener('click', () => {
@@ -56,6 +58,18 @@ document.addEventListener('DOMContentLoaded', () => {
             toastr.info('Urun turu degisikligi sonrasi beden bilgilerini guncelleminiz gerekmektedir!', 'Uyari');
         }
         document.querySelectorAll(`[id^=${sizeDivKey}]`).forEach(div => div.innerHTML = "");
+    });
+
+    /** Cinsiyet bolumu degistiginde urun turu select option i disabled etme **/
+    gender.addEventListener("change", (event) => {
+        let element = event.target;
+        let childrenTypes = document.querySelectorAll('[is-child]');
+
+        if (element.value == 3 || element.value == 4) {
+            childrenTypes.forEach(element => element.disabled = false);
+        } else {
+            childrenTypes.forEach(element => element.disabled = true);
+        }
     });
 
     /** document body click actions **/

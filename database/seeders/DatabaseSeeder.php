@@ -2,12 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Database\Seeders\Brand\BrandSeeder;
 use Database\Seeders\Category\CategorySeeder;
-use Database\Seeders\RolePermissions\GeneralRolePermissionSeeder;
+use Database\Seeders\Products\ProductTypesSeeder;
 use Database\Seeders\User\UserInitializeUserSeeder;
+use Database\Seeders\RolePermissions\GeneralRolePermissionSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -26,9 +27,11 @@ class DatabaseSeeder extends Seeder
          */
 
         $this->call([
+            ProductTypesSeeder::class,
+            BrandSeeder::class,
+            CategorySeeder::class,
             GeneralRolePermissionSeeder::class,
             UserInitializeUserSeeder::class,
-            CategorySeeder::class,
         ]);
     }
 }
