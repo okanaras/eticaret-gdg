@@ -20,14 +20,14 @@
             </li>
             <li class="nav-item nav-category">Urun Yonetimi</li>
             <li
-                class="nav-item {{ Route::is('admin.brand.index') || Route::is('admin.brand.create') ? 'active' : '' }}">
+                class="nav-item {{ Route::is('admin.brand.index') || Route::is('admin.brand.create') || Route::is('admin.brand.edit') ? 'active' : '' }}">
                 <a class="nav-link" data-bs-toggle="collapse" href="#brands" role="button" aria-expanded="false"
                     aria-controls="brands">
                     <i class="link-icon" data-feather="bold"></i>
                     <span class="link-title">Marka Yonetimi</span>
                     <i class="link-arrow" data-feather="chevron-down"></i>
                 </a>
-                <div class="collapse {{ Route::is('admin.brand.index') || Route::is('admin.brand.create') ? 'show' : '' }}"
+                <div class="collapse {{ Route::is('admin.brand.index') || Route::is('admin.brand.create') || Route::is('admin.brand.edit') ? 'show' : '' }}"
                     id="brands">
                     <ul class="nav sub-menu">
                         <li class="nav-item">
@@ -36,20 +36,21 @@
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('admin.brand.create') }}"
-                                class="nav-link {{ Route::is('admin.brand.create') ? 'active' : '' }}">Marka Ekleme</a>
+                                class="nav-link {{ Route::is('admin.brand.create') || Route::is('admin.brand.edit') ? 'active' : '' }}">Marka
+                                Ekleme</a>
                         </li>
                     </ul>
                 </div>
             </li>
             <li
-                class="nav-item {{ Route::is('admin.category.index') || Route::is('admin.category.create') ? 'active' : '' }}">
+                class="nav-item {{ Route::is('admin.category.index') || Route::is('admin.category.create') || Route::is('admin.category.edit') ? 'active' : '' }}">
                 <a class="nav-link" data-bs-toggle="collapse" href="#categories" role="button" aria-expanded="false"
                     aria-controls="categories">
                     <i class="link-icon" data-feather="list"></i>
                     <span class="link-title">Kategori Yonetimi</span>
                     <i class="link-arrow" data-feather="chevron-down"></i>
                 </a>
-                <div class="collapse {{ Route::is('admin.category.index') || Route::is('admin.category.create') ? 'show' : '' }}"
+                <div class="collapse {{ Route::is('admin.category.index') || Route::is('admin.category.create') || Route::is('admin.category.edit') ? 'show' : '' }}"
                     id="categories">
                     <ul class="nav sub-menu">
                         <li class="nav-item">
@@ -59,21 +60,21 @@
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('admin.category.create') }}"
-                                class="nav-link {{ Route::is('admin.category.create') ? 'active' : '' }}">Kategori
+                                class="nav-link {{ Route::is('admin.category.create') || Route::is('admin.category.edit') ? 'active' : '' }}">Kategori
                                 Ekleme</a>
                         </li>
                     </ul>
                 </div>
             </li>
             <li
-                class="nav-item {{ Route::is('admin.product.index') || Route::is('admin.product.create') ? 'active' : '' }}">
+                class="nav-item {{ Route::is('admin.product.index') || Route::is('admin.product.create') || Route::is('admin.product.edit') ? 'active' : '' }}">
                 <a class="nav-link" data-bs-toggle="collapse" href="#products" role="button" aria-expanded="false"
                     aria-controls="products">
                     <i class="link-icon" data-feather="list"></i>
                     <span class="link-title">Urun Yonetimi</span>
                     <i class="link-arrow" data-feather="chevron-down"></i>
                 </a>
-                <div class="collapse {{ Route::is('admin.product.index') || Route::is('admin.product.create') ? 'show' : '' }}"
+                <div class="collapse {{ Route::is('admin.product.index') || Route::is('admin.product.create') || Route::is('admin.product.edit') ? 'show' : '' }}"
                     id="products">
                     <ul class="nav sub-menu">
                         <li class="nav-item">
@@ -83,7 +84,7 @@
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('admin.product.create') }}"
-                                class="nav-link {{ Route::is('admin.product.create') ? 'active' : '' }}">Urun
+                                class="nav-link {{ Route::is('admin.product.create') || Route::is('admin.product.edit') ? 'active' : '' }}">Urun
                                 Ekleme</a>
                         </li>
                     </ul>

@@ -11,7 +11,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class BrandService
 {
     private array $prepareData = [];
-    public function __construct(public Brand $brand, public ImageService $imageService)
+
+    public function __construct(public Brand $brand, public ImageService $imageService, public FilterService $filterService)
     {
     }
 
@@ -24,9 +25,82 @@ class BrandService
     {
         return $this->brand::orderBy($orderBy[0], $orderBy[1])->paginate($page);
     }
+
     public function getAll($orderBy = ['order', 'DESC'])
     {
         return $this->brand::orderBy($orderBy[0], $orderBy[1])->get();
+    }
+
+    public function getBrands(int $perPage = 0)
+    {
+        $query = $this->brand::query();
+        $filters = $this->getFilters();
+        $query = $this->filterService->applyFilters($query, $filters);
+        if ($perPage) {
+            return $this->filterService->paginate($query, $perPage);
+        }
+        return $query->get();
+    }
+
+    public function getFilters(): array
+    {
+        return [
+            'order' => [
+                'label' => 'Sira Numarasi',
+                'type' => 'number',
+                'column' => 'order',
+                'operator' => '=',
+            ],
+            'name' => [
+                'label' => 'Marka Adi',
+                'type' => 'text',
+                'column' => 'name',
+                'operator' => 'like',
+            ],
+            'slug' => [
+                'label' => 'Slug',
+                'type' => 'text',
+                'column' => 'slug',
+                'operator' => 'like',
+            ],
+            'status' => [
+                'label' => 'Durum',
+                'type' => 'select',
+                'column' => 'status',
+                'operator' => '=',
+                'options' => ['all' => 'Tumu', 'Pasif', 'Aktif'],
+            ],
+            'is_featured' => [
+                'label' => 'One Cikarilma Durumu',
+                'type' => 'select',
+                'column' => 'is_featured',
+                'operator' => '=',
+                'options' => ['all' => 'Tumu', 'Hayir', 'Evet'],
+            ],
+            'order_by' => [
+                'label' => 'Siralama Turu',
+                'type' => 'select',
+                'column' => 'order_by',
+                'operator' => '',
+                'options' => [
+                    'id' => 'ID',
+                    'order' => 'Sira Numarasi',
+                    'name' => 'Marka Adi',
+                    'status' => 'Durum',
+                    'is_featured' => 'One Cikarilma Durumu',
+                ],
+            ],
+            'order_direction' => [
+                'label' => 'Siralama Yonu',
+                'type' => 'select',
+                'column' => 'order_direction',
+                'operator' => '',
+                'options' => [
+                    'asc' => 'A-Z',
+                    'desc' => 'Z-A',
+                ],
+            ],
+        ];
     }
 
     public function create(array $data = null)
@@ -119,7 +193,7 @@ class BrandService
         return $this->brand->delete();
     }
 
-    public function deleteLogo(): void
+    public function deleteLogo()
     {
         $logo = $this->brand->logo;
         $path = is_null($logo) ? '' :  pathEditor($logo);

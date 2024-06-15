@@ -19,14 +19,17 @@ use App\Http\Requests\BrandUpdateRequest;
 class BrandController extends Controller
 {
     use GdgException;
+
     public function __construct(public BrandService $brandService)
     {
     }
 
     public function index()
     {
-        $brands = $this->brandService->getAllPaginate();
-        return view('admin.brand.index', compact('brands'));
+        $brands = $this->brandService->getBrands(10);
+        $filters = $this->brandService->getFilters();
+
+        return view('admin.brand.index', compact('brands', 'filters'));
     }
 
     public function create()

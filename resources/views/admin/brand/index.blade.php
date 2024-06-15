@@ -5,6 +5,22 @@
 
 
 @push('css')
+    <style>
+        .size-14 {
+            width: 16px;
+            height: 16px;
+            margin-left: 1px;
+        }
+
+        th {
+            cursor: pointer;
+        }
+
+        .order-by:hover {
+            color: #6571ffd9;
+            font-weight: bolder;
+        }
+    </style>
 @endpush
 
 
@@ -12,17 +28,61 @@
     <div class="card">
         <div class="card-body">
             <h6 class="card-title">Marka Listesi</h6>
+            <x-filter-form :filters="$filters" action="{{ route('admin.brand.index') }}" />
+
             <div class="table-responsive pt-3">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th @class([
+                                'order-by',
+                                'text-primary fw-bolder' =>
+                                    request('order_by') == 'id' || is_null(request('order_by')),
+                            ]) data-order="id">#
+                                {!! (request('order_by') == 'id' && request('order_direction') === 'asc') || request('order_by') == null
+                                    ? '<i class="size-14" data-feather="arrow-down-circle"></i>'
+                                    : (request('order_by') == 'id' && request('order_direction') === 'desc'
+                                        ? '<i class="size-14" data-feather="arrow-up-circle"></i>'
+                                        : '') !!}
+                            </th>
                             <th>Logo</th>
-                            <th>Sira Numarasi</th>
-                            <th>Marka Adi</th>
+                            <th @class([
+                                'order-by',
+                                'text-primary fw-bolder' => request('order_by') == 'order',
+                            ]) data-order="order">Sira Numarasi
+                                {!! request('order_by') == 'order' && request('order_direction') === 'asc'
+                                    ? '<i class="size-14" data-feather="arrow-down-circle"></i>'
+                                    : (request('order_by') == 'order' && request('order_direction') === 'desc'
+                                        ? '<i class="size-14" data-feather="arrow-up-circle"></i>'
+                                        : '') !!}</th>
+                            <th @class([
+                                'order-by',
+                                'text-primary fw-bolder' => request('order_by') == 'name',
+                            ]) data-order="name">Marka Adi
+                                {!! request('order_by') == 'name' && request('order_direction') === 'asc'
+                                    ? '<i class="size-14" data-feather="arrow-down-circle"></i>'
+                                    : (request('order_by') == 'name' && request('order_direction') === 'desc'
+                                        ? '<i class="size-14" data-feather="arrow-up-circle"></i>'
+                                        : '') !!}</th>
                             <th>Slug</th>
-                            <th>Durum</th>
-                            <th>One Cikarilma Durumu</th>
+                            <th @class([
+                                'order-by',
+                                'text-primary fw-bolder' => request('order_by') == 'status',
+                            ]) data-order="status">Durum
+                                {!! request('order_by') == 'status' && request('order_direction') === 'asc'
+                                    ? '<i class="size-14" data-feather="arrow-down-circle"></i>'
+                                    : (request('order_by') == 'status' && request('order_direction') === 'desc'
+                                        ? '<i class="size-14" data-feather="arrow-up-circle"></i>'
+                                        : '') !!}</th>
+                            <th @class([
+                                'order-by',
+                                'text-primary fw-bolder' => request('order_by') == 'is_featured',
+                            ]) data-order="is_featured">One Cikarilma Durumu
+                                {!! request('order_by') == 'is_featured' && request('order_direction') === 'asc'
+                                    ? '<i class="size-14" data-feather="arrow-down-circle"></i>'
+                                    : (request('order_by') == 'is_featured' && request('order_direction') === 'desc'
+                                        ? '<i class="size-14" data-feather="arrow-up-circle"></i>'
+                                        : '') !!}</th>
                             <th>Islemler</th>
                         </tr>
                     </thead>
@@ -83,6 +143,9 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             let deleteForm = document.querySelector('#deleteForm');
+            let defaultOrderDirection = "{{ request('order_direction') }}";
+
+            feather.replace();
 
             document.querySelector('.table').addEventListener('click', (event) => {
                 let element = event.target;
@@ -234,7 +297,50 @@
                     });
 
                 }
+
+                if (element.classList.contains('order-by')) {
+                    let dataOrder = element.getAttribute('data-order');
+                    let orderByElement = document.querySelector('#order_by');
+                    let orderDirectionElement = document.querySelector('#order_direction');
+                    let filterForm = document.querySelector('#filter-form');
+
+                    orderByElement.value = dataOrder;
+                    removeIElements();
+
+                    if (defaultOrderDirection === '' || defaultOrderDirection === null ||
+                        defaultOrderDirection === undefined) {
+                        defaultOrderDirection = 'desc';
+
+                        let iElement = document.createElement('i');
+                        iElement.setAttribute('data-feather', 'arrow-up-circle');
+                        iElement.classList.add('size-14');
+                        element.appendChild(iElement);
+
+                    } else if (defaultOrderDirection === 'asc') {
+                        defaultOrderDirection = 'desc';
+                        let iElement = document.createElement('i');
+                        iElement.setAttribute('data-feather', 'arrow-up-circle');
+                        iElement.classList.add('size-14');
+                        element.appendChild(iElement);
+                    } else {
+                        defaultOrderDirection = 'asc';
+                        let iElement = document.createElement('i');
+                        iElement.setAttribute('data-feather', 'arrow-down-circle');
+                        iElement.classList.add('size-14');
+                        element.appendChild(iElement);
+                    }
+
+                    orderDirectionElement.value = defaultOrderDirection;
+                    feather.replace();
+                    filterForm.submit();
+
+                }
             });
+
+            function removeIElements() {
+                let findIElement = document.querySelectorAll('th svg');
+                findIElement.forEach(i => i.remove());
+            }
         });
     </script>
 @endpush
