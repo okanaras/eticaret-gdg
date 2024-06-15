@@ -32,7 +32,8 @@ class CategoryController extends Controller
     {
         // $categories = Category::orderBy('id', 'DESC')->paginate(10);
 
-        $categories = $this->categoryService->getAllCategoriesPaginate(orderBy: ['name', 'ASC']);
+        $categories = $this->categoryService->getCategories(10);
+        $filters = $this->categoryService->getFilters();
 
         /**
          * constructeer olusturmadan tek seferlik asagidaki gibi service i kullanabiliriz
@@ -40,7 +41,7 @@ class CategoryController extends Controller
          * $categoryService = new CategoryService(new Category());
          * $categoryService = App::make(CategoryService::class);
          */
-        return view('admin.category.index', compact('categories'));
+        return view('admin.category.index', compact('categories', 'filters'));
     }
 
     /**

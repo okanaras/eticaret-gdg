@@ -12,7 +12,7 @@ class CategoryService
 {
     private array $prepareData = [];
 
-    public function __construct(public Category $category)
+    public function __construct(public Category $category, public FilterService $filterService)
     {
     }
 
@@ -31,6 +31,82 @@ class CategoryService
     {
         return $this->category::orderBy($orderBy[0], $orderBy[1])->paginate($page);
     }
+
+    public function getCategories(int $perPage = 0)
+    {
+        $query = $this->category::query()->with('parentCategory');
+        $filters = $this->getFilters();
+        $query = $this->filterService->applyFilters($query, $filters);
+        if ($perPage) {
+            return $this->filterService->paginate($query, $perPage);
+        }
+        return $query->get();
+    }
+
+    public function getFilters(): array
+    {
+        $categories = $this->category->all()->pluck('name', 'id')->toArray();
+        $categories = ['all' => 'Tumu'] + $categories;
+
+        return [
+            'name' => [
+                'label' => 'Kategori Adi',
+                'type' => 'text',
+                'column' => 'name',
+                'operator' => 'like',
+            ],
+            'short_description' => [
+                'label' => 'Kisa Aciklama',
+                'type' => 'text',
+                'column' => 'short_description',
+                'operator' => 'like',
+            ],
+            'description' => [
+                'label' => 'Aciklama',
+                'type' => 'text',
+                'column' => 'description',
+                'operator' => 'like',
+            ],
+            'parent_id' => [
+                'label' => 'Ust Kategori',
+                'type' => 'select',
+                'column' => 'parent_id',
+                'operator' => '=',
+                'options' => $categories,
+            ],
+            'status' => [
+                'label' => 'Durum',
+                'type' => 'select',
+                'column' => 'status',
+                'operator' => '=',
+                'options' => ['all' => 'Tumu', 'Pasif', 'Aktif'],
+            ],
+            'order_by' => [
+                'label' => 'Siralama Turu',
+                'type' => 'select',
+                'column' => 'order_by',
+                'operator' => '',
+                'options' => [
+                    'id' => 'ID',
+                    'name' => 'Marka Adi',
+                    'status' => 'Durum',
+                    'parent_id' => 'Ust Kategori',
+                    'is_featured' => 'One Cikarilma Durumu',
+                ],
+            ],
+            'order_direction' => [
+                'label' => 'Siralama Yonu',
+                'type' => 'select',
+                'column' => 'order_direction',
+                'operator' => '',
+                'options' => [
+                    'asc' => 'A-Z',
+                    'desc' => 'Z-A',
+                ],
+            ],
+        ];
+    }
+
 
     public function prepareDataRequest(): self
     {

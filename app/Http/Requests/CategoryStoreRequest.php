@@ -25,7 +25,7 @@ class CategoryStoreRequest extends FormRequest
         return [
             'name' => ['required', 'min:2', 'max:255'],
             'short_description' => ['sometimes', 'nullable', 'max:63'], // sometimes ve nullable ile bazen gelebiliri ekleyip idger kosullari kontrol edebiliriz.
-            'description' => ['sometimes', 'nullable', 'max:255'],
+            'description' => ['sometimes', 'nullable'],
             'slug' => ['sometimes', 'nullable', 'max:255', 'unique:categories,slug'],
         ];
     }

@@ -130,7 +130,8 @@
                 </form>
 
                 <div class="col-6 mx-auto mt-3">
-                    {{ $brands->links() }}
+                    {{-- {{ $brands->appends(request()->query())->links() }} --}}
+                    {{ $brands->WithQueryString()->links() }}
                 </div>
             </div>
         </div>

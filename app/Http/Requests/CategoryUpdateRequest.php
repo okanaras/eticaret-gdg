@@ -26,7 +26,7 @@ class CategoryUpdateRequest extends FormRequest
         return [
             'name' => ['required', 'min:2', 'max:255'],
             'short_description' => ['sometimes', 'nullable', 'max:63'],
-            'description' => ['sometimes', 'nullable', 'max:255'],
+            'description' => ['sometimes', 'nullable'],
             'slug' => ['sometimes', 'nullable', 'max:255', 'unique:categories,slug, ' . $this->category->id], // kullani eger ki editte slug degistirmediyse buradaki unique kontrolune takilir bu yuzden en sonda this category id ekledik
         ];
     }
