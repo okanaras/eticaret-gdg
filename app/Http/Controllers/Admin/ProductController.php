@@ -30,9 +30,16 @@ class ProductController extends Controller
     }
     public function index()
     {
-        $productsMain = ProductsMain::all();
+        $products = $this->productService->getProducts(10);
+        $filters = $this->productService->getFilters();
 
-        return view('admin.product.index')->with('products', $productsMain);
+        return view('admin.product.index')->with('products', $products)->with('filters', $filters);
+    }
+
+    public function search(Request $request)
+    {
+        $products = $this->productService->getProducts(10);
+        return $products;
     }
 
     public function create()

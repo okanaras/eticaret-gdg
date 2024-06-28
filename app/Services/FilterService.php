@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Http\Request;
+use Throwable;
 
 class FilterService
 {
@@ -20,13 +21,18 @@ class FilterService
                 $filterKey != 'order_direction'
             ) {
                 $requestValue = $filterValue['operator'] == 'like' ? '%' . $this->request->$filterKey . '%' : $this->request->$filterKey;
-                $query = $query->where($filterValue['column'], $filterValue['operator'], $requestValue);
-            }
-
-            if ($this->request->filled('order_by') && $this->request->filled('order_direction')) {
-                $query->orderBy($this->request->order_by, $this->request->order_direction);
+                if (isset($filterValue['table'])) {
+                    $query = $query->where($filterValue['table'] . '.' . $filterValue['column_live'], $filterValue['operator'], $requestValue);
+                } else {
+                    $query = $query->where($filterValue['column'], $filterValue['operator'], $requestValue);
+                }
             }
         }
+
+        if ($this->request->filled('order_by') && $this->request->filled('order_direction')) {
+            $query->orderBy($this->request->order_by, $this->request->order_direction);
+        }
+
         return $query;
     }
 

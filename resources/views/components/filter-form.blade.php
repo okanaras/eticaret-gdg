@@ -1,7 +1,7 @@
 <form action="{{ $action }}" method="GET" id="filter-form">
     <div class="row">
         @foreach ($filters as $filter)
-            <div class="col mb-3">
+            <div class="{{ isset($customClass) ? $customClass : 'col' }} mb-3">
                 <label for="{{ $filter['column'] }}" class="form-label">{{ $filter['label'] }}</label>
                 @if ($filter['type'] == 'text')
                     <input type="text" class="form-control" id="{{ $filter['column'] }}" autocomplete="off"
