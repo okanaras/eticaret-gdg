@@ -5,6 +5,16 @@
 
 
 @push('css')
+    <style>
+        #filter-form {
+            height: 80px;
+            max-height: 440px;
+            min-height: 80px;
+            overflow: hidden;
+            transition: height 1s ease;
+            resize: vertical;
+        }
+    </style>
 @endpush
 
 
@@ -13,6 +23,14 @@
         <div class="card-body">
             <h6 class="card-title">Urun Listesi</h6>
             <x-filter-form :filters="$filters" action="" customClass="col-md-3" />
+
+            <div class="row justify-content-end mt-3">
+                <div class="col-md-4">
+                    <a href="javascript:void(0)" id="showFilter" class="btn btn-info float-end"
+                        title="Tum Filtreleri Goster">Filtreleri
+                        Goster</a>
+                </div>
+            </div>
 
             <div class="table-responsive pt-3">
                 <table class="table table-bordered">
@@ -75,6 +93,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             let deleteForm = document.querySelector('#deleteForm');
+            const showFilter = document.querySelector('#showFilter');
+
 
             document.querySelector('.table').addEventListener('click', (event) => {
                 let element = event.target;
@@ -167,6 +187,15 @@
 
                 }
 
+            });
+
+            showFilter.addEventListener('click', () => {
+                const filterForm = document.querySelector('#filter-form');
+                if (filterForm.offsetHeight < 440) {
+                    filterForm.style.height = '440px';
+                } else {
+                    filterForm.style.height = '80px';
+                }
             });
         });
 
