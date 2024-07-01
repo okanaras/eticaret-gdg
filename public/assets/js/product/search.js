@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     let currentPage = 1;
-    let currentSortColumn = 'id';
+    let defaultOrderDirection = document.querySelector('#order_direction').value;
+    let oldSortColumn = 'products_main.id';
     let currentSortDirection = 'asc';
 
     let inputs = document.querySelectorAll('#filter-form input, #filter-form select');
@@ -10,8 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
         input.addEventListener('input', inputChange);
     });
 
-    function inputChange(event) {
-        let filterForm = document.querySelector('#filter-form');
+    function inputChange() {
         let inputs = document.querySelectorAll('#filter-form input, #filter-form select');
 
         let formData = {};
@@ -19,12 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
             formData[input.getAttribute('name')] = input.value;
         });
 
-        let element = event.target;
-        // let elementType = element.tagName.toLowerCase();
-        // let elementVal = element.val;
-
         let queryString = new URLSearchParams(formData).toString();
-
         let newRoute = `${searchRoute}/?${queryString}`;
 
         fetch(newRoute)
@@ -44,9 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <td>${product.id}</td>
             <td>${product.name}</td>
             <td>${product.price}</td>
-            <td>${product.category.name}</td>
-            <td>${product.brand.name}</td>
-            <td>${product.type.name}</td>
+            <td>${product.cname}</td>
+            <td>${product.bname}</td>
+            <td>${product.typename}</td>
             <td>${product.status ?
                     `<a href="javascript:void(0)" class="btn btn-inverse-success btn-change-status" data-id="${product.id}" data-name="${product.name}">Aktif</a>` :
                     `<a href="javascript:void(0)" class="btn btn-inverse-danger btn-change-status" data-id="${product.id}" data-name="${product.name}">Pasif</a>`
@@ -64,4 +59,69 @@ document.addEventListener('DOMContentLoaded', () => {
             feather.replace();
         });
     }
+
+    document.querySelector('.table').addEventListener('click', (event) => {
+        let element = event.target;
+
+        if (element.classList.contains('order-by')) {
+            let dataOrder = element.getAttribute('data-order');
+            let orderByElement = document.querySelector('#order_by');
+            let orderDirectionElement = document.querySelector('#order_direction');
+
+            orderByElement.value = dataOrder;
+            removeIElements();
+
+            defaultOrderDirection = orderDirectionElement.value;
+
+            if (oldSortColumn === dataOrder && defaultOrderDirection === 'asc') {
+                defaultOrderDirection = 'desc';
+                let iElement = document.createElement('i');
+                iElement.setAttribute('data-feather', 'arrow-up-circle');
+                iElement.classList.add('size-14');
+                element.appendChild(iElement);
+            } else {
+                defaultOrderDirection = 'asc';
+                let iElement = document.createElement('i');
+                iElement.setAttribute('data-feather', 'arrow-down-circle');
+                iElement.classList.add('size-14');
+                element.appendChild(iElement);
+            }
+
+
+
+            // if (defaultOrderDirection === '' || defaultOrderDirection === null ||
+            //     defaultOrderDirection === undefined) {
+            //     defaultOrderDirection = 'desc';
+
+            //     let iElement = document.createElement('i');
+            //     iElement.setAttribute('data-feather', 'arrow-up-circle');
+            //     iElement.classList.add('size-14');
+            //     element.appendChild(iElement);
+
+            // } else if (defaultOrderDirection === 'asc') {
+            //     defaultOrderDirection = 'desc';
+            //     let iElement = document.createElement('i');
+            //     iElement.setAttribute('data-feather', 'arrow-up-circle');
+            //     iElement.classList.add('size-14');
+            //     element.appendChild(iElement);
+            // } else {
+            //     defaultOrderDirection = 'asc';
+            //     let iElement = document.createElement('i');
+            //     iElement.setAttribute('data-feather', 'arrow-down-circle');
+            //     iElement.classList.add('size-14');
+            //     element.appendChild(iElement);
+            // }
+
+            orderDirectionElement.value = defaultOrderDirection;
+            feather.replace();
+            inputChange();
+            oldSortColumn = dataOrder;
+        }
+
+        function removeIElements() {
+            let findIElement = document.querySelectorAll('th svg');
+            findIElement.forEach(i => i.remove());
+        }
+
+    });
 });

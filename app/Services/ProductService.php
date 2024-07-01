@@ -52,7 +52,7 @@ class ProductService
 
         return [
             'name' => [
-                'label' => 'Marka Adi',
+                'label' => 'Urun Adi',
                 'type' => 'text',
                 'column' => 'name',
                 'column_live' => 'name',
@@ -175,7 +175,11 @@ class ProductService
                 'operator' => '',
                 'options' => [
                     'products_main.id' => 'ID',
-                    'products_main.name' => 'Marka Adi',
+                    'products_main.name' => 'Urun Adi',
+                    'categories.name' => 'Kategori',
+                    'brands.name' => 'Marka',
+                    'product_types.name' => 'Urun Turu',
+                    'products_main.status' => 'Durum',
                 ],
             ],
             'order_direction' => [

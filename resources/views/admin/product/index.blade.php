@@ -8,11 +8,26 @@
     <style>
         #filter-form {
             height: 80px;
-            max-height: 440px;
+            max-height: max-content;
             min-height: 80px;
             overflow: hidden;
-            transition: height 1s ease;
+            transition: all 1s ease;
             resize: vertical;
+        }
+
+        .size-14 {
+            width: 16px;
+            height: 16px;
+            margin-left: 1px;
+        }
+
+        th {
+            cursor: pointer;
+        }
+
+        .order-by:hover {
+            color: #6571ffd9;
+            font-weight: bolder;
         }
     </style>
 @endpush
@@ -36,13 +51,13 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Ad</th>
+                            <th class="order-by" data-order="products_main.id">#</th>
+                            <th class="order-by" data-order="products_main.name">Ad</th>
                             <th>Fiyat</th>
-                            <th>Kategori</th>
-                            <th>Marka</th>
-                            <th>Urun Turu</th>
-                            <th>Durum</th>
+                            <th class="order-by" data-order="categories.name">Kategori</th>
+                            <th class="order-by" data-order="brands.name">Marka</th>
+                            <th class="order-by" data-order="products_main.type_id">Urun Turu</th>
+                            <th class="order-by" data-order="staus">Durum</th>
                             <th>Islemler</th>
                         </tr>
                     </thead>
@@ -52,9 +67,9 @@
                                 <td>{{ $product->id }}</td>
                                 <td>{{ $product->name }}</td>
                                 <td>{{ number_format($product->price, 2) }}</td>
-                                <td>{{ $product->category->name }}</td>
-                                <td>{{ $product->brand->name }}</td>
-                                <td>{{ $product->type->name }}</td>
+                                <td>{{ $product->cname }}</td>
+                                <td>{{ $product->bname }}</td>
+                                <td>{{ $product->typename }}</td>
                                 <td>
                                     @if ($product->status)
                                         <a href="javascript:void(0)" class="btn btn-inverse-success btn-change-status"
@@ -94,7 +109,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             let deleteForm = document.querySelector('#deleteForm');
             const showFilter = document.querySelector('#showFilter');
-
 
             document.querySelector('.table').addEventListener('click', (event) => {
                 let element = event.target;
@@ -186,17 +200,19 @@
                     });
 
                 }
-
             });
 
             showFilter.addEventListener('click', () => {
                 const filterForm = document.querySelector('#filter-form');
-                if (filterForm.offsetHeight < 440) {
-                    filterForm.style.height = '440px';
+
+                if (filterForm.offsetHeight < filterForm.scrollHeight) {
+                    filterForm.style.height = `${filterForm.scrollHeight}px`;
                 } else {
                     filterForm.style.height = '80px';
                 }
             });
+
+
         });
 
         var searchRoute = "{{ route('admin.product.search') }}";
