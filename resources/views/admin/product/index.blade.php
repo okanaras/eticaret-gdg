@@ -37,7 +37,7 @@
     <div class="card">
         <div class="card-body">
             <h6 class="card-title">Urun Listesi</h6>
-            <x-filter-form :filters="$filters" action="" customClass="col-md-3" />
+            <x-filter-form :filters="$filters" action="" customClass="col-md-3" :disableButton="true" />
 
             <div class="row justify-content-end mt-3">
                 <div class="col-md-4">
@@ -62,32 +62,6 @@
                         </tr>
                     </thead>
                     <tbody id="list-body">
-                        @foreach ($products as $product)
-                            <tr>
-                                <td>{{ $product->id }}</td>
-                                <td>{{ $product->name }}</td>
-                                <td>{{ number_format($product->price, 2) }}</td>
-                                <td>{{ $product->cname }}</td>
-                                <td>{{ $product->bname }}</td>
-                                <td>{{ $product->typename }}</td>
-                                <td>
-                                    @if ($product->status)
-                                        <a href="javascript:void(0)" class="btn btn-inverse-success btn-change-status"
-                                            data-id="{{ $product->id }}" data-name="{{ $product->name }}">Aktif</a>
-                                    @else
-                                        <a href="javascript:void(0)" class="btn btn-inverse-danger btn-change-status"
-                                            data-id="{{ $product->id }}" data-name="{{ $product->name }}">Pasif</a>
-                                    @endif
-                                </td>
-                                <td>
-                                    <a href="{{ route('admin.product.edit', ['products_main' => $product->id]) }}"><i
-                                            data-feather="edit" class="text-warning"></i></a>
-                                    <a href="javascript:void(0)"><i data-feather="trash"
-                                            class="text-danger btn-delete-product" data-id="{{ $product->id }}"
-                                            data-name="{{ $product->name }}"></i></a>
-                                </td>
-                            </tr>
-                        @endforeach
                     </tbody>
                 </table>
                 <form action="" method="POST" id="deleteForm">
@@ -96,7 +70,19 @@
                 </form>
 
                 <div class="col-6 mx-auto mt-3">
-                    {{-- {{ $brands->links() }} --}}
+
+                    <nav class="d-flex justify-items-center justify-content-between">
+                        <div class="d-flex justify-content-between flex-fill d-sm-none">
+                            <ul class="pagination">
+                            </ul>
+                        </div>
+                        <div class="d-none flex-sm-fill d-sm-flex align-items-sm-center justify-content-sm-between">
+                            <div>
+                                <ul class="pagination">
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
                 </div>
             </div>
         </div>
@@ -217,6 +203,7 @@
 
         var searchRoute = "{{ route('admin.product.search') }}";
         var editRoute = "{{ route('admin.product.edit', ['products_main' => ':main_id_val']) }}";
+        var currentPage = "{{ request()->input('page', 1) }}"; // input if else gibi varsa ilkini, yoksa default al
     </script>
     <script src="{{ asset('assets/js/product/search.js') }}"></script>
 @endpush
