@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class ProductService
 {
     private array $preparedData = [];
+
     public function __construct(public Product $product)
     {
     }
@@ -23,6 +24,11 @@ class ProductService
     public function update(): bool
     {
         return $this->product->update($this->preparedData);
+    }
+
+    public function destroy(array $ids): int
+    {
+        return $this->product::destroy($ids);
     }
 
     public function setProduct(Product $product): self
@@ -60,6 +66,7 @@ class ProductService
     {
         return Str::slug($slug);
     }
+
     private function calculateFinalPrice(ProductsMain $productsMain, float $additionalPrice): string
     {
         $finalPrice = $productsMain->price + $additionalPrice;

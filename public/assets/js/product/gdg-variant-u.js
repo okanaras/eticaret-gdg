@@ -320,9 +320,9 @@ document.addEventListener('DOMContentLoaded', () => {
             { selector: '[id^="sizeStockDeleteGeneral-"]', attr: 'id', prefix: 'sizeStockDeleteGeneral-', special: true },
             { selector: '[for^="radio-"]', attr: 'for', prefix: 'radio-', special: true },
             { selector: '[id^="radio-"]', attr: 'id', prefix: 'radio-', name: true, special: true },
-            { selector: '[id^="data-input-"]', attr: 'id', prefix: 'data-input-', name: 'image' },
+            { selector: '[id^="data-input-"]', attr: 'id', prefix: 'data-input-', special: true },
             { selector: '[id^="sizeStockDelete-"]', attr: 'data-size-stock-id', prefix: 'sizeStockDelete-', special: true },
-            { selector: '[id^="variant-index-"]', attr: 'id', prefix: 'variant-index-', name: true },
+            { selector: '[id^="variant-index-"]', attr: 'name', prefix: 'variant-index-', name: 'variant_index', special: true },
         ];
 
         allVariants.forEach((variant, index) => {
@@ -351,12 +351,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else if (special && selector === '[id^="radio-"]') {
                         let [_, __, imageID] = element.getAttribute(attr).split('-');
                         element.id = `${prefix}${index}-${imageID}`;
-                        element.setAttribute('name', `variant[${index}][radio]`);
+                        element.setAttribute('name', `variant[${index}][featured_image]`);
                     }
                     else if (special && selector === '[id^="sizeStockDelete-"]') {
                         let [_, size] = element.getAttribute(attr).split('-');
                         element.id = `${prefix}${index}-${size}`;
                         element.setAttribute(attr, `${index}-${size}`);
+                    } else if (special && selector === '[id^="data-input-"]') {
+                        element.id = `${prefix}${index}`;
+                        element.name = `variant[${index}][image]`;
+                    }
+                    else if (special && selector === '[id^="variant-index-"]') {
+                        element.id = `${prefix}${index}`;
+                        element.setAttribute(attr, `variant[${index}][${name}]`);
                     } else {
                         element.setAttribute(attr, `${prefix}${index}`);
 

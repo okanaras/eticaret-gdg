@@ -134,7 +134,8 @@
                                     @php($productTypeSizeRange = [])
                                     @foreach ($types as $type)
                                         @php($productTypeSizeRange[$type->id] = explode(',', $type->size_range))
-                                        <option {{ $type->id == 4 ? 'is-child disabled' : '' }} value="{{ $type->id }}"
+                                        <option value="{{ $type->id }}"
+                                            {{ $type->id == 4 ? (isset($isGenderDisabled) && $isGenderDisabled ? '' : 'is-child disabled') : '' }}
                                             {{ $type->id == (isset($product) ? $product->type_id : old('type_id')) ? 'selected' : '' }}>
                                             {{ $type->name }}
                                         </option>

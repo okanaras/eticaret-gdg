@@ -290,6 +290,8 @@ class ProductService
 
     public function updateVariants(Request $request, ProductsMain $productsMain): void
     {
+        $this->diffVariantUpdateIds($request, $productsMain);
+
         $data = $request->all();
         foreach ($data['variant'] as $variant) {
             if (isset($variant['variant_index'])) {
@@ -305,5 +307,15 @@ class ProductService
                 $this->storeSizeStock($variant, $product->id);
             }
         }
+    }
+
+    public function diffVariantUpdateIds(Request $request, ProductsMain $productsMain): void
+    {
+        // $requestVariantIds = collect($request->variant)->pluck('variant_index'); // collection a cevirip pluck ile de alinabilinir
+        $requestVariantIds = array_column($request->variant, 'variant_index'); // array colonu olarak ta cekilebilinir.
+        $dbVariantIds = $productsMain->variants->pluck('id')->toArray();
+        $diffVariantIds = array_diff($dbVariantIds, $requestVariantIds);
+
+        $this->productService->destroy($diffVariantIds);
     }
 }
