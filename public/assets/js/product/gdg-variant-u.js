@@ -82,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (findDeleteVariantElement) {
                 findDeleteVariantElement.remove();
+                variantSizeStockInfo.splice(variantID, 1);
                 updateVariantIndexes();
             }
         }
@@ -213,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (isEdit) {
-            var variantIDElement = createInput('', '', '', `variant[${variantCount}][variant_index]`, 'hidden', variant.id);
+            var variantIDElement = createInput('', `variant-index-${variantCount}`, '', `variant[${variantCount}][variant_index]`, 'hidden', variant.id);
             row.appendChild(variantIDElement);
         } else {
             console.log(variant, 'isEdit');
@@ -314,12 +315,14 @@ document.addEventListener('DOMContentLoaded', () => {
             { selector: '[for^="size-"]', attr: 'for', prefix: 'size-' },
             { selector: '[id^="size-"]', attr: 'id', prefix: 'size-', name: true },
             { selector: '[id^="sizeDiv"]', attr: 'id', prefix: 'sizeDiv' },
-            { selector: '[id^="sizeStockDeleteGeneral-"]', attr: 'id', prefix: 'sizeStockDeleteGeneral-', special: true },
             { selector: '[for^="stock-"]', attr: 'for', prefix: 'stock-' },
             { selector: '[id^="stock-"]', attr: 'id', prefix: 'stock-', name: true },
+            { selector: '[id^="sizeStockDeleteGeneral-"]', attr: 'id', prefix: 'sizeStockDeleteGeneral-', special: true },
             { selector: '[for^="radio-"]', attr: 'for', prefix: 'radio-', special: true },
             { selector: '[id^="radio-"]', attr: 'id', prefix: 'radio-', name: true, special: true },
             { selector: '[id^="data-input-"]', attr: 'id', prefix: 'data-input-', name: 'image' },
+            { selector: '[id^="sizeStockDelete-"]', attr: 'data-size-stock-id', prefix: 'sizeStockDelete-', special: true },
+            { selector: '[id^="variant-index-"]', attr: 'id', prefix: 'variant-index-', name: true },
         ];
 
         allVariants.forEach((variant, index) => {
@@ -330,18 +333,30 @@ document.addEventListener('DOMContentLoaded', () => {
                         let [_, oldVariantID, stockID] = element.getAttribute(attr).split('-');
                         element.id = `${prefix}${index}-${stockID}`;
                         element.classList.replace(`size-stock-${oldVariantID}`, `size-stock-${index}`);
+
                         element.querySelectorAll('[for^="size-"]').forEach(e => e.setAttribute('for', `size-${index}-${stockID}`));
                         element.querySelectorAll('[id^="size-"]').forEach(e => {
                             e.id = `size-${index}-${stockID}`;
                             e.setAttribute('name', `variant[${index}][size][${stockID}]`);
+                        });
+
+                        element.querySelectorAll('[for^="stock-"]').forEach(e => e.setAttribute('for', `stock-${index}-${stockID}`));
+                        element.querySelectorAll('[id^="stock-"]').forEach(e => {
+                            e.id = `stock-${index}-${stockID}`;
+                            e.setAttribute('name', `variant[${index}][stock][${stockID}]`);
                         });
                     } else if (special && selector === '[for^="radio-"]' && attr === 'for') {
                         let [_, __, imageID] = element.getAttribute(attr).split('-');
                         element.setAttribute(attr, `${prefix}${index}-${imageID}`);
                     } else if (special && selector === '[id^="radio-"]') {
                         let [_, __, imageID] = element.getAttribute(attr).split('-');
-                        element.id = `${prefix}${index}-${imageID}`
+                        element.id = `${prefix}${index}-${imageID}`;
                         element.setAttribute('name', `variant[${index}][radio]`);
+                    }
+                    else if (special && selector === '[id^="sizeStockDelete-"]') {
+                        let [_, size] = element.getAttribute(attr).split('-');
+                        element.id = `${prefix}${index}-${size}`;
+                        element.setAttribute(attr, `${index}-${size}`);
                     } else {
                         element.setAttribute(attr, `${prefix}${index}`);
 
@@ -531,6 +546,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /** Update Size Stock Indexes **/
     function updateSizeStockIndexes(dataSizeStockID) {
         let [variantID, sizeStockID] = dataSizeStockID.split('-');
+        variantSizeStockInfo[variantID].size_stock -= 1;
         let allSizeStock = document.querySelectorAll(`.row.size-stock-${variantID}`);
 
         allSizeStock.forEach((variant, index) => {

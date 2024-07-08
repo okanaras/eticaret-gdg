@@ -89,6 +89,7 @@ class ProductController extends Controller
     public function update(ProductUpdateRequest $request, ProductsMain $productsMain)
     {
         try {
+            dd($request->all());
             $this->productService->update($request, $productsMain);
 
             toast('Urun guncellendi', 'success');
