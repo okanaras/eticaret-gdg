@@ -39,6 +39,11 @@ class ProductService
         return $query->get();
     }
 
+    public function getAllActiveProducts(): Collection
+    {
+        return $this->productService->getAllActive();
+    }
+
     public function getFilters(): array
     {
         $categories = Category::all()->pluck('name', 'id')->toArray();

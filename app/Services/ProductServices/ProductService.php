@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Support\Str;
 use App\Models\ProductsMain;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Collection;
 
 class ProductService
 {
@@ -72,5 +73,14 @@ class ProductService
         $finalPrice = $productsMain->price + $additionalPrice;
         $finalPrice = number_format($finalPrice, 2);
         return str_replace(',', '', $finalPrice);
+    }
+
+    public function getAllActive(): Collection
+    {
+        return $this->product::query()
+            ->with(['activeProductsMain', 'activeProductsMain.brand', 'activeProductsMain.category', 'sizeStock', 'featuredImage'])
+            ->where('status', 1)
+            ->orderBy('id', 'desc')
+            ->get();
     }
 }

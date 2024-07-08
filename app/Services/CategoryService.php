@@ -27,6 +27,11 @@ class CategoryService
         return $this->category::all();
     }
 
+    public function getAllActiveCategories(): Collection
+    {
+        return $this->category::query()->where('status', 1)->get();
+    }
+
     public function getAllCategoriesPaginate(int $page = 10, $orderBy = ['id', 'DESC']): LengthAwarePaginator
     {
         return $this->category::orderBy($orderBy[0], $orderBy[1])->paginate($page);
@@ -106,7 +111,6 @@ class CategoryService
             ],
         ];
     }
-
 
     public function prepareDataRequest(): self
     {

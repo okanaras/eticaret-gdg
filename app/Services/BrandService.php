@@ -7,6 +7,7 @@ use App\Models\Brand;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class BrandService
 {
@@ -40,6 +41,16 @@ class BrandService
             return $this->filterService->paginate($query, $perPage);
         }
         return $query->get();
+    }
+
+    public function getFeaturedBrands(): Collection
+    {
+        return $this->brand::query()->where('status', 1)->where('is_featured', 1)->get();
+    }
+
+    public function getAllActive(): Collection
+    {
+        return $this->brand::query()->where('status', 1)->get();
     }
 
     public function getFilters(): array

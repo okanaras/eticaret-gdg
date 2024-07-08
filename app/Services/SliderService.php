@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Sliders;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class SliderService
 {
@@ -38,6 +39,12 @@ class SliderService
     public function getAllPaginate(int $page = 10, $orderBy = ['order', 'DESC']): LengthAwarePaginator
     {
         return $this->sliders::orderBy($orderBy[0], $orderBy[1])->paginate($page);
+    }
+
+    public function getAllActive(): Collection
+    {
+        // dd($this->sliders::query()->where('status', 1)->get());
+        return $this->sliders::query()->where('status', 1)->get();
     }
 
     public function prepareData(array $data): self

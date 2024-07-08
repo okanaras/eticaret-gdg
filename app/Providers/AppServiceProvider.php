@@ -7,6 +7,7 @@ use App\Observers\UserObserver;
 use App\Events\UserRegisterEvent;
 use Illuminate\Pagination\Paginator;
 use App\Listeners\UserRegisterListener;
+use App\Services\BrandService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -40,5 +41,13 @@ class AppServiceProvider extends ServiceProvider
          */
 
         Paginator::useBootstrapFive();
+
+        $brandService = $this->app->make(BrandService::class);
+        $brandsColumns = $brandService->getAllActive();
+
+        view()->composer('front.*', function ($view) use ($brandsColumns) {
+            $view->with('brandsColumns', $brandsColumns);
+        });
+        // view('front.*')->share('brandsColumns', $brandsColumns); // share butun sayfalarla paylasmis olacak. Custom sayfalar icin composer kullandik.
     }
 }

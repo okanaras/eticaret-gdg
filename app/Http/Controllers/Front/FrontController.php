@@ -3,14 +3,17 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
-
+use App\Services\BrandService;
+use App\Services\SliderService;
 use Illuminate\Http\Request;
 
 class FrontController extends Controller
 {
-    public function index()
+    public function index(SliderService $sliderService, BrandService $brandService)
     {
-        // Your code here
-        return view('front.index');
+        $sliders = $sliderService->getAllActive();
+        $featuredBrands = $brandService->getFeaturedBrands();
+
+        return view('front.index', compact('sliders', 'featuredBrands'));
     }
 }

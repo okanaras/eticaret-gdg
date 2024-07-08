@@ -2,15 +2,25 @@
 
 namespace App\Http\Controllers\Front;
 
+use App\Enums\GenderEnum;
 use App\Http\Controllers\Controller;
-
+use App\Services\CategoryService;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function list()
+    public function __construct(public ProductService $productService)
     {
-        return view('front.product-list');
+    }
+
+    public function list(CategoryService $categoryService)
+    {
+        $categories = $categoryService->getAllActiveCategories();
+        $genders = GenderEnum::cases();
+        $products = $this->productService->getAllActiveProducts();
+
+        return view('front.product-list', compact('categories', 'genders', 'products'));
     }
     public function detail()
     {

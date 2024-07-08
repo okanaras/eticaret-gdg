@@ -453,7 +453,7 @@
                     toastr.warning('Slider icin gorsel secmediniz!', 'Uyari!');
                 } else if (images.length) {
                     let image = images[0];
-                    let validTypes = ['images/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+                    let validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
                     let maxSize = 2 * 1024 * 1024;
 
                     if (!validTypes.includes(image.type)) {

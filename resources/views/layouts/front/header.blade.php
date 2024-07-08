@@ -17,50 +17,14 @@
                                     <div class="col-md-9 nav-brands">
                                         <h4 class="mb-4">Tum Markalar</h4>
                                         <div class="row">
-                                            <div class="col navbar-column">
-                                                <a href="product-list.html" class="dropdown-link">Adidas</a>
-                                                <a href="#" class="dropdown-link">Nike</a>
-                                                <a href="#" class="dropdown-link">Puma</a>
-                                                <a href="#" class="dropdown-link">Skechers</a>
-                                                <a href="#" class="dropdown-link">Lotto</a>
-                                                <a href="#" class="dropdown-link">Huf</a>
-                                                <a href="#" class="dropdown-link">Reebok</a>
-                                                <a href="#" class="dropdown-link">Parafina</a>
-                                                <a href="#" class="dropdown-link">Salomon</a>
-                                            </div>
-                                            <div class="col navbar-column">
-                                                <a href="product-list.html" class="dropdown-link">Adidas</a>
-                                                <a href="#" class="dropdown-link">Nike</a>
-                                                <a href="#" class="dropdown-link">Puma</a>
-                                                <a href="#" class="dropdown-link">Skechers</a>
-                                                <a href="#" class="dropdown-link">Lotto</a>
-                                                <a href="#" class="dropdown-link">Huf</a>
-                                                <a href="#" class="dropdown-link">Reebok</a>
-                                                <a href="#" class="dropdown-link">Parafina</a>
-                                                <a href="#" class="dropdown-link">Salomon</a>
-                                            </div>
-                                            <div class="col navbar-column">
-                                                <a href="product-list.html" class="dropdown-link">Adidas</a>
-                                                <a href="#" class="dropdown-link">Nike</a>
-                                                <a href="#" class="dropdown-link">Puma</a>
-                                                <a href="#" class="dropdown-link">Skechers</a>
-                                                <a href="#" class="dropdown-link">Lotto</a>
-                                                <a href="#" class="dropdown-link">Huf</a>
-                                                <a href="#" class="dropdown-link">Reebok</a>
-                                                <a href="#" class="dropdown-link">Parafina</a>
-                                                <a href="#" class="dropdown-link">Salomon</a>
-                                            </div>
-                                            <div class="col navbar-column">
-                                                <a href="product-list.html" class="dropdown-link">Adidas</a>
-                                                <a href="#" class="dropdown-link">Nike</a>
-                                                <a href="#" class="dropdown-link">Puma</a>
-                                                <a href="#" class="dropdown-link">Skechers</a>
-                                                <a href="#" class="dropdown-link">Lotto</a>
-                                                <a href="#" class="dropdown-link">Huf</a>
-                                                <a href="#" class="dropdown-link">Reebok</a>
-                                                <a href="#" class="dropdown-link">Parafina</a>
-                                                <a href="#" class="dropdown-link">Salomon</a>
-                                            </div>
+                                            @foreach ($brandsColumns->chunk(9) as $brands)
+                                                <div class="col navbar-column">
+                                                    @foreach ($brands as $brand)
+                                                        <a href="product-list.html"
+                                                            class="dropdown-link">{{ $brand->name }}</a>
+                                                    @endforeach
+                                                </div>
+                                            @endforeach
                                         </div>
                                     </div>
 
@@ -72,20 +36,20 @@
                                                     <div class="swiper-wrapper">
                                                         <div class="swiper-slide">
                                                             <a href="">
-                                                                <img src="assets/images/product2.webp"
-                                                                    class="img-fluid" alt="" />
+                                                                <img src="assets/images/product2.webp" class="img-fluid"
+                                                                    alt="" />
                                                             </a>
                                                         </div>
                                                         <div class="swiper-slide">
                                                             <a href="">
-                                                                <img src="assets/images/product3.jpeg"
-                                                                    class="img-fluid" alt="" />
+                                                                <img src="assets/images/product3.jpeg" class="img-fluid"
+                                                                    alt="" />
                                                             </a>
                                                         </div>
                                                         <div class="swiper-slide">
                                                             <a href="">
-                                                                <img src="assets/images/product4.jpeg"
-                                                                    class="img-fluid" alt="" />
+                                                                <img src="assets/images/product4.jpeg" class="img-fluid"
+                                                                    alt="" />
                                                             </a>
                                                         </div>
                                                     </div>
