@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Front;
 
 use App\Enums\GenderEnum;
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 use App\Services\CategoryService;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
@@ -48,8 +49,17 @@ class ProductController extends Controller
 
         return view('front.product-list', compact('categories', 'genders', 'products', 'selectedValues'));
     }
-    public function detail()
+    public function detail(Request $request, Product $product)
     {
-        return view('front.product-detail');
+        /**
+         * Global Scope Kullandigimiz icin asagidaki 2 farkli yolu commentledim.
+         *
+        // $product = $product->query()->withRelations()->where('slug', $request->slug)->firstOrFail();
+        // $product = $product->load(['productsMain', 'productsMain.category', 'productsMain.brand', 'variantImages']);
+         */
+
+        // dd($product);
+
+        return view('front.product-detail', compact('product'));
     }
 }

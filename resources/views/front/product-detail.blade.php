@@ -1,6 +1,6 @@
 @extends('layouts.front')
 
-@section('title', 'Urun Detay Sayfasi')
+@section('title', ucfirst($product->name))
 
 @push('css')
 @endpush
@@ -13,36 +13,13 @@
                     <div class="product-image-wrapper position-relative">
                         <div class="swiper-container big-slider">
                             <div class="swiper-wrapper">
-                                <div class="swiper-slide big-image">
-                                    <div class="swiper-zoom-container">
-                                        <img src="{{ asset('assets/images/product1.jpeg') }}" />
+                                @foreach ($product->variantImages as $image)
+                                    <div class="swiper-slide big-image">
+                                        <div class="swiper-zoom-container">
+                                            <img src="{{ asset($image->path) }}" />
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="swiper-slide big-image">
-                                    <div class="swiper-zoom-container">
-                                        <img src="{{ asset('assets/images/product2.webp') }}" />
-                                    </div>
-                                </div>
-                                <div class="swiper-slide big-image">
-                                    <div class="swiper-zoom-container">
-                                        <img src="{{ asset('assets/images/product3.jpeg') }}" />
-                                    </div>
-                                </div>
-                                <div class="swiper-slide big-image">
-                                    <div class="swiper-zoom-container">
-                                        <img src="{{ asset('assets/images/product4.jpeg') }}" />
-                                    </div>
-                                </div>
-                                <div class="swiper-slide big-image">
-                                    <div class="swiper-zoom-container">
-                                        <img src="{{ asset('assets/images/product5.jpeg') }}" />
-                                    </div>
-                                </div>
-                                <div class="swiper-slide big-image">
-                                    <div class="swiper-zoom-container">
-                                        <img src="{{ asset('assets/images/product6.jpeg') }}" />
-                                    </div>
-                                </div>
+                                @endforeach
                             </div>
 
                             <!-- If we need navigation buttons -->
@@ -51,24 +28,12 @@
                         </div>
                         <div thumbsSlider="" class="swiper-container thumb-sliders swiper-thumbs">
                             <div class="swiper-wrapper">
-                                <div class="swiper-slide ">
-                                    <img class="thumb-image" src="{{ asset('assets/images/product1.jpeg') }}" />
-                                </div>
-                                <div class="swiper-slide ">
-                                    <img class="thumb-image" src="{{ asset('assets/images/product2.webp') }}" />
-                                </div>
-                                <div class="swiper-slide ">
-                                    <img class="thumb-image" src="{{ asset('assets/images/product3.jpeg') }}" />
-                                </div>
-                                <div class="swiper-slide ">
-                                    <img class="thumb-image" src="{{ asset('assets/images/product4.jpeg') }}" />
-                                </div>
-                                <div class="swiper-slide ">
-                                    <img class="thumb-image" src="{{ asset('assets/images/product5.jpeg') }}" />
-                                </div>
-                                <div class="swiper-slide ">
-                                    <img class="thumb-image" src="{{ asset('assets/images/product6.jpeg') }}" />
-                                </div>
+                                @foreach ($product->variantImages as $image)
+                                    <div class="swiper-slide ">
+                                        <img class="thumb-image" src="{{ asset($image->path) }}" />
+                                    </div>
+                                @endforeach
+
                             </div>
                             <div class="thumb-sliders-buttons text-center">
                                 <span class="thumb-prev me-4">
@@ -82,18 +47,14 @@
                     </div>
                 </div>
                 <div class="col-md-7 product-detail position-relative">
-                    <h4 class="fw-bold-600">Niteball</h4>
-                    <div class="price text-orange fw-bold-600">199,99 TL</div>
+                    <h4 class="fw-bold-600">{{ $product->name }}</h4>
+                    <div class="price text-orange fw-bold-600">{{ number_format($product->final_price, 2) }} TL</div>
                     <hr class="mt5">
-                    <h6>Unisex Sneaker</h6>
+                    <h6>{{ $product->productsMain->category->name }}</h6>
                     <hr>
-                    <h6>Adidas</h6>
+                    <h6>{{ $product->productsMain->brand->name }}</h6>
                     <hr>
-                    <p class="product-short-description">
-                        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Repellendus, dolor porro sed
-                        distinctio
-                        est, neque labore expedita atque dolorem optio a. Omnis eligendi non numquam.
-                    </p>
+                    <p class="product-short-description">{{ $product->productsMain->short_description }}</p>
                     <div class="shopping">
                         <div class="row">
                             <div class="col-md-1 text-center">
@@ -112,17 +73,9 @@
                                 <div class="input-group">
                                     <select id="footSize" class="form-control text-center">
                                         <option disabled selected>Beden</option>
-                                        <option value="36">36</option>
-                                        <option value="37">37</option>
-                                        <option value="38">38</option>
-                                        <option value="39">39</option>
-                                        <option value="40">40</option>
-                                        <option value="41">41</option>
-                                        <option value="42">42</option>
-                                        <option value="43">43</option>
-                                        <option value="44">44</option>
-                                        <option value="45">45</option>
-                                        <option value="46">46</option>
+                                        @foreach ($product->sizeStock as $size)
+                                            <option value="{{ $size->id }}">{{ $size->size }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -150,22 +103,7 @@
                             </h2>
                             <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
-                                    <h6>Lorem ipsum dolor sit amet.</h6>
-                                    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusantium doloremque
-                                        dolor deserunt repellat fugit maiores, labore provident adipisci illum ullam
-                                        modi repellendus possimus consequatur ex quia illo minima quibusdam numquam.
-                                        Inventore explicabo deserunt voluptate? Non, quia architecto itaque ullam nisi
-                                        quas. Suscipit similique porro veniam ducimus, error enim vero quisquam.</p>
-                                    <hr>
-                                    <strong>Lorem, ipsum.</strong>
-                                    <hr>
-                                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Laudantium assumenda
-                                        saepe velit tempora numquam, quos quas sequi ducimus fugiat placeat excepturi
-                                        ipsum ipsam accusantium facilis, unde nostrum mollitia earum? Iure pariatur ex
-                                        maiores nostrum! Nisi eos, odio architecto mollitia dolores quae vel eveniet
-                                        ipsam laudantium suscipit voluptatibus iure tenetur alias eum autem eius magni
-                                        molestiae maxime! Ducimus sint, dignissimos quam incidunt, ipsam ratione quia
-                                        officiis quibusdam natus ad hic perferendis!</p>
+                                    {!! $product->productsMain->description !!}
                                 </div>
                             </div>
                         </div>

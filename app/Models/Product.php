@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +22,10 @@ class Product extends Model
         'publish_date',
     ];
 
+    public function getRouteKey(): string
+    {
+        return 'slug';
+    }
 
     public function variantImages(): HasMany
     {
@@ -46,4 +51,25 @@ class Product extends Model
     {
         return $this->belongsTo(ProductsMain::class, 'main_product_id', 'id');
     }
+
+    // local scope
+    public function scopeWithRelations($query)
+    {
+        return $query->with(['productsMain', 'productsMain.category', 'productsMain.brand', 'variantImages']);
+    }
+
+    // global scope
+    protected static function booted()
+    {
+        static::addGlobalScope('activeProudctMain', function (Builder $builder) {
+            $builder->with(['productsMain', 'productsMain.category', 'productsMain.brand', 'variantImages']);
+        });
+    }
+
+    /**
+     * NOT : local scope ile global scope arasindaki fark local scope modele bind edilmiyor. Manuel olarak query edilmesi gerekir.
+     * ORNK: $product = $product->query()->withRelations()->where('slug', $request->slug)->firstOrFail();
+     *
+     * Global Scope ise model her cagrildiginda iliskiler bastan bind edilir.
+     */
 }

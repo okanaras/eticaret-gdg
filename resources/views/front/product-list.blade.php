@@ -6,8 +6,6 @@
 @endpush
 
 @section('body')
-    {{-- @dd(request()->all()) --}}
-
     <main>
         <div class="container">
             <form action="{{ route('product.list') }}" id="productFilterForm">
@@ -114,25 +112,28 @@
                             @foreach ($products as $product)
                                 <div class="col-md-3 wrapper-product position-relative mb-5">
                                     <div class="product-image position-relative">
-                                        <a href="">
+                                        <a href="{{ route('product.detail', $product->slug) }}">
                                             <img src="{{ $product->featuredImage->path }}" class="img-fluid"
-                                                alt="adidas">
+                                                alt="{{ $product->name }}">
                                         </a>
                                         <div class="product-overlay">
                                             <span class="product-tag text-orange fw-bold-600">Yeni</span>
                                             <span class="favorite"><i class="bi bi-heart"></i></span>
                                             <span class="un-favorite"><i class="bi bi-heart-fill"></i></span>
-                                            <a href=""
+                                            <a href="{{ route('product.list', ['brands' => $product->activeProductsMain->brand->slug]) }}"
                                                 class="product-brand text-orange fw-bold-600">{{ $product->activeProductsMain->brand->name }}</a>
                                         </div>
                                     </div>
                                     <div class="product-info text-center pt-3">
-                                        <h4 class="product-title">{{ $product->name }}</h4>
-                                        <div class="text-muted product-description">
-                                            {{ $product->activeProductsMain->category->name }}
-                                        </div>
-                                        <a href="" class="product-price text-orange">
-                                            {{ number_format($product->final_price, 2) }} TL
+                                        <a href="{{ route('product.detail', $product->slug) }}">
+                                            <h4 class="product-title">{{ $product->name }}</h4>
+                                            <div class="text-muted product-description">
+                                                {{ $product->activeProductsMain->category->name }}
+                                            </div>
+                                            <a href="{{ route('product.detail', $product->slug) }}"
+                                                class="product-price text-orange">
+                                                {{ number_format($product->final_price, 2) }} TL
+                                            </a>
                                         </a>
                                     </div>
                                 </div>
