@@ -6,12 +6,11 @@
 a {
     text-decoration: none;
     color: #2d3a4b;
-
 }
 
 body {
     margin: 0 auto;
-    font-family: 'Montserrat', sans-serif;
+    font-family: "Montserrat", sans-serif;
 }
 
 li {
@@ -19,11 +18,11 @@ li {
 }
 
 .font-montserrat {
-    font-family: 'Montserrat', sans-serif;
+    font-family: "Montserrat", sans-serif;
 }
 
 .font-playfair {
-    font-family: 'Playfair', sans-serif;
+    font-family: "Playfair", sans-serif;
 }
 
 .text-orange {
@@ -50,7 +49,6 @@ li {
 
 .top-bar {
     height: 50px;
-
 }
 
 .top-bar .login li {
@@ -99,7 +97,7 @@ li {
     scrollbar-width: thin;
 }
 
-/* Kaydirma cubugunun stili icin webkit on eki 
+/* Kaydirma cubugunun stili icin webkit on eki
  * browser bazli calisir
  * butun scroll u etkilemek icin class i kaldir: '::-webkit-scrollbar, ::-webkit-scrollbar-thumb'
  */
@@ -138,20 +136,20 @@ header nav li a.nav-link {
     margin: 0 10px;
     letter-spacing: 3px;
     position: relative;
-    transition: all .3s linear;
+    transition: all 0.3s linear;
 }
 
 header nav li a.nav-link:before {
     width: 0;
     margin: 0 auto;
     position: absolute;
-    content: '';
+    content: "";
     height: 5px;
     left: 0;
     top: 45%;
     z-index: -1;
     background-color: #ffe115;
-    transition: .2s ease-in-out;
+    transition: 0.2s ease-in-out;
 }
 
 header nav li a.nav-link:hover:before {
@@ -162,13 +160,13 @@ header nav li.active a.nav-link:before {
     width: 100%;
     margin: 0 auto;
     position: absolute;
-    content: '';
+    content: "";
     height: 5px;
     left: 0;
     top: 45%;
     z-index: -1;
     background-color: #ffe115;
-    transition: .2s ease-in-out;
+    transition: 0.2s ease-in-out;
 }
 
 .nav-right {
@@ -221,7 +219,6 @@ header nav li.active a.nav-link:before {
 .nav-brand-swiper img {
     max-height: 190px;
 }
-
 
 /* Search */
 .search-inside {
@@ -323,7 +320,7 @@ header nav li.active a.nav-link:before {
     height: 100px;
     background-color: rgba(0, 0, 0, 0.5);
     color: #fff;
-    transition: background-color .4s ease;
+    transition: background-color 0.4s ease;
 }
 
 .home-swiper .swiper-button-prev:hover,
@@ -506,7 +503,6 @@ header nav li.active a.nav-link:before {
 .wrapper-product .product-info .product-title {
     font-size: 19px;
     margin-bottom: 0;
-
 }
 
 .wrapper-product .product-info .product-description {
@@ -515,7 +511,7 @@ header nav li.active a.nav-link:before {
 
 .wrapper-product .product-info .product-price {
     font-weight: 500;
-    font-size: 14px
+    font-size: 14px;
 }
 
 /* FOOTER */
@@ -567,6 +563,15 @@ main {
     top: 0;
 }
 
+.product-filter .search-text.form-control:focus {
+    border-color: #f38509;
+    box-shadow: unset;
+}
+
+.product-filter .search-text {
+    height: 30px;
+    font-size: 14px;
+}
 .product-filter .filter-item-wrapper {
     position: relative;
     border-bottom: 1px solid #ececec;
@@ -582,7 +587,7 @@ main {
     overflow: hidden auto;
 }
 
-.filter-item input[type=checkbox] {
+.filter-item input[type="checkbox"] {
     min-width: 15px;
     min-height: 15px;
     border-radius: 2px;
@@ -591,11 +596,11 @@ main {
     border: #d6d6d6 solid 1.5px;
 }
 
-.filter-item input[type=checkbox]:checked {
+.filter-item input[type="checkbox"]:checked {
     background-color: #f38509;
 }
 
-.filter-item input[type=checkbox]:focus {
+.filter-item input[type="checkbox"]:focus {
     outline: none;
     box-shadow: none;
 }
@@ -628,7 +633,7 @@ main {
     color: #f38509;
 }
 
-.filter-price>* {
+.filter-price > * {
     padding-left: 12px;
     padding-right: 2px;
 }
@@ -950,7 +955,8 @@ main {
 
 /* Order Detail Wrapper Checkout Sayfasi */
 
-.order-detail-wrapper {}
+.order-detail-wrapper {
+}
 
 .order-detail-wrapper h6 {
     font-size: 20px;
@@ -962,7 +968,7 @@ main {
     height: 2px;
     background-color: #2d3a4b;
     border: none;
-    content: '';
+    content: "";
     display: inline-block;
     position: absolute;
     margin-top: 30px;
@@ -1003,13 +1009,13 @@ main {
 
 .order-detail-wrapper .nav-tabs .nav-link::after {
     position: absolute;
-    content: '';
+    content: "";
     bottom: 0;
     left: 0;
     width: 0;
     height: 3px;
     background-color: #f38509;
-    transition: width .3s ease;
+    transition: width 0.3s ease;
 }
 
 .order-detail-wrapper .nav-tabs .nav-link.active::after {

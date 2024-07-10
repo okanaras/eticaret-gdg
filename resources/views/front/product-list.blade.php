@@ -17,6 +17,12 @@
                         <div class="row position-relative">
                             <div class="col-12 product-filter">
                                 <div class="filter-item-wrapper mt-2">
+                                    <div class="filter-detail">
+                                        <input type="search" name="q" id="searchText" class="form-control search-text"
+                                            placeholder="Arama" value="{{ request()->q }}">
+                                    </div>
+                                </div>
+                                <div class="filter-item-wrapper mt-2">
                                     <h3 class="filter-title">Kategoriler</h3>
                                     <div class="filter-detail">
                                         @foreach ($categories as $category)
@@ -69,7 +75,7 @@
                                                         placeholder="En cok" value="{{ request()->input('max_price') }}">
                                                 </div>
                                                 <div class="col-3">
-                                                    <button type="submit">
+                                                    <button type="button" id="btnPriceSearch">
                                                         <i class="bi bi-search"></i>
                                                     </button>
                                                 </div>
@@ -91,9 +97,14 @@
                                     </div>
                                     <div class="col">
                                         <select name="sort" id="sortSelect" class="sortby float-end">
-                                            <option value="1">Yeni Gelenler</option>
-                                            <option value="2">Artan Fiyat</option>
-                                            <option value="3">Azalan Fiyat</option>
+                                            <option value="id_desc" {{ request()->sort === 'id_desc' ? 'selected' : '' }}>
+                                                Yeni Gelenler</option>
+                                            <option value="price_asc"
+                                                {{ request()->sort === 'price_asc' ? 'selected' : '' }}>Artan Fiyat
+                                            </option>
+                                            <option value="price_desc"
+                                                {{ request()->sort === 'price_desc' ? 'selected' : '' }}>Azalan Fiyat
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
@@ -148,17 +159,36 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             let productFilterForm = document.querySelector('#productFilterForm');
+            let btnPriceSearch = document.querySelector('#btnPriceSearch');
 
+            productFilterForm.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
+                    let newURL = generateSearchURL();
+                    window.location.href = newURL;
+                }
+            });
             productFilterForm.addEventListener('input', (event) => {
                 let currentElement = event.target;
+
+                let newURL = generateSearchURL();
+
+                if (!['min_price', 'max_price', 'q'].includes(currentElement.name)) {
+                    window.location.href = newURL;
+                }
+            });
+
+            btnPriceSearch.addEventListener('click', (event) => {
+                let newURL = generateSearchURL();
+                window.location.href = newURL;
+            });
+
+            function generateSearchURL() {
                 let params = {};
                 let elements = productFilterForm.elements;
                 let selectedCheckbox = [];
 
                 [...elements].forEach(element => {
-                    if (element.name && element.value && element.type === 'text') {
-                        params[element.name] = element.value;
-                    } else if (element.name && element.value && element.type === 'checkbox') {
+                    if (element.name && element.value && element.type === 'checkbox') {
                         let checkboxes = document.querySelectorAll(
                             `input[name*="${element.name}"]`);
                         checkboxes.forEach(checkbox => {
@@ -181,6 +211,8 @@
                                 }
                             }
                         });
+                    } else if (element.name && element.value) {
+                        params[element.name] = element.value;
                     }
                 });
 
@@ -193,8 +225,9 @@
                 let actionURL = productFilterForm.action;
                 actionURL = actionURL.replace('#', '');
                 let newURL = `${actionURL}${queryString ? '?' + queryString : ''}`;
-                window.location.href = newURL;
-            });
+
+                return newURL;
+            }
         });
     </script>
 @endpush

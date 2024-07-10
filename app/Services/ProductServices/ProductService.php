@@ -87,22 +87,22 @@ class ProductService
 
     public function getSearchProducts(Request $request, array $filterValues): Collection
     {
-        $query = $this->product::query()->with(['productsMain', 'productsMain.category', 'productsMain.brand']);
+        $query = $this->product::query()->with(['activeProductsMain', 'activeProductsMain.category', 'activeProductsMain.brand']);
 
         if (isset($filterValues['categories'])) {
-            $query->whereHas('productsMain.category', function ($q) use ($filterValues) {
+            $query->whereHas('activeProductsMain.category', function ($q) use ($filterValues) {
                 $q->whereIn('slug', $filterValues['categories'])->where('status', 1);
             });
         }
 
         if (isset($filterValues['brands'])) {
-            $query->whereHas('productsMain.brand', function ($q) use ($filterValues) {
+            $query->whereHas('activeProductsMain.brand', function ($q) use ($filterValues) {
                 $q->whereIn('slug', $filterValues['brands'])->where('status', 1);
             });
         }
 
         if (isset($filterValues['genders'])) {
-            $query->whereHas('productsMain', function ($q) use ($filterValues) {
+            $query->whereHas('activeProductsMain', function ($q) use ($filterValues) {
                 $q->whereIn('gender', $filterValues['genders']);
             });
         }
@@ -115,6 +115,43 @@ class ProductService
             $query->where('final_price', '<=', number_format((float)$request->max_price, 2, thousands_separator: ''));
         }
 
-        return $query->where('status', 1)->get();
+        $query = $query->whereHas('activeProductsMain')->where('status', 1);
+
+        if ($request->has('q')) {
+
+            $searchTerm = $request->q;
+            $query = $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'LIKE', '%' . $searchTerm . '%')
+                    ->orWhereHas('activeProductsMain', function ($q) use ($searchTerm) {
+                        $q->where('name', 'LIKE', "%{$searchTerm}%"); // yukardaki seklin kisaltilmisisi js teki temp literals
+                    });
+            });
+        }
+
+        if ($request->has('sort')) {
+            $query = match ($request->sort) {
+                'id_desc' => $query->orderBy('id', 'DESC'),
+                'price_asc' => $query->orderBy('final_price', 'ASC'),
+                'price_desc' => $query->orderBy('final_price', 'DESC'),
+                default => $query->orderBy('id', 'DESC'),
+            };
+
+            //// switch case li hali
+            // switch ($request->sort) {
+            //     case 'id_desc':
+            //         $query = $query->orderBy('id', 'DESC');
+            //         break;
+            //     case 'price_asc':
+            //         $query = $query->orderBy('final_price', 'ASC');
+            //         break;
+            //     case 'price_desc':
+            //         $query = $query->orderBy('final_price', 'DESC');
+            //         break;
+            //     default:
+            //         $query = $query->orderBy('id', 'DESC');
+            // }
+        }
+
+        return $query->get();
     }
 }
