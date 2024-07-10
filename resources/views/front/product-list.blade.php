@@ -8,7 +8,7 @@
 @section('body')
     <main>
         <div class="container">
-            <form action="">
+            <form action="" id="productFilterForm">
                 <div class="row">
 
                     <div class="col-md-3">
@@ -19,7 +19,7 @@
                                     <div class="filter-detail">
                                         @foreach ($categories as $category)
                                             <div class="form-check filter-item">
-                                                <input type="checkbox" class="form-check-input" name="categories[]"
+                                                <input type="checkbox" class="form-check-input" name="categories"
                                                     value="{{ $category->slug }}" id="cat-{{ $category->id }}">
                                                 <label for="cat-{{ $category->id }}">{{ ucfirst($category->name) }}</label>
                                             </div>
@@ -31,7 +31,7 @@
                                     <div class="filter-detail">
                                         @foreach ($brandsColumns as $brand)
                                             <div class="form-check filter-item">
-                                                <input type="checkbox" class="form-check-input" name="brands[]"
+                                                <input type="checkbox" class="form-check-input" name="brands"
                                                     value="{{ $brand->slug }}" id="brand-{{ $brand->id }}">
                                                 <label for="brand-{{ $brand->id }}">{{ ucfirst($brand->name) }}</label>
                                             </div>
@@ -43,7 +43,7 @@
                                     <div class="filter-detail">
                                         @foreach ($genders as $gender)
                                             <div class="form-check filter-item">
-                                                <input type="checkbox" class="form-check-input" name="genders[]"
+                                                <input type="checkbox" class="form-check-input" name="genders"
                                                     value="{{ $gender->value }}" id="gender-{{ $gender->value }}">
                                                 <label for="gender-{{ $gender->value }}">{{ getGender($gender) }}</label>
                                             </div>
@@ -56,11 +56,11 @@
                                         <div class="filter-item">
                                             <div class="row filter-price">
                                                 <div class="col">
-                                                    <input type="text" class="min-price form-control"
+                                                    <input type="text" name="min_price" class="min-price form-control"
                                                         placeholder="En az">
                                                 </div>
                                                 <div class="col">
-                                                    <input type="text" class="max-price form-control"
+                                                    <input type="text" name="max_price" class="max-price form-control"
                                                         placeholder="En cok">
                                                 </div>
                                                 <div class="col-3">
@@ -140,4 +140,49 @@
 @endsection
 
 @push('js')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let productFilterForm = document.querySelector('#productFilterForm');
+
+            productFilterForm.addEventListener('input', (event) => {
+                let currentElement = event.target;
+                let params = {};
+                let elements = productFilterForm.elements;
+                let selectedCheckbox = [];
+
+                [...elements].forEach(element => {
+                    if (element.name && element.value && element.type === 'text') {
+                        params[element.name] = element.value;
+                    } else if (element.name && element.value && element.type === 'checkbox') {
+                        let checkboxes = document.querySelectorAll(
+                            `input[name*="${element.name}"]`);
+                        checkboxes.forEach(checkbox => {
+                            if (checkbox.checked) {
+                                if (!selectedCheckbox[element.name]) {
+                                    selectedCheckbox[checkbox.name] = [];
+                                }
+
+                                if (!selectedCheckbox[element.name].includes(checkbox
+                                        .value)) {
+                                    selectedCheckbox[element.name].push(checkbox.value);
+                                }
+                            } else {
+                                if (selectedCheckbox[element.name] && selectedCheckbox[
+                                        element.name].includes(checkbox.value)) {
+                                    const INDEX = selectedCheckbox[element.name].indexOf(
+                                        checkbox.value);
+                                    selectedCheckbox[element.name].splice(INDEX, 1);
+                                }
+                            }
+                        });
+                    }
+                });
+
+                for (const key in selectedCheckbox) {
+                    params[key] = selectedCheckbox[key];
+                }
+                console.log('params: ', params);
+            });
+        });
+    </script>
 @endpush

@@ -14,11 +14,13 @@ class ProductController extends Controller
     {
     }
 
-    public function list(CategoryService $categoryService)
+    public function list(Request $request, CategoryService $categoryService)
     {
         $categories = $categoryService->getAllActiveCategories();
         $genders = GenderEnum::cases();
         $products = $this->productService->getAllActiveProducts();
+
+        // dd('$request: ', $request);
 
         return view('front.product-list', compact('categories', 'genders', 'products'));
     }
