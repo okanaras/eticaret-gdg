@@ -323,4 +323,9 @@ class ProductService
 
         $this->productService->destroy($diffVariantIds);
     }
+
+    public function getSearchProducts(Request $request, array $filterValues): Collection
+    {
+        return $this->productService->getSearchProducts($request, $filterValues);
+    }
 }

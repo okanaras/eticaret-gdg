@@ -16,13 +16,19 @@ class ProductController extends Controller
 
     public function list(Request $request, CategoryService $categoryService)
     {
+        $selectedValues = [];
+        foreach ($request->all() as $itemKey => $itemValue) {
+            $selectedValues[$itemKey] = explode(',', $itemValue);
+        }
+
         $categories = $categoryService->getAllActiveCategories();
         $genders = GenderEnum::cases();
-        $products = $this->productService->getAllActiveProducts();
 
-        // dd('$request: ', $request);
+        $products = $selectedValues ? $this->productService->getSearchProducts($request, $selectedValues) : $this->productService->getAllActiveProducts();
 
-        return view('front.product-list', compact('categories', 'genders', 'products'));
+        // dd('$products: ', $products);
+
+        return view('front.product-list', compact('categories', 'genders', 'products', 'selectedValues'));
     }
     public function detail()
     {

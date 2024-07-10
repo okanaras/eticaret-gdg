@@ -6,9 +6,11 @@
 @endpush
 
 @section('body')
+    {{-- @dd(request()->all()) --}}
+
     <main>
         <div class="container">
-            <form action="" id="productFilterForm">
+            <form action="{{ route('product-list') }}" id="productFilterForm">
                 <div class="row">
 
                     <div class="col-md-3">
@@ -20,7 +22,8 @@
                                         @foreach ($categories as $category)
                                             <div class="form-check filter-item">
                                                 <input type="checkbox" class="form-check-input" name="categories"
-                                                    value="{{ $category->slug }}" id="cat-{{ $category->id }}">
+                                                    value="{{ $category->slug }}" id="cat-{{ $category->id }}"
+                                                    {{ in_array($category->slug, $selectedValues['categories'] ?? []) ? 'checked' : '' }}>
                                                 <label for="cat-{{ $category->id }}">{{ ucfirst($category->name) }}</label>
                                             </div>
                                         @endforeach
@@ -32,7 +35,8 @@
                                         @foreach ($brandsColumns as $brand)
                                             <div class="form-check filter-item">
                                                 <input type="checkbox" class="form-check-input" name="brands"
-                                                    value="{{ $brand->slug }}" id="brand-{{ $brand->id }}">
+                                                    value="{{ $brand->slug }}" id="brand-{{ $brand->id }}"
+                                                    {{ in_array($brand->slug, $selectedValues['brands'] ?? []) ? 'checked' : '' }}>
                                                 <label for="brand-{{ $brand->id }}">{{ ucfirst($brand->name) }}</label>
                                             </div>
                                         @endforeach
@@ -44,7 +48,8 @@
                                         @foreach ($genders as $gender)
                                             <div class="form-check filter-item">
                                                 <input type="checkbox" class="form-check-input" name="genders"
-                                                    value="{{ $gender->value }}" id="gender-{{ $gender->value }}">
+                                                    value="{{ $gender->value }}" id="gender-{{ $gender->value }}"
+                                                    {{ in_array($gender->value, $selectedValues['genders'] ?? []) ? 'checked' : '' }}>
                                                 <label for="gender-{{ $gender->value }}">{{ getGender($gender) }}</label>
                                             </div>
                                         @endforeach
@@ -57,11 +62,11 @@
                                             <div class="row filter-price">
                                                 <div class="col">
                                                     <input type="text" name="min_price" class="min-price form-control"
-                                                        placeholder="En az">
+                                                        placeholder="En az" value="{{ request()->input('min_price') }}">
                                                 </div>
                                                 <div class="col">
                                                     <input type="text" name="max_price" class="max-price form-control"
-                                                        placeholder="En cok">
+                                                        placeholder="En cok" value="{{ request()->input('max_price') }}">
                                                 </div>
                                                 <div class="col-3">
                                                     <button type="submit">
@@ -172,6 +177,7 @@
                                     const INDEX = selectedCheckbox[element.name].indexOf(
                                         checkbox.value);
                                     selectedCheckbox[element.name].splice(INDEX, 1);
+                                    params[element.name].splice(INDEX, 1);
                                 }
                             }
                         });
@@ -181,7 +187,13 @@
                 for (const key in selectedCheckbox) {
                     params[key] = selectedCheckbox[key];
                 }
-                console.log('params: ', params);
+
+                let queryString = Object.keys(params).map((key) =>
+                    `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`).join('&');
+                let actionURL = productFilterForm.action;
+                actionURL = actionURL.replace('#', '');
+                let newURL = `${actionURL}${queryString ? '?' + queryString : ''}`;
+                window.location.href = newURL;
             });
         });
     </script>

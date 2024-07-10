@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Support\Str;
 use App\Models\ProductsMain;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class ProductService
@@ -82,5 +83,38 @@ class ProductService
             ->where('status', 1)
             ->orderBy('id', 'desc')
             ->get();
+    }
+
+    public function getSearchProducts(Request $request, array $filterValues): Collection
+    {
+        $query = $this->product::query()->with(['productsMain', 'productsMain.category', 'productsMain.brand']);
+
+        if (isset($filterValues['categories'])) {
+            $query->whereHas('productsMain.category', function ($q) use ($filterValues) {
+                $q->whereIn('slug', $filterValues['categories'])->where('status', 1);
+            });
+        }
+
+        if (isset($filterValues['brands'])) {
+            $query->whereHas('productsMain.brand', function ($q) use ($filterValues) {
+                $q->whereIn('slug', $filterValues['brands'])->where('status', 1);
+            });
+        }
+
+        if (isset($filterValues['genders'])) {
+            $query->whereHas('productsMain', function ($q) use ($filterValues) {
+                $q->whereIn('gender', $filterValues['genders']);
+            });
+        }
+
+        if ($request->has('min_price')) {
+            $query->where('final_price', '>=', number_format((float)$request->min_price, 2, thousands_separator: ''));
+        }
+
+        if ($request->has('max_price')) {
+            $query->where('final_price', '<=', number_format((float)$request->max_price, 2, thousands_separator: ''));
+        }
+
+        return $query->where('status', 1)->get();
     }
 }
