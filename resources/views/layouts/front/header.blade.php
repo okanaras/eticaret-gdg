@@ -1,7 +1,9 @@
     <header>
         <nav class="navbar navbar-expand-lg">
             <div class="container">
-                <a class="navbar-brand" href="#"><img src="assets/images/logo.png" alt="" class="logo"></a>
+                <a class="navbar-brand" href="{{ route('index') }}">
+                    <img src="{{ asset('assets/images/logo.png') }}" alt="logo" class="logo">
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
@@ -20,7 +22,7 @@
                                             @foreach ($brandsColumns->chunk(9) as $brands)
                                                 <div class="col navbar-column">
                                                     @foreach ($brands as $brand)
-                                                        <a href="product-list.html"
+                                                        <a href="{{ route('product.list', ['brands' => $brand->slug]) }}"
                                                             class="dropdown-link">{{ $brand->name }}</a>
                                                     @endforeach
                                                 </div>
@@ -75,21 +77,6 @@
                         <li class="nav-item">
                             <a class="nav-link" aria-current="page" href="#">INDIRIMLER</a>
                         </li>
-
-                        <!-- <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                Dropdown
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Action</a></li>
-                                <li><a class="dropdown-item" href="#">Another action</a></li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li><a class="dropdown-item" href="#">Something else here</a></li>
-                            </ul>
-                        </li> -->
                     </ul>
                 </div>
                 <div class="nav-right">
@@ -101,8 +88,9 @@
                         <div class="search-overlay"></div>
                         <div class="position-center-center">
                             <div class="search animate__animated animate__backInUp">
-                                <form action="">
-                                    <input type=" text" placeholder="Arama">
+                                <form action="{{ route('product.list') }}">
+                                    <input type="search" placeholder="Arama" name="q"
+                                        value="{{ request()->q }}">
                                     <button type="submit"><i class="bi bi-check-circle"></i></button>
                                 </form>
                             </div>

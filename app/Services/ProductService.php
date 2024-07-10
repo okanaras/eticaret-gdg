@@ -3,18 +3,19 @@
 namespace App\Services;
 
 use App\Models\Brand;
-use App\Models\Category;
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Support\Str;
 use App\Models\ProductsMain;
 use App\Models\ProductTypes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use App\Services\ProductServices\SizeStockService;
 use App\Services\ProductServices\ProductMainService;
 use App\Services\ProductServices\ProductImageService;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Services\ProductServices\ProductService as PService;
-use Illuminate\Support\Collection;
 
 class ProductService
 {
@@ -324,7 +325,7 @@ class ProductService
         $this->productService->destroy($diffVariantIds);
     }
 
-    public function getSearchProducts(Request $request, array $filterValues): Collection
+    public function getSearchProducts(Request $request, array $filterValues): LengthAwarePaginator
     {
         return $this->productService->getSearchProducts($request, $filterValues);
     }

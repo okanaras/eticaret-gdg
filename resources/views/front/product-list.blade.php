@@ -10,7 +10,7 @@
 
     <main>
         <div class="container">
-            <form action="{{ route('product-list') }}" id="productFilterForm">
+            <form action="{{ route('product.list') }}" id="productFilterForm">
                 <div class="row">
 
                     <div class="col-md-3">
@@ -138,15 +138,7 @@
                                 </div>
                             @endforeach
 
-                            <div class="col-md-12 d-flex justify-content-center">
-                                <ul class="pagination">
-                                    <li class="active"><a href="">1</a></li>
-                                    <li><a href="">2</a></li>
-                                    <li><a href="">3</a></li>
-                                    <li><a href="">4</a></li>
-                                    <li><a href="">5</a></li>
-                                </ul>
-                            </div>
+                            {{ $products->withQueryString()->links('pagination::front-custom') }}
                         </div>
                     </div>
                 </div>

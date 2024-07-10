@@ -646,6 +646,12 @@ main {
     color: #2d3a4b;
 }
 
+.pagination li a.previous:hover,
+.pagination li a.next:hover {
+    background: #2d3a4b;
+    color: #fff;
+}
+
 .pagination li a {
     background-color: #2d3a4b;
     color: #fff;

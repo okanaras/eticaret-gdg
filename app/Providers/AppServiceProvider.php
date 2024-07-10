@@ -41,6 +41,7 @@ class AppServiceProvider extends ServiceProvider
          */
 
         Paginator::useBootstrapFive();
+        // Paginator::defaultView('pagination::front-custom');
 
         $brandService = $this->app->make(BrandService::class);
         $brandsColumns = $brandService->getAllActive();

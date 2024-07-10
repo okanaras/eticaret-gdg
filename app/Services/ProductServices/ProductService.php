@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use App\Models\ProductsMain;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 class ProductService
@@ -85,7 +86,7 @@ class ProductService
             ->get();
     }
 
-    public function getSearchProducts(Request $request, array $filterValues): Collection
+    public function getSearchProducts(Request $request, array $filterValues): LengthAwarePaginator
     {
         $query = $this->product::query()->with(['activeProductsMain', 'activeProductsMain.category', 'activeProductsMain.brand']);
 
@@ -136,7 +137,8 @@ class ProductService
                 default => $query->orderBy('id', 'DESC'),
             };
 
-            //// switch case li hali
+            // switch case li hali
+            /*
             // switch ($request->sort) {
             //     case 'id_desc':
             //         $query = $query->orderBy('id', 'DESC');
@@ -150,8 +152,9 @@ class ProductService
             //     default:
             //         $query = $query->orderBy('id', 'DESC');
             // }
+            */
         }
 
-        return $query->get();
+        return $query->paginate(1);
     }
 }

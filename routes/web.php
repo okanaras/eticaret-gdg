@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [FrontController::class, 'index'])->name('index');
 
 /** Front */
-Route::get('/urun-listesi', [ProductController::class, 'list'])->name('product-list');
+Route::get('/urun-listesi', [ProductController::class, 'list'])->name('product.list');
 Route::get('/urun-detay', [ProductController::class, 'detail']);
 
 Route::get('/sepet', [CardController::class, 'card']);
