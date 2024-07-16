@@ -135,6 +135,20 @@ class DiscountService
         return $this->discount->delete();
     }
 
+    public function assignProductsProcess(array $productIds): bool
+    {
+        $oldAssignProducts = $this->getAssignProducts()->pluck('id')->toArray();
+
+        $newProductIds = $this->diffNewOldAssignIds($productIds, $oldAssignProducts);
+
+        if (count($newProductIds)) {
+            $this->assignProducts($newProductIds);
+            return true;
+        }
+
+        return false;
+    }
+
     public function assignProducts(array $productIds): self
     {
         $this->discount->products()->attach($productIds);
@@ -145,5 +159,66 @@ class DiscountService
     public function getAssignProducts(): Collection
     {
         return $this->discount->products;
+    }
+
+
+
+    public function assignCategoryProcess(array $categoryIds): bool
+    {
+        $oldAssignCategories = $this->getAssignCategories()->pluck('id')->toArray();
+
+        $newCategoryIds = $this->diffNewOldAssignIds($categoryIds, $oldAssignCategories);
+
+        if (count($newCategoryIds)) {
+            $this->assignCategories($newCategoryIds);
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getAssignCategories(): Collection
+    {
+        return $this->discount->categories;
+    }
+
+    public function assignCategories(array $categoryIds): self
+    {
+        $this->discount->categories()->attach($categoryIds);
+
+        return $this;
+    }
+
+    public function assignBrandProcess(array $brandIds): bool
+    {
+        $oldAssignBrands = $this->getAssignBrands()->pluck('id')->toArray();
+
+        $newBrandIds = $this->diffNewOldAssignIds($brandIds, $oldAssignBrands);
+
+        if (count($newBrandIds)) {
+            $this->assignBrands($newBrandIds);
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getAssignBrands(): Collection
+    {
+        return $this->discount->brands;
+    }
+
+    public function assignBrands(array $brandIds): self
+    {
+        $this->discount->brands()->attach($brandIds);
+
+        return $this;
+    }
+
+
+
+    public function diffNewOldAssignIds(array $newIDs, array $oldIDs): array
+    {
+        return array_diff($newIDs, $oldIDs);
     }
 }

@@ -27,11 +27,11 @@ class Discounts extends Model
 
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, 'discount_categories');
+        return $this->belongsToMany(Category::class, 'discount_categories', 'discount_id', 'category_id');
     }
 
     public function brands(): BelongsToMany
     {
-        return $this->belongsToMany(Brand::class, 'discount_brands');
+        return $this->belongsToMany(Brand::class, 'discount_brands', 'discount_id', 'brand_id');
     }
 }

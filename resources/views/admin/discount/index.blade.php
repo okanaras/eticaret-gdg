@@ -148,6 +148,14 @@
                                         class="btn btn-primary p-1" title="Urune Indirim Atama">
                                         <i data-feather="box"></i>
                                     </a>
+                                    <a href="{{ route('admin.discount.assign-categories', $discount->id) }}"
+                                        class="btn btn-success p-1" title="Kategoriye Indirim Atama">
+                                        <i data-feather="grid"></i>
+                                    </a>
+                                    <a href="{{ route('admin.discount.assign-brands', $discount->id) }}"
+                                        class="btn btn-info p-1" title="Markaya Indirim Atama">
+                                        <i data-feather="shield"></i>
+                                    </a>
                                 </td>
 
                             </tr>

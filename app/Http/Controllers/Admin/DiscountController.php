@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DiscountAssignProductsRequest;
 use App\Http\Requests\DiscountStoreRequest;
 use App\Models\Discounts;
+use App\Services\BrandService;
+use App\Services\CategoryService;
 use App\Services\DiscountService;
 use App\Services\ProductServices\ProductService;
 use App\Traits\GdgException;
@@ -158,16 +160,91 @@ class DiscountController extends Controller
     public function showAssignProducts(DiscountAssignProductsRequest $request, Discounts $discount)
     {
         try {
-            $oldAssignProducts = $this->discountService->setDiscount($discount)->getAssignProducts()->pluck('id')->toArray();
-            $newProductsIds = array_diff($request->product_ids, $oldAssignProducts);
+            $result = $this->discountService->setDiscount($discount)->assignProductsProcess($request->product_ids);
 
-            if (count($newProductsIds)) {
-                $this->discountService->setDiscount($discount)->assignProducts($request->product_ids)->getAssignProducts();
-
+            if ($result) {
                 toast('Atama yapildi.', 'success');
                 return redirect()->back();
             } else {
                 toast('Atama yapilmadi. Daha onceden urune ayni indirim eklenmistir.', 'error');
+                return redirect()->back();
+            }
+        } catch (Throwable $th) {
+            dd($th->getMessage());
+        }
+    }
+
+    public function showAssignCategoriesForm(Discounts $discount, CategoryService $categoryService)
+    {
+        $categories = $categoryService->getAllActiveCategories();
+        $data = (object)[
+            'items' => $categories,
+            'title' => 'Kategoriye Indirim Ekleme',
+            'label' => 'Indirim Yapilcak Kategori',
+            'select_id' => 'category_ids',
+            'select_name' => 'category_ids',
+            'option' => 'Indirim Yapilcak Kategoriye Seciniz',
+            'route' => route('admin.discount.assign-categories', $discount->id),
+            'message' => 'Lutfen indirim yapilacak kategoriyi seciniz!',
+        ];
+
+        return view('admin.discount.assign-product.assign', compact('discount', 'data'));
+    }
+
+    public function showAssignCategories(Request $request, Discounts $discount)
+    {
+        $request->validate([
+            'category_ids' => ['required', 'array'],
+            'category_ids.*' => ['exists:categories,id'],
+        ]);
+
+        try {
+            $result = $this->discountService->setDiscount($discount)->assignCategoryProcess($request->category_ids);
+
+            if ($result) {
+                toast('Atama yapildi.', 'success');
+                return redirect()->back();
+            } else {
+                toast('Atama yapilmadi. Daha onceden kategoriye ayni indirim eklenmistir.', 'error');
+                return redirect()->back();
+            }
+        } catch (Throwable $th) {
+            dd($th->getMessage());
+        }
+    }
+
+    public function showAssignBrandsForm(Discounts $discount, BrandService $brandService)
+    {
+        $brands = $brandService->getAllActive();
+        $data = (object)[
+            'items' => $brands,
+            'title' => 'Markaya Indirim Ekleme',
+            'label' => 'Indirim Yapilcak Kategori',
+            'select_id' => 'brands_ids',
+            'select_name' => 'brands_ids',
+            'option' => 'Indirim Yapilcak Markayi Seciniz',
+            'route' => route('admin.discount.assign-brands', $discount->id),
+            'message' => 'Lutfen indirim yapilacak kategoriyi seciniz!',
+        ];
+
+        return view('admin.discount.assign-product.assign', compact('discount', 'data'));
+    }
+
+    public function showAssignBrands(Request $request, Discounts $discount)
+    {
+        $request->validate([
+            'brands_ids' => ['required', 'array'],
+            'brands_ids.*' => ['exists:brands,id'],
+        ]);
+
+        try {
+            $result = $this->discountService->setDiscount($discount)->assignBrandProcess($request->brands_ids);
+
+            if ($result) {
+                toast('Atama yapildi.', 'success');
+                return redirect()->back();
+            } else {
+                toast('Atama yapilmadi. Daha onceden markaya ayni indirim eklenmistir.', 'error');
                 return redirect()->back();
             }
         } catch (Throwable $th) {

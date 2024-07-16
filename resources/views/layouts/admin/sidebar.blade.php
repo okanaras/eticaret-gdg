@@ -98,7 +98,7 @@
                     <span class="link-title">Indirim Yonetimi</span>
                     <i class="link-arrow" data-feather="chevron-down"></i>
                 </a>
-                <div class="collapse {{ Route::is('admin.discount.index') || Route::is('admin.discount.create') || Route::is('admin.discount.edit') ? 'show' : '' }}"
+                <div class="collapse {{ Route::is('admin.discount.index') || Route::is('admin.discount.create') || Route::is('admin.discount.edit') || Route::is('admin.discount.assign-products') || Route::is('admin.discount.assign-categories') || Route::is('admin.discount.assign-brands') ? 'show' : '' }}"
                     id="discounts">
                     <ul class="nav sub-menu">
                         <li class="nav-item">
@@ -108,7 +108,7 @@
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('admin.discount.create') }}"
-                                class="nav-link {{ Route::is('admin.discount.create') || Route::is('admin.discount.edit') ? 'active' : '' }}">Indirim
+                                class="nav-link {{ Route::is('admin.discount.create') || Route::is('admin.discount.edit') || Route::is('admin.discount.assign-products') || Route::is('admin.discount.assign-categories') || Route::is('admin.discount.assign-brands') ? 'active' : '' }}">Indirim
                                 Ekleme</a>
                         </li>
                     </ul>
