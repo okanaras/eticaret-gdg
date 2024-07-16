@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\DiscountTypeEnum;
 use App\Enums\GenderEnum;
 
 if (!function_exists('getGender')) {
@@ -8,6 +9,15 @@ if (!function_exists('getGender')) {
         $configText = config('genders');
 
         return $configText[$genderEnum->value] ?? 'Bulunamadi';
+    }
+}
+
+if (!function_exists('getDiscountType')) {
+    function getDiscountType(DiscountTypeEnum $discountTypeEnum): string
+    {
+        $configText = config('discount_types');
+
+        return $configText[$discountTypeEnum->value] ?? 'Bulunamadi';
     }
 }
 

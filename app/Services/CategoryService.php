@@ -96,7 +96,6 @@ class CategoryService
                     'name' => 'Marka Adi',
                     'status' => 'Durum',
                     'parent_id' => 'Ust Kategori',
-                    'is_featured' => 'One Cikarilma Durumu',
                 ],
             ],
             'order_direction' => [

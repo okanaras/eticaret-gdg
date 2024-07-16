@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Front\CardController;
 use App\Http\Controllers\Front\CheckoutController;
 use App\Http\Controllers\Front\DashboardController;
@@ -13,6 +14,26 @@ use App\Http\Controllers\Front\ProductController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\SlidersController;
 use Illuminate\Support\Facades\Route;
+
+/** Auth */
+Route::prefix('/kayit-ol')->middleware(['throttle:registration', 'guest'])->group(function () {
+    Route::get('/', [RegisterController::class, 'showForm'])->name('register');
+    Route::post('/', [RegisterController::class, 'register']);
+});
+
+Route::prefix('giris')->middleware(['throttle:100,60', 'guest'])->group(function () {  // throttle:100,60 : 60 dakikada 100 istek
+    Route::get('/', [LoginController::class, 'showForm'])->name('login');
+    Route::post('/', [LoginController::class, 'login']);
+});
+
+Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+Route::get('auth/{driver}/callback', [LoginController::class, 'socialiteVerify'])->name('login.socialite-verify');
+Route::get('auth/{driver}', [LoginController::class, 'socialite'])->name('login.socialite');
+
+Route::get('dogrula/{token}', [RegisterController::class, 'verify'])->name('verify');
+Route::get('dogrula-mail', [RegisterController::class, 'sendVerifyMailShowForm'])->name('send-verify-mail');
+Route::post('dogrula-mail', [RegisterController::class, 'sendVerifyMail']);
 
 /** Home */
 Route::get('/', [FrontController::class, 'index'])->name('index');
@@ -68,6 +89,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.check'])->gro
         Route::post('/change-status', [SlidersController::class, 'changeStatus'])->name('change-status');
     });
 
+    Route::resource('discount', DiscountController::class);
+
     Route::group(['prefix' => 'gdg-filemanager', 'middleware' => ['web', 'auth']], function () {
         \UniSharp\LaravelFilemanager\Lfm::routes();
     });
@@ -76,23 +99,3 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.check'])->gro
 /** Front basligi altinda kestik 201. commit */
 Route::get('/urun-listesi', [ProductController::class, 'list'])->name('product.list');
 Route::get('/{product:slug}', [ProductController::class, 'detail'])->name('product.detail');
-
-/** Auth */
-Route::prefix('/kayit-ol')->middleware(['throttle:registration', 'guest'])->group(function () {
-    Route::get('/', [RegisterController::class, 'showForm'])->name('register');
-    Route::post('/', [RegisterController::class, 'register']);
-});
-
-Route::prefix('giris')->middleware(['throttle:100,60', 'guest'])->group(function () {  // throttle:100,60 : 60 dakikada 100 istek
-    Route::get('/', [LoginController::class, 'showForm'])->name('login');
-    Route::post('/', [LoginController::class, 'login']);
-});
-
-Route::post('logout', [LoginController::class, 'logout'])->name('logout');
-
-Route::get('auth/{driver}/callback', [LoginController::class, 'socialiteVerify'])->name('login.socialite-verify');
-Route::get('auth/{driver}', [LoginController::class, 'socialite'])->name('login.socialite');
-
-Route::get('dogrula/{token}', [RegisterController::class, 'verify'])->name('verify');
-Route::get('dogrula-mail', [RegisterController::class, 'sendVerifyMailShowForm'])->name('send-verify-mail');
-Route::post('dogrula-mail', [RegisterController::class, 'sendVerifyMail']);

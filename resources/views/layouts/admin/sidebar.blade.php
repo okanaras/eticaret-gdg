@@ -91,6 +91,30 @@
                 </div>
             </li>
             <li
+                class="nav-item {{ Route::is('admin.discount.index') || Route::is('admin.discount.create') || Route::is('admin.discount.edit') ? 'active' : '' }}">
+                <a class="nav-link" data-bs-toggle="collapse" href="#discounts" role="button" aria-expanded="false"
+                    aria-controls="discounts">
+                    <i class="link-icon" data-feather="list"></i>
+                    <span class="link-title">Indirim Yonetimi</span>
+                    <i class="link-arrow" data-feather="chevron-down"></i>
+                </a>
+                <div class="collapse {{ Route::is('admin.discount.index') || Route::is('admin.discount.create') || Route::is('admin.discount.edit') ? 'show' : '' }}"
+                    id="discounts">
+                    <ul class="nav sub-menu">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.discount.index') }}"
+                                class="nav-link {{ Route::is('admin.discount.index') ? 'active' : '' }}">Indirim
+                                Listesi</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.discount.create') }}"
+                                class="nav-link {{ Route::is('admin.discount.create') || Route::is('admin.discount.edit') ? 'active' : '' }}">Indirim
+                                Ekleme</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li
                 class="nav-item {{ Route::is('admin.slider.index') || Route::is('admin.slider.create') || Route::is('admin.slider.edit') ? 'active' : '' }}">
                 <a class="nav-link" data-bs-toggle="collapse" href="#sliders" role="button" aria-expanded="false"
                     aria-controls="sliders">

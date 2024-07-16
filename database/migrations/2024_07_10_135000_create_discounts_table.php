@@ -27,8 +27,8 @@ return new class extends Migration
             $table->id();
             $table->string('code');
             $table->unsignedBigInteger('discount_id');
-            $table->int('usage_limit');
-            $table->int('used_count');
+            $table->integer('usage_limit');
+            $table->integer('used_count');
             $table->date('expiry_date');
             $table->timestamps();
 
