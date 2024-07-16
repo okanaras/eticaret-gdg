@@ -90,7 +90,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.check'])->gro
     });
 
     Route::resource('discount', DiscountController::class);
-    Route::post('discount/change-status', [DiscountController::class, 'changeStatus'])->name('discount.change-status');
+    Route::prefix('discount')->name('discount.')->group(function () {
+        Route::post('/change-status', [DiscountController::class, 'changeStatus'])->name('change-status');
+        Route::get('/{discount}/assign-products', [DiscountController::class, 'showAssignProductsForm'])->name('assign-products');
+        Route::post('/{discount}/assign-products', [DiscountController::class, 'showAssignProducts']);
+        Route::get('/{discount}/assign-categories', [DiscountController::class, 'showAssignCategoriesForm'])->name('assign-categories');
+        Route::post('/{discount}/assign-categories', [DiscountController::class, 'showAssignCategories']);
+        Route::get('/{discount}/assign-brands', [DiscountController::class, 'showAssignBrandsForm'])->name('assign-brands');
+        Route::post('/{discount}/assign-brands', [DiscountController::class, 'showAssignBrands']);
+    });
 
 
     Route::group(['prefix' => 'gdg-filemanager', 'middleware' => ['web', 'auth']], function () {

@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\DiscountTypeEnum;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DiscountAssignProductsRequest;
 use App\Http\Requests\DiscountStoreRequest;
+use App\Models\Discounts;
 use App\Services\DiscountService;
+use App\Services\ProductServices\ProductService;
 use App\Traits\GdgException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -132,6 +135,43 @@ class DiscountController extends Controller
             return $this->jsonException($th, ['message' => 'Indirim bulunamadi'], 404);
         } catch (Throwable $th) {
             return $this->jsonException($th, ['message' => 'Indirim bulunamadi']);
+        }
+    }
+
+    public function showAssignProductsForm(Discounts $discount, ProductService $productService)
+    {
+        $products = $productService->getAllActive();
+        $data = (object)[
+            'items' => $products,
+            'title' => 'Urune Indirim Ekleme',
+            'label' => 'Indirim Yapilcak Urun',
+            'select_id' => 'product_ids',
+            'select_name' => 'product_ids',
+            'option' => 'Indirim Yapilcak Urunu Seciniz',
+            'route' => route('admin.discount.assign-products', $discount->id),
+            'message' => 'Lutfen indirim yapilacak urunu seciniz!',
+        ];
+
+        return view('admin.discount.assign-product.assign', compact('discount', 'data'));
+    }
+
+    public function showAssignProducts(DiscountAssignProductsRequest $request, Discounts $discount)
+    {
+        try {
+            $oldAssignProducts = $this->discountService->setDiscount($discount)->getAssignProducts()->pluck('id')->toArray();
+            $newProductsIds = array_diff($request->product_ids, $oldAssignProducts);
+
+            if (count($newProductsIds)) {
+                $this->discountService->setDiscount($discount)->assignProducts($request->product_ids)->getAssignProducts();
+
+                toast('Atama yapildi.', 'success');
+                return redirect()->back();
+            } else {
+                toast('Atama yapilmadi. Daha onceden urune ayni indirim eklenmistir.', 'error');
+                return redirect()->back();
+            }
+        } catch (Throwable $th) {
+            dd($th->getMessage());
         }
     }
 }

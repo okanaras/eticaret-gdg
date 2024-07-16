@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\DiscountTypeEnum;
 use App\Models\Discounts;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Collection;
 
 class DiscountService
 {
@@ -132,5 +133,17 @@ class DiscountService
     public function delete(): bool
     {
         return $this->discount->delete();
+    }
+
+    public function assignProducts(array $productIds): self
+    {
+        $this->discount->products()->attach($productIds);
+
+        return $this;
+    }
+
+    public function getAssignProducts(): Collection
+    {
+        return $this->discount->products;
     }
 }

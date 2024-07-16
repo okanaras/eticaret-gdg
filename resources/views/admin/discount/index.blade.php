@@ -112,6 +112,7 @@
                             </th>
 
                             <th>Islemler</th>
+                            <th>Atamalar</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -121,7 +122,6 @@
                                 <td>{{ $discount->name }}</td>
                                 <td>{{ getDiscountType(\App\Enums\DiscountTypeEnum::tryFrom($discount->type)) }}</td>
                                 <td>{{ $discount->value }}</td>
-                                <td>{{ $discount->minimum_spend }}</td>
                                 <td>
                                     @if ($discount->status)
                                         <a href="javascript:void(0)" class="btn btn-inverse-success btn-change-status"
@@ -134,12 +134,22 @@
                                 <td>{{ $discount->start_date }}</td>
                                 <td>{{ $discount->end_date }}</td>
                                 <td>
-                                    <a href="{{ route('admin.discount.edit', ['discount' => $discount->id]) }}"><i
-                                            data-feather="edit" class="text-warning"></i></a>
-                                    <a href="javascript:void(0)"><i data-feather="trash"
-                                            class="text-danger btn-delete-discount" data-id="{{ $discount->id }}"
-                                            data-name="{{ $discount->name }}"></i></a>
+                                    <a href="{{ route('admin.discount.edit', ['discount' => $discount->id]) }}">
+                                        <i data-feather="edit" class="text-warning"></i>
+                                    </a>
+                                    <a href="javascript:void(0)">
+                                        <i data-feather="trash" class="text-danger btn-delete-discount"
+                                            data-id="{{ $discount->id }}" data-name="{{ $discount->name }}">
+                                        </i>
+                                    </a>
                                 </td>
+                                <td>
+                                    <a href="{{ route('admin.discount.assign-products', $discount->id) }}"
+                                        class="btn btn-primary p-1" title="Urune Indirim Atama">
+                                        <i data-feather="box"></i>
+                                    </a>
+                                </td>
+
                             </tr>
                         @endforeach
                     </tbody>
