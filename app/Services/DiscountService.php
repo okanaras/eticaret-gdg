@@ -17,7 +17,7 @@ class DiscountService
 
     public function getFilters(): array
     {
-        $types = ['all' => 'Tumu'] + array_map(fn ($case) => $case->value, DiscountTypeEnum::cases());
+        $types = ['all' => 'Tumu'] +  getAllDiscountTypes();
 
         return [
             'name' => [

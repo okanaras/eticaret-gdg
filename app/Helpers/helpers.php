@@ -21,6 +21,18 @@ if (!function_exists('getDiscountType')) {
     }
 }
 
+if (!function_exists('getAllDiscountTypes')) {
+    function getAllDiscountTypes(): array
+    {
+        $discountTypes = [];
+        foreach (DiscountTypeEnum::cases() as $discountTypeEnum) {
+            $discountTypes[$discountTypeEnum->value] = getDiscountType($discountTypeEnum);
+        }
+
+        return $discountTypes;
+    }
+}
+
 if (!function_exists('pathEditor')) {
     function pathEditor(string $path): string
     {
