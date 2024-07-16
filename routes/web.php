@@ -90,6 +90,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.check'])->gro
     });
 
     Route::resource('discount', DiscountController::class);
+    Route::post('discount/change-status', [DiscountController::class, 'changeStatus'])->name('discount.change-status');
+
 
     Route::group(['prefix' => 'gdg-filemanager', 'middleware' => ['web', 'auth']], function () {
         \UniSharp\LaravelFilemanager\Lfm::routes();

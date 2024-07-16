@@ -134,10 +134,10 @@
                                 <td>{{ $discount->start_date }}</td>
                                 <td>{{ $discount->end_date }}</td>
                                 <td>
-                                    <a href="{{ route('admin.brand.edit', ['brand' => $discount->id]) }}"><i
+                                    <a href="{{ route('admin.discount.edit', ['discount' => $discount->id]) }}"><i
                                             data-feather="edit" class="text-warning"></i></a>
                                     <a href="javascript:void(0)"><i data-feather="trash"
-                                            class="text-danger btn-delete-brand" data-id="{{ $discount->id }}"
+                                            class="text-danger btn-delete-discount" data-id="{{ $discount->id }}"
                                             data-name="{{ $discount->name }}"></i></a>
                                 </td>
                             </tr>
@@ -174,9 +174,9 @@
                 let dataID = element.getAttribute('data-id');
                 let dataName = element.getAttribute('data-name');
 
-                if (element.classList.contains('btn-delete-brand')) {
+                if (element.classList.contains('btn-delete-discount')) {
                     Swal.fire({
-                        title: " '" + dataName + "' markasini silmek istediginize emin misiniz?",
+                        title: " '" + dataName + "' indirimini silmek istediginize emin misiniz?",
                         showCancelButton: true,
                         confirmButtonText: "Evet",
                         cancelButtonText: "Hayir"
@@ -184,8 +184,8 @@
                         /* Read more about isConfirmed, isDenied below */
                         if (result.isConfirmed) {
                             let route =
-                                '{{ route('admin.brand.destroy', ['brand' => ':brand']) }}'
-                            route = route.replace(':brand', dataID)
+                                '{{ route('admin.discount.destroy', ['discount' => ':discount']) }}'
+                            route = route.replace(':discount', dataID)
 
                             deleteForm.action = route;
 
@@ -222,15 +222,17 @@
                                 body: JSON.stringify(body)
                             }
 
-                            let route = "{{ route('admin.brand.change-status') }}";
+                            let route = "{{ route('admin.discount.change-status') }}";
 
                             fetch(route, data)
                                 .then(response => {
                                     if (!response.ok) {
-                                        toastr.error(
-                                            'Marka status guncellenemedi, hata alindi!',
-                                            'Hata');
-                                        console.error(response);
+                                        return response.json()
+                                            .then(error => {
+                                                toastr.error(
+                                                    `Indirim status guncellenemedi. ${error?.message || 'Hata alindi!'}`,
+                                                    'Hata');
+                                            });
                                     }
 
                                     return response.json();
@@ -247,7 +249,7 @@
                                         element.classList.add('btn-inverse-danger');
                                     }
                                     toastr.success(
-                                        `Marka ${element.textContent.toLowerCase()} olarak guncellendi!`,
+                                        `Indirim ${element.textContent.toLowerCase()} olarak guncellendi!`,
                                         'Basarili');
                                 })
 

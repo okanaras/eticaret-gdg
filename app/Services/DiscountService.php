@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\DiscountTypeEnum;
 use App\Models\Discounts;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class DiscountService
 {
@@ -78,7 +79,6 @@ class DiscountService
         ];
     }
 
-
     public function prepareDataRequest(): self
     {
         $data = request()->only('name', 'type', 'value', 'start_date', 'end_date', 'minimum_spend', 'status'); // ! status cikacak
@@ -86,6 +86,12 @@ class DiscountService
 
         $this->prepareData = $data;
 
+        return $this;
+    }
+
+    public function setPrepareData(array $data): self
+    {
+        $this->prepareData = $data;
         return $this;
     }
 
@@ -103,5 +109,28 @@ class DiscountService
         if ($perPage) return $this->filterService->paginate($query, $perPage);
 
         return $query->get();
+    }
+
+    public function getById(int $id): Discounts|ModelNotFoundException
+    {
+        return $this->discount::findOrFail($id);
+    }
+
+    public function setDiscount(Discounts $discounts): self
+    {
+        $this->discount = $discounts;
+        return $this;
+    }
+
+    public function update(array $data = null): bool
+    {
+        if (is_null($data)) $data = $this->prepareData;
+
+        return $this->discount->update($data);
+    }
+
+    public function delete(): bool
+    {
+        return $this->discount->delete();
     }
 }

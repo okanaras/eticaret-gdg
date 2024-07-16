@@ -77,7 +77,8 @@
 
                     <div class="input-group flatpickr flatpickr-date">
                         <input type="text" class="form-control flatpickr-input active" name="start_date" id="start_date"
-                            placeholder="Indirim Baslangic Tarihi" value="" data-input="">
+                            placeholder="Indirim Baslangic Tarihi"
+                            value="{{ isset($discount) ? $discount->start_date : old('start_date') }}" data-input="">
                         <span class="input-group-text input-group-addon" data-toggle=""><i
                                 data-feather="calendar"></i></span>
                     </div>
@@ -88,7 +89,8 @@
 
                     <div class="input-group flatpickr flatpickr-date">
                         <input type="text" class="form-control flatpickr-input active" name="end_date" id="end_date"
-                            placeholder="Indirim Bitis Tarihi" value="" data-input="">
+                            placeholder="Indirim Bitis Tarihi"
+                            value="{{ isset($discount) ? $discount->end_date : old('end_date') }}" data-input="">
                         <span class="input-group-text input-group-addon" data-toggle=""><i
                                 data-feather="calendar"></i></span>
                     </div>

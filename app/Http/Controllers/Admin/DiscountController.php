@@ -6,11 +6,15 @@ use App\Enums\DiscountTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DiscountStoreRequest;
 use App\Services\DiscountService;
+use App\Traits\GdgException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Throwable;
 
 class DiscountController extends Controller
 {
+    use GdgException;
     public function __construct(public DiscountService $discountService)
     {
     }
@@ -40,14 +44,14 @@ class DiscountController extends Controller
      */
     public function store(DiscountStoreRequest $request)
     {
-        // try {
-        $this->discountService->prepareDataRequest()->create();
-        toast('Indirim kaydedildi.', 'success');
-        return to_route('admin.discount.index');
-        // }
-        //  catch (Throwable $th) {
-        //     return $this->exception($th, 'admin.category.index', 'Kategori eklenmedi.');
-        // }
+        try {
+            $this->discountService->prepareDataRequest()->create();
+
+            toast('Indirim kaydedildi.', 'success');
+            return to_route('admin.discount.index');
+        } catch (Throwable $th) {
+            return $this->exception($th, 'admin.discount.index', 'Indirim eklenmedi.');
+        }
     }
 
     /**
@@ -63,15 +67,29 @@ class DiscountController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $discount = $this->discountService->getById($id);
+        $types = DiscountTypeEnum::cases();
+
+        return view('admin.discount.create_edit', compact('discount', 'types'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(DiscountStoreRequest $request, string $id)
     {
-        //
+
+
+        try {
+            $discount = $this->discountService->getById($id);
+            $this->discountService->setDiscount($discount)->prepareDataRequest()->update();
+
+            toast('Indirim guncellendi.', 'success');
+            // return redirect()->route('admin.discount.index');
+            return to_route('admin.discount.index');
+        } catch (Throwable $th) {
+            return $this->exception($th, 'admin.discount.index', 'Indirim guncellenemedi.');
+        }
     }
 
     /**
@@ -79,6 +97,41 @@ class DiscountController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $discount = $this->discountService->getById($id);
+            $this->discountService->setDiscount($discount)->delete();
+
+            toast('Indirim silindi.', 'success');
+            return redirect()->back();
+        } catch (Throwable $th) {
+            return $this->exception($th, 'admin.discount.index', 'Indirim silinemedi');
+        }
+    }
+
+    public function changeStatus(Request $request): JsonResponse
+    {
+        try {
+            $id = $request->id;
+
+            $discount = $this->discountService->getById($id);
+
+            $data = ['status' => !$discount->status];
+            $this->discountService
+                ->setDiscount($discount)
+                ->setPrepareData($data)
+                ->update();
+
+            return response()
+                ->json()
+                ->setData($discount)
+                ->setStatusCode(200)
+                ->setCharset('utf-8')
+                ->header('Content-Type', 'application.json')
+                ->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+        } catch (ModelNotFoundException $th) {
+            return $this->jsonException($th, ['message' => 'Indirim bulunamadi'], 404);
+        } catch (Throwable $th) {
+            return $this->jsonException($th, ['message' => 'Indirim bulunamadi']);
+        }
     }
 }
