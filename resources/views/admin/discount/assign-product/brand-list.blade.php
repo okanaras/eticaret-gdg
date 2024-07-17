@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 
-@section('title', 'Indirimli Urun Listesi')
+@section('title', 'Indirimli Marka Listesi')
 
 
 @push('css')
@@ -45,8 +45,8 @@
                     </div>
                 </div>
                 <div class="col-md-9">
-                    <x-filter-form :filters="$filters" custom-class="col-md-3"
-                        action="{{ route('admin.discount.show-products-list', $discount->id) }}" />
+                    <x-filter-form :filters="$filters" custom-class="col-md-4"
+                        action="{{ route('admin.discount.show-brands-list', $discount->id) }}" />
                 </div>
                 <div class="col-md-12">
                     <h6 class="card-title">Indirim Listesi</h6>
@@ -58,68 +58,26 @@
                                     <th @class([
                                         'order-by',
                                         'text-primary fw-bolder' =>
-                                            request('order_by') == 'products.id' || is_null(request('order_by')),
-                                    ]) data-order="products.id">#
-                                        {!! (request('order_by') == 'products.id' && request('order_direction') === 'asc') || request('order_by') == null
+                                            request('order_by') == 'brands.id' || is_null(request('order_by')),
+                                    ]) data-order="brands.id">#
+                                        {!! (request('order_by') == 'brands.id' && request('order_direction') === 'asc') || request('order_by') == null
                                             ? '<i class="size-14" data-feather="arrow-down-circle"></i>'
-                                            : (request('order_by') == 'products.id' && request('order_direction') === 'desc'
+                                            : (request('order_by') == 'brands.id' && request('order_direction') === 'desc'
                                                 ? '<i class="size-14" data-feather="arrow-up-circle"></i>'
                                                 : '') !!}
                                     </th>
 
                                     <th @class([
                                         'order-by',
-                                        'text-primary fw-bolder' => request('order_by') == 'products.name',
-                                    ]) data-order="products.name">
-                                        Indirimli Urun {!! request('order_by') == 'products.name' && request('order_direction') === 'asc'
+                                        'text-primary fw-bolder' => request('order_by') == 'brands.name',
+                                    ]) data-order="brands.name">
+                                        Indirimli Marka Adi {!! request('order_by') == 'brands.name' && request('order_direction') === 'asc'
                                             ? '<i class="size-14" data-feather="arrow-down-circle"></i>'
-                                            : (request('order_by') == 'products.name' && request('order_direction') === 'desc'
+                                            : (request('order_by') == 'brands.name' && request('order_direction') === 'desc'
                                                 ? '<i class="size-14" data-feather="arrow-up-circle"></i>'
                                                 : '') !!}
                                     </th>
 
-                                    <th @class([
-                                        'order-by',
-                                        'text-primary fw-bolder' => request('order_by') == 'products.final_price',
-                                    ]) data-order="products.final_price">
-                                        Urun Fiyati {!! request('order_by') == 'products.final_price' && request('order_direction') === 'asc'
-                                            ? '<i class="size-14" data-feather="arrow-down-circle"></i>'
-                                            : (request('order_by') == 'products.final_price' && request('order_direction') === 'desc'
-                                                ? '<i class="size-14" data-feather="arrow-up-circle"></i>'
-                                                : '') !!}
-                                    </th>
-
-                                    <th @class([
-                                        'order-by',
-                                        'text-primary fw-bolder' =>
-                                            request('order_by') == 'products_main.category_id',
-                                    ]) data-order="products_main.category_id">
-                                        Kategori {!! request('order_by') == 'products_main.category_id' && request('order_direction') === 'asc'
-                                            ? '<i class="size-14" data-feather="arrow-down-circle"></i>'
-                                            : (request('order_by') == 'products_main.category_id' && request('order_direction') === 'desc'
-                                                ? '<i class="size-14" data-feather="arrow-up-circle"></i>'
-                                                : '') !!}
-                                    </th>
-                                    <th @class([
-                                        'order-by',
-                                        'text-primary fw-bolder' => request('order_by') == 'products_main.brand_id',
-                                    ]) data-order="products_main.brand_id">
-                                        Marka {!! request('order_by') == 'products_main.brand_id' && request('order_direction') === 'asc'
-                                            ? '<i class="size-14" data-feather="arrow-down-circle"></i>'
-                                            : (request('order_by') == 'products_main.brand_id' && request('order_direction') === 'desc'
-                                                ? '<i class="size-14" data-feather="arrow-up-circle"></i>'
-                                                : '') !!}
-                                    </th>
-                                    <th @class([
-                                        'order-by',
-                                        'text-primary fw-bolder' => request('order_by') == 'products_main.type_id',
-                                    ]) data-order="products_main.type_id">
-                                        Urun Turu {!! request('order_by') == 'products_main.type_id' && request('order_direction') === 'asc'
-                                            ? '<i class="size-14" data-feather="arrow-down-circle"></i>'
-                                            : (request('order_by') == 'products_main.type_id' && request('order_direction') === 'desc'
-                                                ? '<i class="size-14" data-feather="arrow-up-circle"></i>'
-                                                : '') !!}
-                                    </th>
                                     <th>Islemler</th>
 
                                 </tr>
@@ -127,17 +85,13 @@
                             <tbody>
                                 @foreach ($discounts as $item)
                                     <tr>
-                                        <td>{{ $item->pId }}</td>
-                                        <td>{{ $item->pName }}</td>
-                                        <td>{{ number_format($item->final_price, 2, thousands_separator: '') }}</td>
-                                        <td>{{ $item->cName }}</td>
+                                        <td>{{ $item->bId }}</td>
                                         <td>{{ $item->bName }}</td>
-                                        <td>{{ $item->ptName }}</td>
                                         <td>
                                             <a href="javascript:void(0)">
                                                 <i data-feather="trash" class="text-danger btn-delete-discount"
                                                     data-discount-id="{{ $discount->id }}"
-                                                    data-product-id="{{ $item->pId }}" data-name="{{ $item->pName }}">
+                                                    data-product-id="{{ $item->bId }}" data-name="{{ $item->bName }}">
                                                 </i>
                                             </a>
                                         </td>

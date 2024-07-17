@@ -72,7 +72,7 @@
                                         'order-by',
                                         'text-primary fw-bolder' => request('order_by') == 'categories.name',
                                     ]) data-order="categories.name">
-                                        Indirimli Kategori {!! request('order_by') == 'categories.name' && request('order_direction') === 'asc'
+                                        Indirimli Kategori Adi {!! request('order_by') == 'categories.name' && request('order_direction') === 'asc'
                                             ? '<i class="size-14" data-feather="arrow-down-circle"></i>'
                                             : (request('order_by') == 'categories.name' && request('order_direction') === 'desc'
                                                 ? '<i class="size-14" data-feather="arrow-up-circle"></i>'
@@ -119,7 +119,7 @@
 
                         <div class="col-6 mx-auto mt-3">
                             {{-- {{ $discounts->appends(request()->query())->links() }} --}}
-                            {{-- {{ $discounts->WithQueryString()->links() }} --}}
+                            {{ $discounts->WithQueryString()->links() }}
                         </div>
                     </div>
                 </div>

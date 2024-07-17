@@ -268,4 +268,11 @@ class DiscountController extends Controller
 
         return view('admin.discount.assign-product.category-list', compact('discount', 'discounts', 'filters'));
     }
+    public function showBrandsList(Request $request, Discounts $discount)
+    {
+        $filters = $this->discountService->getFiltersForBrands();
+        $discounts = $this->discountService->getDiscountForBrandList();
+
+        return view('admin.discount.assign-product.brand-list', compact('discount', 'discounts', 'filters'));
+    }
 }

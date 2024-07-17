@@ -136,7 +136,7 @@ class DiscountService
                 'type' => 'select',
                 'column' => 'status',
                 'column_live' => 'status',
-                'table' => 'products_main',
+                'table' => 'products',
                 'operator' => '=',
                 'options' => ['all' => 'Tumu', 'Pasif', 'Aktif'],
             ],
@@ -201,12 +201,16 @@ class DiscountService
             'name' => [
                 'label' => 'Kategori Adi',
                 'type' => 'text',
+                'column_live' => 'name',
+                'table' => 'categories',
                 'column' => 'name',
                 'operator' => 'like',
             ],
             'parent_id' => [
                 'label' => 'Ust Kategori',
                 'type' => 'select',
+                'column_live' => 'parent_id',
+                'table' => 'categories',
                 'column' => 'parent_id',
                 'operator' => '=',
                 'options' => $categories,
@@ -214,6 +218,8 @@ class DiscountService
             'status' => [
                 'label' => 'Durum',
                 'type' => 'select',
+                'column_live' => 'status',
+                'table' => 'categories',
                 'column' => 'status',
                 'operator' => '=',
                 'options' => ['all' => 'Tumu', 'Pasif', 'Aktif'],
@@ -227,6 +233,62 @@ class DiscountService
                     'categories.id' => 'ID',
                     'categories.name' => 'Kategori Adi',
                     'categories.parent_id' => 'Ust Kategori',
+                ],
+            ],
+            'order_direction' => [
+                'label' => 'Siralama Yonu',
+                'type' => 'select',
+                'column' => 'order_direction',
+                'operator' => '',
+                'options' => [
+                    'asc' => 'A-Z',
+                    'desc' => 'Z-A',
+                ],
+            ],
+        ];
+    }
+
+    public function getFiltersForBrands(): array
+    {
+        return [
+
+            'name' => [
+                'label' => 'Marka Adi',
+                'type' => 'text',
+                'column' => 'name',
+                'column_live' => 'name',
+                'table' => 'brands',
+                'operator' => 'like',
+            ],
+
+            'status' => [
+                'label' => 'Durum',
+                'type' => 'select',
+                'column' => 'status',
+                'column_live' => 'status',
+                'table' => 'brands',
+                'operator' => '=',
+                'options' => ['all' => 'Tumu', 'Pasif', 'Aktif'],
+            ],
+            'is_featured' => [
+                'label' => 'One Cikarilma Durumu',
+                'type' => 'select',
+                'column' => 'is_featured',
+                'column_live' => 'is_featured',
+                'table' => 'brands',
+                'operator' => '=',
+                'options' => ['all' => 'Tumu', 'Hayir', 'Evet'],
+            ],
+            'order_by' => [
+                'label' => 'Siralama Turu',
+                'type' => 'select',
+                'column' => 'order_by',
+                'operator' => '',
+                'options' => [
+                    'brands.id' => 'ID',
+                    'brands.name' => 'Marka Adi',
+                    'brands.status' => 'Durum',
+                    'brands.is_featured' => 'One Cikarilma Durumu',
                 ],
             ],
             'order_direction' => [
@@ -323,8 +385,6 @@ class DiscountService
         return $this->discount->products;
     }
 
-
-
     public function assignCategoryProcess(array $categoryIds): bool
     {
         $oldAssignCategories = $this->getAssignCategories()->pluck('id')->toArray();
@@ -384,18 +444,6 @@ class DiscountService
 
     public function getDiscountForProductList()
     {
-
-        $categoryId = request()->input('category_id');
-        $brandId = request()->input('brand_id');
-        $typeId = request()->input('type_id');
-        $gender = request()->input('gender');
-        $name = request()->input('product_name');
-        $finalPriceMin = request()->input('final_price_min');
-        $finalPriceMax = request()->input('final_price_max');
-        $status = request()->input('status');
-        $orderBy = request()->input('order_by');
-        $orderDirection = request()->input('order_direction');
-
         $query = Discounts::query()
             ->join('discount_products', 'discount_products.discount_id', '=', 'discounts.id')
             ->join('products', 'products.id', '=', 'discount_products.product_id')
@@ -403,54 +451,17 @@ class DiscountService
             ->join('categories', 'categories.id', '=', 'products_main.category_id')
             ->join('brands', 'brands.id', '=', 'products_main.brand_id')
             ->join('product_types', 'product_types.id', '=', 'products_main.type_id')
-            ->select('discounts.*', 'products.id as pId', 'products.name as pName', 'products.final_price', 'products.status', 'products_main.category_id', 'categories.name as cName', 'brands.name as bName', 'product_types.name as ptName');
+            ->select('discounts.*', 'products.id as pId', 'products.name as pName', 'products.final_price', 'products.status', 'products_main.category_id', 'categories.name as cName', 'brands.name as bName', 'product_types.name as ptName')
+            ->where('discounts.id', request()->discount->id);
 
+        $filters = $this->getFiltersForProduct();
+        $query = $this->filterService->applyFilters($query, $filters);
 
-        if (!is_null($categoryId) && $categoryId != 'all') {
-            $query->where('products_main.category_id', $categoryId);
-        }
-        if (!is_null($brandId) && $brandId != 'all') {
-            $query->where('products_main.brand_id', $brandId);
-        }
-        if (!is_null($typeId) && $typeId != 'all') {
-            $query->where('products_main.type_id', $typeId);
-        }
-        if (!is_null($gender) && $gender != 'all') {
-            $query->where('products_main.gender', $gender);
-        }
-        if (!is_null($status) && $status != 'all') {
-            $query->where('products.status', $status);
-        }
-        if (!is_null($name)) {
-            $query->where('products.name', 'LIKE', "%$name%");
-        }
-        if (!is_null($finalPriceMin)) {
-            $query->where('products.final_price', '>=', (float)$finalPriceMin);
-        }
-        if (!is_null($finalPriceMax)) {
-            $query->where('products.final_price', '<=', (float)$finalPriceMax);
-        }
-
-        $query = $query->where('discounts.id', request()->discount->id);
-
-        if (!is_null($orderBy) && !is_null($orderDirection)) {
-            $query->orderBy($orderBy, $orderDirection);
-        } else {
-            $query->orderBy('discounts.id', 'DESC');
-        }
-
-        return $query->get();
+        return $this->filterService->paginate($query, 10);
     }
 
     public function getDiscountForCategoryList()
     {
-        $name = request()->input('name');
-        $status = request()->input('status');
-        $parentId = request()->input('parent_id');
-        $orderBy = request()->input('order_by');
-        $orderDirection = request()->input('order_direction');
-
-
         $query = Discounts::query()
             ->join('discount_categories', 'discount_categories.discount_id', '=', 'discounts.id')
             ->join('categories', 'categories.id', '=', 'discount_categories.category_id')
@@ -458,22 +469,24 @@ class DiscountService
             ->select('discounts.*', 'categories.id as cId', 'categories.name as cName', 'categories.parent_id', 'parentCategory.name as parentCategoryName')
             ->where('discounts.id', request()->discount->id);
 
+        $filters = $this->getFiltersForCategories();
+        $query = $this->filterService->applyFilters($query, $filters);
 
-        if (!is_null($name)) {
-            $query->where('categories.name', 'LIKE', "%$name%");
-        }
-        if (!is_null($status) && $status != 'all') {
-            $query->where('categories.status', $status);
-        }
-        if (!is_null($parentId) && $parentId != 'all') {
-            $query->where('categories.parent_id', $parentId);
-        }
-        if (!is_null($orderBy) && !is_null($orderDirection)) {
-            $query->orderBy($orderBy, $orderDirection);
-        } else {
-            $query->orderBy('discounts.id', 'DESC');
-        }
+        return $this->filterService->paginate($query, 10);
+    }
 
-        return $query->get();
+    public function getDiscountForBrandList()
+    {
+        $query = Discounts::query()
+            ->join('discount_brands', 'discount_brands.discount_id', '=', 'discounts.id')
+            ->join('brands', 'brands.id', '=', 'discount_brands.brand_id')
+            ->select('discounts.*', 'brands.id as bId', 'brands.name as bName', 'brands.logo')
+            ->where('discounts.id', request()->discount->id);
+
+
+        $filters = $this->getFiltersForBrands();
+        $query = $this->filterService->applyFilters($query, $filters);
+
+        return $this->filterService->paginate($query, 10);
     }
 }
