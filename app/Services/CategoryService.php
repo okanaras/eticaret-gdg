@@ -93,7 +93,7 @@ class CategoryService
                 'operator' => '',
                 'options' => [
                     'id' => 'ID',
-                    'name' => 'Marka Adi',
+                    'name' => 'Kategori Adi',
                     'status' => 'Durum',
                     'parent_id' => 'Ust Kategori',
                 ],

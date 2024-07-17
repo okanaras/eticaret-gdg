@@ -192,6 +192,56 @@ class DiscountService
         ];
     }
 
+    public function getFiltersForCategories(): array
+    {
+        $categories = Category::all()->pluck('name', 'id')->toArray();
+        $categories = ['all' => 'Tumu'] + $categories;
+
+        return [
+            'name' => [
+                'label' => 'Kategori Adi',
+                'type' => 'text',
+                'column' => 'name',
+                'operator' => 'like',
+            ],
+            'parent_id' => [
+                'label' => 'Ust Kategori',
+                'type' => 'select',
+                'column' => 'parent_id',
+                'operator' => '=',
+                'options' => $categories,
+            ],
+            'status' => [
+                'label' => 'Durum',
+                'type' => 'select',
+                'column' => 'status',
+                'operator' => '=',
+                'options' => ['all' => 'Tumu', 'Pasif', 'Aktif'],
+            ],
+            'order_by' => [
+                'label' => 'Siralama Turu',
+                'type' => 'select',
+                'column' => 'order_by',
+                'operator' => '',
+                'options' => [
+                    'categories.id' => 'ID',
+                    'categories.name' => 'Kategori Adi',
+                    'categories.parent_id' => 'Ust Kategori',
+                ],
+            ],
+            'order_direction' => [
+                'label' => 'Siralama Yonu',
+                'type' => 'select',
+                'column' => 'order_direction',
+                'operator' => '',
+                'options' => [
+                    'asc' => 'A-Z',
+                    'desc' => 'Z-A',
+                ],
+            ],
+        ];
+    }
+
     public function prepareDataRequest(): self
     {
         $data = request()->only('name', 'type', 'value', 'start_date', 'end_date', 'minimum_spend', 'status'); // ! status cikacak
@@ -383,6 +433,41 @@ class DiscountService
 
         $query = $query->where('discounts.id', request()->discount->id);
 
+        if (!is_null($orderBy) && !is_null($orderDirection)) {
+            $query->orderBy($orderBy, $orderDirection);
+        } else {
+            $query->orderBy('discounts.id', 'DESC');
+        }
+
+        return $query->get();
+    }
+
+    public function getDiscountForCategoryList()
+    {
+        $name = request()->input('name');
+        $status = request()->input('status');
+        $parentId = request()->input('parent_id');
+        $orderBy = request()->input('order_by');
+        $orderDirection = request()->input('order_direction');
+
+
+        $query = Discounts::query()
+            ->join('discount_categories', 'discount_categories.discount_id', '=', 'discounts.id')
+            ->join('categories', 'categories.id', '=', 'discount_categories.category_id')
+            ->leftjoin('categories as parentCategory', 'parentCategory.id', '=', 'categories.parent_id')
+            ->select('discounts.*', 'categories.id as cId', 'categories.name as cName', 'categories.parent_id', 'parentCategory.name as parentCategoryName')
+            ->where('discounts.id', request()->discount->id);
+
+
+        if (!is_null($name)) {
+            $query->where('categories.name', 'LIKE', "%$name%");
+        }
+        if (!is_null($status) && $status != 'all') {
+            $query->where('categories.status', $status);
+        }
+        if (!is_null($parentId) && $parentId != 'all') {
+            $query->where('categories.parent_id', $parentId);
+        }
         if (!is_null($orderBy) && !is_null($orderDirection)) {
             $query->orderBy($orderBy, $orderDirection);
         } else {
