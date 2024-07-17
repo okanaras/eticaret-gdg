@@ -98,6 +98,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.check'])->gro
         Route::post('/{discount}/assign-categories', [DiscountController::class, 'showAssignCategories']);
         Route::get('/{discount}/assign-brands', [DiscountController::class, 'showAssignBrandsForm'])->name('assign-brands');
         Route::post('/{discount}/assign-brands', [DiscountController::class, 'showAssignBrands']);
+        Route::get('/{discount}/products', [DiscountController::class, 'showProductsList'])->name('show-products-list');
+        Route::get('/{discount}/categories', [DiscountController::class, 'showCategoriesList'])->name('show-categories-list');
+        Route::get('/{discount}/brands', [DiscountController::class, 'showBrandsList'])->name('show-brands-list');
     });
 
 

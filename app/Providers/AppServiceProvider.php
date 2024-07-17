@@ -5,9 +5,7 @@ namespace App\Providers;
 use App\Events\UserRegisterEvent;
 use Illuminate\Pagination\Paginator;
 use App\Listeners\UserRegisterListener;
-use App\Models\Product;
 use App\Services\BrandService;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -54,18 +52,6 @@ class AppServiceProvider extends ServiceProvider
         // view('front.*')->share('brandsColumns', $brandsColumns); // share butun sayfalarla paylasmis olacak. Custom sayfalar icin composer kullandik.
         view()->composer('front.*', function ($view) use ($brandsColumns) {
             $view->with('brandsColumns', $brandsColumns);
-        });
-
-
-        /** ROUTE BINDING */
-        Route::bind('product', function ($value) { // Buradaki key'in (product), web.php de tanimlanan key ile ayni olmasi gerekli.
-            return Product::query()
-                ->with(['productsMain', 'productsMain.category', 'productsMain.brand', 'variantImages', 'sizeStock'])
-                ->whereHas('sizeStock', function ($q) {
-                    $q->where('remaining_stock', '>', 0);
-                })
-                ->where('slug', $value)
-                ->firstOrFail();
         });
     }
 }

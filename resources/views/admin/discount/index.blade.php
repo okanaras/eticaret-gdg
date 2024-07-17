@@ -113,6 +113,7 @@
 
                             <th>Islemler</th>
                             <th>Atamalar</th>
+                            <th>Listeler</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -154,6 +155,20 @@
                                     </a>
                                     <a href="{{ route('admin.discount.assign-brands', $discount->id) }}"
                                         class="btn btn-info p-1" title="Markaya Indirim Atama">
+                                        <i data-feather="shield"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{ route('admin.discount.show-products-list', $discount->id) }}"
+                                        class="btn btn-primary p-1" title="Urune Listesi">
+                                        <i data-feather="box"></i>
+                                    </a>
+                                    <a href="{{ route('admin.discount.show-categories-list', $discount->id) }}"
+                                        class="btn btn-success p-1" title="Kategoriye Listesi">
+                                        <i data-feather="grid"></i>
+                                    </a>
+                                    <a href="{{ route('admin.discount.show-brands-list', $discount->id) }}"
+                                        class="btn btn-info p-1" title="Markaya Listesi">
                                         <i data-feather="shield"></i>
                                     </a>
                                 </td>

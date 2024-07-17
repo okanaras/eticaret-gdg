@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DiscountAssignProductsRequest;
 use App\Http\Requests\DiscountStoreRequest;
 use App\Models\Discounts;
+use App\Models\Product;
 use App\Services\BrandService;
 use App\Services\CategoryService;
 use App\Services\DiscountService;
@@ -250,5 +251,14 @@ class DiscountController extends Controller
         } catch (Throwable $th) {
             dd($th->getMessage());
         }
+    }
+
+    public function showProductsList(Request $request, Discounts $discount)
+    {
+        $filters = $this->discountService->getFiltersForProduct();
+        $discounts = $this->discountService->getDiscountForProductList();
+        // dd('$discount: ', $discounts);
+
+        return view('admin.discount.assign-product.product-list', compact('discount', 'discounts', 'filters'));
     }
 }
