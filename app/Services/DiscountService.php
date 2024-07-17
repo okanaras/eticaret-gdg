@@ -172,6 +172,7 @@ class DiscountService
                 'options' => [
                     'products.id' => 'ID',
                     'products.name' => 'Urun Adi',
+                    'products.final_price' => 'Urun Fiyati',
                     'products_main.category_id' => 'Kategori',
                     'products_main.brand_id' => 'Marka',
                     'products_main.type_id' => 'Urun Turu',
@@ -349,13 +350,10 @@ class DiscountService
             ->join('discount_products', 'discount_products.discount_id', '=', 'discounts.id')
             ->join('products', 'products.id', '=', 'discount_products.product_id')
             ->join('products_main', 'products_main.id', '=', 'products.main_product_id')
-            ->join('discount_categories', 'discount_categories.discount_id', '=', 'discounts.id')
-            ->join('categories', 'categories.id', '=', 'discount_categories.category_id')
-            ->join('discount_brands', 'discount_brands.discount_id', '=', 'discounts.id')
-            ->join('brands', 'brands.id', '=', 'discount_brands.brand_id')
-            ->select('discounts.*', 'products.id as pId', 'products.name as pName', 'products.final_price', 'products.status', 'products_main.category_id')
-            // ->groupBy('discounts.*', 'products.id', 'products.name', 'products.final_price', 'products.status', 'products_main.category_id');
-        // ->distinct();
+            ->join('categories', 'categories.id', '=', 'products_main.category_id')
+            ->join('brands', 'brands.id', '=', 'products_main.brand_id')
+            ->join('product_types', 'product_types.id', '=', 'products_main.type_id')
+            ->select('discounts.*', 'products.id as pId', 'products.name as pName', 'products.final_price', 'products.status', 'products_main.category_id', 'categories.name as cName', 'brands.name as bName', 'product_types.name as ptName');
 
 
         if (!is_null($categoryId) && $categoryId != 'all') {
@@ -377,10 +375,10 @@ class DiscountService
             $query->where('products.name', 'LIKE', "%$name%");
         }
         if (!is_null($finalPriceMin)) {
-            $query->where('products.final_price', '>=', number_format((float)$finalPriceMin, 2, thousands_separator: ''));
+            $query->where('products.final_price', '>=', (float)$finalPriceMin);
         }
         if (!is_null($finalPriceMax)) {
-            $query->where('products.final_price', '<=', number_format((float)$finalPriceMax, 2, thousands_separator: ''));
+            $query->where('products.final_price', '<=', (float)$finalPriceMax);
         }
 
         $query = $query->where('discounts.id', request()->discount->id);

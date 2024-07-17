@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 
-@section('title', 'Indirimlu Urun Listesi')
+@section('title', 'Indirimli Urun Listesi')
 
 
 @push('css')
@@ -58,37 +58,68 @@
                                     <th @class([
                                         'order-by',
                                         'text-primary fw-bolder' =>
-                                            request('order_by') == 'id' || is_null(request('order_by')),
-                                    ]) data-order="id">#
-                                        {!! (request('order_by') == 'id' && request('order_direction') === 'asc') || request('order_by') == null
+                                            request('order_by') == 'products.id' || is_null(request('order_by')),
+                                    ]) data-order="products.id">#
+                                        {!! (request('order_by') == 'products.id' && request('order_direction') === 'asc') || request('order_by') == null
                                             ? '<i class="size-14" data-feather="arrow-down-circle"></i>'
-                                            : (request('order_by') == 'id' && request('order_direction') === 'desc'
+                                            : (request('order_by') == 'products.id' && request('order_direction') === 'desc'
                                                 ? '<i class="size-14" data-feather="arrow-up-circle"></i>'
                                                 : '') !!}
                                     </th>
 
                                     <th @class([
                                         'order-by',
-                                        'text-primary fw-bolder' => request('order_by') == 'product_id',
-                                    ]) data-order="product_id">
-                                        Indirimli Urun {!! request('order_by') == 'product_id' && request('order_direction') === 'asc'
+                                        'text-primary fw-bolder' => request('order_by') == 'products.name',
+                                    ]) data-order="products.name">
+                                        Indirimli Urun {!! request('order_by') == 'products.name' && request('order_direction') === 'asc'
                                             ? '<i class="size-14" data-feather="arrow-down-circle"></i>'
-                                            : (request('order_by') == 'product_id' && request('order_direction') === 'desc'
+                                            : (request('order_by') == 'products.name' && request('order_direction') === 'desc'
                                                 ? '<i class="size-14" data-feather="arrow-up-circle"></i>'
                                                 : '') !!}
                                     </th>
 
                                     <th @class([
                                         'order-by',
-                                        'text-primary fw-bolder' => request('order_by') == 'final_price',
-                                    ]) data-order="final_price">
-                                        Urun Fiyati {!! request('order_by') == 'final_price' && request('order_direction') === 'asc'
+                                        'text-primary fw-bolder' => request('order_by') == 'products.final_price',
+                                    ]) data-order="products.final_price">
+                                        Urun Fiyati {!! request('order_by') == 'products.final_price' && request('order_direction') === 'asc'
                                             ? '<i class="size-14" data-feather="arrow-down-circle"></i>'
-                                            : (request('order_by') == 'final_price' && request('order_direction') === 'desc'
+                                            : (request('order_by') == 'products.final_price' && request('order_direction') === 'desc'
                                                 ? '<i class="size-14" data-feather="arrow-up-circle"></i>'
                                                 : '') !!}
                                     </th>
 
+                                    <th @class([
+                                        'order-by',
+                                        'text-primary fw-bolder' =>
+                                            request('order_by') == 'products_main.category_id',
+                                    ]) data-order="products_main.category_id">
+                                        Kategori {!! request('order_by') == 'products_main.category_id' && request('order_direction') === 'asc'
+                                            ? '<i class="size-14" data-feather="arrow-down-circle"></i>'
+                                            : (request('order_by') == 'products_main.category_id' && request('order_direction') === 'desc'
+                                                ? '<i class="size-14" data-feather="arrow-up-circle"></i>'
+                                                : '') !!}
+                                    </th>
+                                    <th @class([
+                                        'order-by',
+                                        'text-primary fw-bolder' => request('order_by') == 'products_main.brand_id',
+                                    ]) data-order="products_main.brand_id">
+                                        Marka {!! request('order_by') == 'products_main.brand_id' && request('order_direction') === 'asc'
+                                            ? '<i class="size-14" data-feather="arrow-down-circle"></i>'
+                                            : (request('order_by') == 'products_main.brand_id' && request('order_direction') === 'desc'
+                                                ? '<i class="size-14" data-feather="arrow-up-circle"></i>'
+                                                : '') !!}
+                                    </th>
+                                    <th @class([
+                                        'order-by',
+                                        'text-primary fw-bolder' => request('order_by') == 'products_main.type_id',
+                                    ]) data-order="products_main.type_id">
+                                        Urun Turu {!! request('order_by') == 'products_main.type_id' && request('order_direction') === 'asc'
+                                            ? '<i class="size-14" data-feather="arrow-down-circle"></i>'
+                                            : (request('order_by') == 'products_main.type_id' && request('order_direction') === 'desc'
+                                                ? '<i class="size-14" data-feather="arrow-up-circle"></i>'
+                                                : '') !!}
+                                    </th>
                                     <th>Islemler</th>
 
                                 </tr>
@@ -99,6 +130,9 @@
                                         <td>{{ $item->pId }}</td>
                                         <td>{{ $item->pName }}</td>
                                         <td>{{ number_format($item->final_price, 2, thousands_separator: '') }}</td>
+                                        <td>{{ $item->cName }}</td>
+                                        <td>{{ $item->bName }}</td>
+                                        <td>{{ $item->ptName }}</td>
                                         <td>
                                             <a href="javascript:void(0)">
                                                 <i data-feather="trash" class="text-danger btn-delete-discount"
@@ -129,4 +163,87 @@
 @endsection
 
 @push('js')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // let deleteForm = document.querySelector('#deleteForm');
+            let defaultOrderDirection = "{{ request('order_direction') }}";
+
+            feather.replace();
+
+            document.querySelector('.table').addEventListener('click', (event) => {
+                let element = event.target;
+
+                let dataID = element.getAttribute('data-id');
+                let dataName = element.getAttribute('data-name');
+
+                // if (element.classList.contains('btn-delete-discount')) {
+                //     Swal.fire({
+                //         title: " '" + dataName + "' indirimini silmek istediginize emin misiniz?",
+                //         showCancelButton: true,
+                //         confirmButtonText: "Evet",
+                //         cancelButtonText: "Hayir"
+                //     }).then((result) => {
+                //         /* Read more about isConfirmed, isDenied below */
+                //         if (result.isConfirmed) {
+                //             let route =
+                //                 '{{ route('admin.discount.destroy', ['discount' => ':discount']) }}'
+                //             route = route.replace(':discount', dataID)
+
+                //             deleteForm.action = route;
+
+                //             setTimeout(() => {
+                //                 deleteForm.submit();
+                //             }, 100);
+
+                //         } else if (result.dismiss) {
+                //             toastr.info("Herhangi bir islem gerceklestirilmedi!", 'Bilgi');
+                //         }
+                //     });
+                // }
+
+                if (element.classList.contains('order-by')) {
+                    let dataOrder = element.getAttribute('data-order');
+                    let orderByElement = document.querySelector('#order_by');
+                    let orderDirectionElement = document.querySelector('#order_direction');
+                    let filterForm = document.querySelector('#filter-form');
+
+                    orderByElement.value = dataOrder;
+                    removeIElements();
+
+                    if (defaultOrderDirection === '' || defaultOrderDirection === null ||
+                        defaultOrderDirection === undefined) {
+                        defaultOrderDirection = 'desc';
+
+                        let iElement = document.createElement('i');
+                        iElement.setAttribute('data-feather', 'arrow-up-circle');
+                        iElement.classList.add('size-14');
+                        element.appendChild(iElement);
+
+                    } else if (defaultOrderDirection === 'asc') {
+                        defaultOrderDirection = 'desc';
+                        let iElement = document.createElement('i');
+                        iElement.setAttribute('data-feather', 'arrow-up-circle');
+                        iElement.classList.add('size-14');
+                        element.appendChild(iElement);
+                    } else {
+                        defaultOrderDirection = 'asc';
+                        let iElement = document.createElement('i');
+                        iElement.setAttribute('data-feather', 'arrow-down-circle');
+                        iElement.classList.add('size-14');
+                        element.appendChild(iElement);
+                    }
+
+                    orderDirectionElement.value = defaultOrderDirection;
+                    feather.replace();
+                    filterForm.submit();
+
+                }
+            });
+
+            function removeIElements() {
+                let findIElement = document.querySelectorAll('th svg');
+                findIElement.forEach(i => i.remove());
+            }
+        });
+    </script>
 @endpush
