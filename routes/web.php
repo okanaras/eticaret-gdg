@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DiscountController;
+use App\Http\Controllers\Admin\DiscountCouponsController;
 use App\Http\Controllers\Front\CardController;
 use App\Http\Controllers\Front\CheckoutController;
 use App\Http\Controllers\Front\DashboardController;
@@ -113,6 +114,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.check'])->gro
         Route::put('/{discount}/brands/{brand}', [DiscountController::class, 'restoreBrand'])->name('restore-brand');
     });
 
+    Route::resource('discount-coupons', DiscountCouponsController::class);
 
     Route::group(['prefix' => 'gdg-filemanager', 'middleware' => ['web', 'auth']], function () {
         \UniSharp\LaravelFilemanager\Lfm::routes();
