@@ -186,9 +186,9 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             let deleteForm = document.querySelector('#deleteForm');
-            let defaultOrderDirection = "{{ request('order_direction') }}";
             let putForm = document.querySelector('#putForm');
             let discountProductIdElement = document.querySelector('#discount_product_id');
+            let defaultOrderDirection = "{{ request('order_direction') }}";
 
             feather.replace();
 

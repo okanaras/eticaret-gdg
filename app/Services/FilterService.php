@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Throwable;
 
 class FilterService
@@ -27,6 +28,9 @@ class FilterService
                     if ($requestValue == 0) {
                         $query = $query->whereNull($filterValue['table'] . '.' . $filterValue['column_live']);
                     }
+                    if ($requestValue == 1) {
+                        $query = $query->withTrashed();
+                    }
                 } else {
                     $query = $query->where($filterValue['column'], $filterValue['operator'], $requestValue);
                 }
@@ -40,7 +44,7 @@ class FilterService
         return $query;
     }
 
-    public function paginate($query, $perPage = 10)
+    public function paginate($query, $perPage = 10): LengthAwarePaginator
     {
         return $query->paginate($perPage);
     }

@@ -118,7 +118,9 @@
                     </thead>
                     <tbody>
                         @foreach ($discounts as $discount)
-                            <tr>
+                            <tr @class([
+                                'bg-info' => !is_null($discount->deleted_at),
+                            ])>
                                 <td>{{ $discount->id }}</td>
                                 <td>{{ $discount->name }}</td>
                                 <td>{{ getDiscountType(\App\Enums\DiscountTypeEnum::tryFrom($discount->type)) }}</td>
@@ -138,11 +140,20 @@
                                     <a href="{{ route('admin.discount.edit', ['discount' => $discount->id]) }}">
                                         <i data-feather="edit" class="text-warning"></i>
                                     </a>
-                                    <a href="javascript:void(0)">
-                                        <i data-feather="trash" class="text-danger btn-delete-discount"
-                                            data-id="{{ $discount->id }}" data-name="{{ $discount->name }}">
-                                        </i>
-                                    </a>
+
+                                    @if (is_null($discount->deleted_at))
+                                        <a href="javascript:void(0)">
+                                            <i data-feather="trash" class="text-danger btn-delete-discount"
+                                                data-id="{{ $discount->id }}" data-name="{{ $discount->name }}">
+                                            </i>
+                                        </a>
+                                    @else
+                                        <a href="javascript:void(0)">
+                                            <i data-feather="rotate-cw" class="text-success btn-restore-discount"
+                                                data-discount-id="{{ $discount->id }}" data-name="{{ $discount->name }}">
+                                            </i>
+                                        </a>
+                                    @endif
                                 </td>
                                 <td>
                                     <a href="{{ route('admin.discount.assign-products', $discount->id) }}"
@@ -182,6 +193,11 @@
                     @method('DELETE')
                 </form>
 
+                <form action="" method="POST" id="putForm">
+                    @csrf
+                    @method('PUT')
+                </form>
+
                 <div class="col-6 mx-auto mt-3">
                     {{-- {{ $discounts->appends(request()->query())->links() }} --}}
                     {{ $discounts->WithQueryString()->links() }}
@@ -197,6 +213,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             let deleteForm = document.querySelector('#deleteForm');
+            let putForm = document.querySelector('#putForm');
             let defaultOrderDirection = "{{ request('order_direction') }}";
 
             feather.replace();
@@ -205,6 +222,7 @@
                 let element = event.target;
 
                 let dataID = element.getAttribute('data-id');
+                let dataDiscountID = element.getAttribute('data-discount-id');
                 let dataName = element.getAttribute('data-name');
 
                 if (element.classList.contains('btn-delete-discount')) {
@@ -224,6 +242,32 @@
 
                             setTimeout(() => {
                                 deleteForm.submit();
+                            }, 100);
+
+                        } else if (result.dismiss) {
+                            toastr.info("Herhangi bir islem gerceklestirilmedi!", 'Bilgi');
+                        }
+                    });
+                }
+
+                if (element.classList.contains('btn-restore-discount')) {
+                    Swal.fire({
+                        title: " '" + dataName +
+                            "' indirimini geri almak istediginize emin misiniz?",
+                        showCancelButton: true,
+                        confirmButtonText: "Evet",
+                        cancelButtonText: "Hayir"
+                    }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            let route =
+                                '{{ route('admin.discount.restore', ['discount_restore' => ':discount']) }}'
+                            route = route.replace(':discount', dataDiscountID);
+
+                            putForm.action = route;
+
+                            setTimeout(() => {
+                                putForm.submit();
                             }, 100);
 
                         } else if (result.dismiss) {
