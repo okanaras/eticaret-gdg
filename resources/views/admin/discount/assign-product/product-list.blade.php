@@ -126,20 +126,34 @@
                             </thead>
                             <tbody>
                                 @foreach ($discounts as $item)
-                                    <tr>
-                                        <td>{{ $item->pId }}</td>
+                                    <tr @class([
+                                        'bg-info' => !is_null($item->deleted_at),
+                                    ])>
+                                        <td>{{ $item->dpId }}</td>
                                         <td>{{ $item->pName }}</td>
                                         <td>{{ number_format($item->final_price, 2, thousands_separator: '') }}</td>
                                         <td>{{ $item->cName }}</td>
                                         <td>{{ $item->bName }}</td>
                                         <td>{{ $item->ptName }}</td>
                                         <td>
-                                            <a href="javascript:void(0)">
-                                                <i data-feather="trash" class="text-danger btn-delete-discount"
-                                                    data-discount-id="{{ $discount->id }}"
-                                                    data-product-id="{{ $item->pId }}" data-name="{{ $item->pName }}">
-                                                </i>
-                                            </a>
+                                            @if (is_null($item->deleted_at))
+                                                <a href="javascript:void(0)">
+                                                    <i data-feather="trash" class="text-danger btn-delete-discount"
+                                                        data-discount-id="{{ $discount->id }}"
+                                                        data-product-id="{{ $item->pId }}"
+                                                        data-name="{{ $item->pName }}">
+                                                    </i>
+                                                </a>
+                                            @else
+                                                <a href="javascript:void(0)">
+                                                    <i data-feather="rotate-cw" class="text-success btn-restore-discount"
+                                                        data-discount-id="{{ $discount->id }}"
+                                                        data-discount-product-id="{{ $item->dpId }}"
+                                                        data-product-id="{{ $item->pId }}"
+                                                        data-name="{{ $item->pName }}">
+                                                    </i>
+                                                </a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -148,6 +162,12 @@
                         <form action="" method="POST" id="deleteForm">
                             @csrf
                             @method('DELETE')
+                        </form>
+
+                        <form action="" method="POST" id="putForm">
+                            @csrf
+                            @method('PUT')
+                            <input type="hidden" name="discount_product_id" id="discount_product_id">
                         </form>
 
                         <div class="col-6 mx-auto mt-3">
@@ -167,6 +187,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             let deleteForm = document.querySelector('#deleteForm');
             let defaultOrderDirection = "{{ request('order_direction') }}";
+            let putForm = document.querySelector('#putForm');
+            let discountProductIdElement = document.querySelector('#discount_product_id');
 
             feather.replace();
 
@@ -176,6 +198,7 @@
                 let dataDiscountID = element.getAttribute('data-discount-id');
                 let dataProductID = element.getAttribute('data-product-id');
                 let dataName = element.getAttribute('data-name');
+                discountProductIdElement.value = element.getAttribute('data-discount-product-id');
 
                 if (element.classList.contains('btn-delete-discount')) {
                     Swal.fire({
@@ -195,6 +218,33 @@
 
                             setTimeout(() => {
                                 deleteForm.submit();
+                            }, 100);
+
+                        } else if (result.dismiss) {
+                            toastr.info("Herhangi bir islem gerceklestirilmedi!", 'Bilgi');
+                        }
+                    });
+                }
+
+                if (element.classList.contains('btn-restore-discount')) {
+                    Swal.fire({
+                        title: " '" + dataName +
+                            "' indirimini geri almak istediginize emin misiniz?",
+                        showCancelButton: true,
+                        confirmButtonText: "Evet",
+                        cancelButtonText: "Hayir"
+                    }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            let route =
+                                '{{ route('admin.discount.restore-product', ['discount' => ':discount', 'product_restore' => ':product']) }}'
+                            route = route.replace(':discount', dataDiscountID)
+                                .replace(':product', dataProductID);
+
+                            putForm.action = route;
+
+                            setTimeout(() => {
+                                putForm.submit();
                             }, 100);
 
                         } else if (result.dismiss) {

@@ -96,17 +96,31 @@
                             </thead>
                             <tbody>
                                 @foreach ($discounts as $item)
-                                    <tr>
-                                        <td>{{ $item->cId }}</td>
+                                    <tr @class([
+                                        'bg-info' => !is_null($item->deleted_at),
+                                    ])>
+                                        <td>{{ $item->dcId }}</td>
                                         <td>{{ $item->cName }}</td>
                                         <td>{{ $item->parentCategoryName }}</td>
                                         <td>
-                                            <a href="javascript:void(0)">
-                                                <i data-feather="trash" class="text-danger btn-delete-discount"
-                                                    data-discount-id="{{ $discount->id }}"
-                                                    data-product-id="{{ $item->cId }}" data-name="{{ $item->cName }}">
-                                                </i>
-                                            </a>
+                                            @if (is_null($item->deleted_at))
+                                                <a href="javascript:void(0)">
+                                                    <i data-feather="trash" class="text-danger btn-delete-discount"
+                                                        data-discount-id="{{ $discount->id }}"
+                                                        data-category-id="{{ $item->cId }}"
+                                                        data-name="{{ $item->cName }}">
+                                                    </i>
+                                                </a>
+                                            @else
+                                                <a href="javascript:void(0)">
+                                                    <i data-feather="rotate-cw" class="text-success btn-restore-discount"
+                                                        data-discount-id="{{ $discount->id }}"
+                                                        data-discount-category-id="{{ $item->dcId }}"
+                                                        data-category-id="{{ $item->cId }}"
+                                                        data-name="{{ $item->cName }}">
+                                                    </i>
+                                                </a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -115,6 +129,12 @@
                         <form action="" method="POST" id="deleteForm">
                             @csrf
                             @method('DELETE')
+                        </form>
+
+                        <form action="" method="POST" id="putForm">
+                            @csrf
+                            @method('PUT')
+                            <input type="hidden" name="discount_category_id" id="discount_category_id">
                         </form>
 
                         <div class="col-6 mx-auto mt-3">
@@ -132,7 +152,9 @@
 @push('js')
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // let deleteForm = document.querySelector('#deleteForm');
+            let deleteForm = document.querySelector('#deleteForm');
+            let putForm = document.querySelector('#putForm');
+            let discountCategoryIdElement = document.querySelector('#discount_category_id');
             let defaultOrderDirection = "{{ request('order_direction') }}";
 
             feather.replace();
@@ -140,33 +162,63 @@
             document.querySelector('.table').addEventListener('click', (event) => {
                 let element = event.target;
 
-                let dataID = element.getAttribute('data-id');
+                let dataDiscountID = element.getAttribute('data-discount-id');
+                let dataCategoryID = element.getAttribute('data-category-id');
                 let dataName = element.getAttribute('data-name');
+                discountCategoryIdElement.value = element.getAttribute('data-discount-category-id');
 
-                // if (element.classList.contains('btn-delete-discount')) {
-                //     Swal.fire({
-                //         title: " '" + dataName + "' indirimini silmek istediginize emin misiniz?",
-                //         showCancelButton: true,
-                //         confirmButtonText: "Evet",
-                //         cancelButtonText: "Hayir"
-                //     }).then((result) => {
-                //         /* Read more about isConfirmed, isDenied below */
-                //         if (result.isConfirmed) {
-                //             let route =
-                //                 '{{ route('admin.discount.destroy', ['discount' => ':discount']) }}'
-                //             route = route.replace(':discount', dataID)
+                if (element.classList.contains('btn-delete-discount')) {
+                    Swal.fire({
+                        title: " '" + dataName + "' indirimini silmek istediginize emin misiniz?",
+                        showCancelButton: true,
+                        confirmButtonText: "Evet",
+                        cancelButtonText: "Hayir"
+                    }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            let route =
+                                '{{ route('admin.discount.remove-category', ['discount' => ':discount', 'category' => ':category']) }}'
+                            route = route.replace(':discount', dataDiscountID)
+                                .replace(':category', dataCategoryID);
 
-                //             deleteForm.action = route;
+                            deleteForm.action = route;
 
-                //             setTimeout(() => {
-                //                 deleteForm.submit();
-                //             }, 100);
+                            setTimeout(() => {
+                                deleteForm.submit();
+                            }, 100);
 
-                //         } else if (result.dismiss) {
-                //             toastr.info("Herhangi bir islem gerceklestirilmedi!", 'Bilgi');
-                //         }
-                //     });
-                // }
+                        } else if (result.dismiss) {
+                            toastr.info("Herhangi bir islem gerceklestirilmedi!", 'Bilgi');
+                        }
+                    });
+                }
+
+                if (element.classList.contains('btn-restore-discount')) {
+                    Swal.fire({
+                        title: " '" + dataName +
+                            "' indirimini geri almak istediginize emin misiniz?",
+                        showCancelButton: true,
+                        confirmButtonText: "Evet",
+                        cancelButtonText: "Hayir"
+                    }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            let route =
+                                '{{ route('admin.discount.restore-category', ['discount' => ':discount', 'category' => ':category']) }}'
+                            route = route.replace(':discount', dataDiscountID)
+                                .replace(':category', dataCategoryID);
+
+                            putForm.action = route;
+
+                            setTimeout(() => {
+                                putForm.submit();
+                            }, 100);
+
+                        } else if (result.dismiss) {
+                            toastr.info("Herhangi bir islem gerceklestirilmedi!", 'Bilgi');
+                        }
+                    });
+                }
 
                 if (element.classList.contains('order-by')) {
                     let dataOrder = element.getAttribute('data-order');

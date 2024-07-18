@@ -7,6 +7,8 @@ use App\Models\Category;
 use App\Models\Discounts;
 use App\Models\ProductTypes;
 use App\Enums\DiscountTypeEnum;
+use App\Models\DiscountCategories;
+use App\Models\DiscountProducts;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -232,6 +234,15 @@ class DiscountService
                 'column' => 'status',
                 'operator' => '=',
                 'options' => ['all' => 'Tumu', 'Pasif', 'Aktif'],
+            ],
+            'with_trashed' => [
+                'label' => 'Silinmis Veriler Getirilsin Mi?',
+                'type' => 'select',
+                'column' => 'with_trashed',
+                'column_live' => 'deleted_at',
+                'table' => 'discount_categories',
+                'operator' => '=',
+                'options' => ['Hayir', 'Evet'],
             ],
             'order_by' => [
                 'label' => 'Siralama Turu',
@@ -460,7 +471,7 @@ class DiscountService
             ->join('categories', 'categories.id', '=', 'products_main.category_id')
             ->join('brands', 'brands.id', '=', 'products_main.brand_id')
             ->join('product_types', 'product_types.id', '=', 'products_main.type_id')
-            ->select('discounts.*', 'products.id as pId', 'products.name as pName', 'products.final_price', 'products.status', 'products_main.category_id', 'categories.name as cName', 'brands.name as bName', 'product_types.name as ptName')
+            ->select('discounts.*', 'discount_products.id as dpId', 'discount_products.deleted_at',  'products.id as pId', 'products.name as pName', 'products.final_price', 'products.status', 'products_main.category_id', 'categories.name as cName', 'brands.name as bName', 'product_types.name as ptName')
             ->where('discounts.id', request()->discount->id);
 
         if (empty(request()->all())) {
@@ -479,13 +490,31 @@ class DiscountService
             ->join('discount_categories', 'discount_categories.discount_id', '=', 'discounts.id')
             ->join('categories', 'categories.id', '=', 'discount_categories.category_id')
             ->leftjoin('categories as parentCategory', 'parentCategory.id', '=', 'categories.parent_id')
-            ->select('discounts.*', 'categories.id as cId', 'categories.name as cName', 'categories.parent_id', 'parentCategory.name as parentCategoryName')
+            ->select('discounts.*', 'discount_categories.id as dcId', 'discount_categories.deleted_at', 'categories.id as cId', 'categories.name as cName', 'categories.parent_id', 'parentCategory.name as parentCategoryName')
             ->where('discounts.id', request()->discount->id);
+
+        if (empty(request()->all())) {
+            $query = $query->whereNull('discount_categories.deleted_at');
+        }
 
         $filters = $this->getFiltersForCategories();
         $query = $this->filterService->applyFilters($query, $filters);
 
         return $this->filterService->paginate($query, 10);
+    }
+
+    public function getDiscountProductWT(int $discountProductId)
+    {
+        return DiscountProducts::query()
+            ->withTrashed()
+            ->find($discountProductId);
+    }
+
+    public function getDiscountCategoryWT(int $discountCategoryId)
+    {
+        return DiscountCategories::query()
+            ->withTrashed()
+            ->find($discountCategoryId);
     }
 
     public function getDiscountForBrandList()

@@ -6,6 +6,7 @@ use App\Enums\DiscountTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DiscountAssignProductsRequest;
 use App\Http\Requests\DiscountStoreRequest;
+use App\Models\Category;
 use App\Models\DiscountProducts;
 use App\Models\Discounts;
 use App\Models\Product;
@@ -185,21 +186,44 @@ class DiscountController extends Controller
         return view('admin.discount.assign-product.product-list', compact('discount', 'discounts', 'filters'));
     }
 
-    public function removeProduct(Request $request, Discounts $discount, int|string $product_remove)
+    public function removeProduct(Discounts $discount, int|string $product_remove)
     {
-        $discount->products()->updateExistingPivot($product_remove, ['deleted_at' => now()]); // ! bu islem ilgili kosullara ait her veriyi set eder.
+        try {
+            $discount->products()->updateExistingPivot($product_remove, ['deleted_at' => now()]); // ! bu islem ilgili kosullara ait her veriyi set eder.
 
-        // $discount->products()->detach([$product_remove]); // ! detach soft deletes yapmiyor direkt kaldiriyor.
+            // $discount->products()->detach([$product_remove]); // ! detach soft deletes yapmiyor direkt kaldiriyor.
 
-        // $result = DiscountProducts::query()
-        //     ->where('product_id', $product_remove)
-        //     ->where('discount_id', $discount->id)
-        //     ->orderBy('id', 'desc')
-        //     ->firstOrFail();
-        // $result->delete(); // ! burda ise ilk bulunan son eklenen(orderby id desc, firstorfail) gibi sekilde query degistirilebilinir
+            // $result = DiscountProducts::query()
+            //     ->where('product_id', $product_remove)
+            //     ->where('discount_id', $discount->id)
+            //     ->orderBy('id', 'desc')
+            //     ->firstOrFail();
+            // $result->delete(); // ! burda ise ilk bulunan son eklenen(orderby id desc, firstorfail) gibi sekilde query degistirilebilinir
 
-        toast('Urun indirimden kaldirildi.', 'success');
-        return redirect()->back();
+
+            toast('Urun indirimden kaldirildi.', 'success');
+            return redirect()->back();
+        } catch (Throwable $th) {
+            return $this->exception($th, 'admin.discount.index', 'Urun indirimden kaldirilamadi!');
+        }
+    }
+
+    public function restoreProduct(Request $request)
+    {
+        try {
+            $discountProductId = $request->discount_product_id;
+
+            $discountProduct = $this->discountService->getDiscountProductWT($discountProductId);
+            if ($discountProduct) {
+                $discountProduct->restore();
+                toast('Urun indirimi geri getirildi.', 'success');
+                return redirect()->back();
+            }
+            toast('Urune tanimlanmis indirim bulunumadi ve geri getirilemedi.', 'error');
+            return redirect()->back();
+        } catch (Throwable $th) {
+            return $this->exception($th, 'admin.discount.index', 'Urun indirimi geri getirilemedi!');
+        }
     }
 
     public function showAssignCategoriesForm(Discounts $discount, CategoryService $categoryService)
@@ -247,6 +271,36 @@ class DiscountController extends Controller
         $discounts = $this->discountService->getDiscountForCategoryList();
 
         return view('admin.discount.assign-product.category-list', compact('discount', 'discounts', 'filters'));
+    }
+
+    public function removeCategory(Discounts $discount, Category $category)
+    {
+        try {
+            $discount->categories()->updateExistingPivot($category->id, ['deleted_at' => now()]);
+
+            toast('Kategori indirimden kaldirildi.', 'success');
+            return redirect()->back();
+        } catch (Throwable $th) {
+            return $this->exception($th, 'admin.discount.index', 'Kategori indirimden kaldirilamadi!');
+        }
+    }
+
+    public function restoreCategory(Request $request)
+    {
+        try {
+            $discountCategoryId = $request->discount_category_id;
+
+            $discountCategory = $this->discountService->getDiscountCategoryWT($discountCategoryId);
+            if ($discountCategory) {
+                $discountCategory->restore();
+                toast('Kategori indirimi geri getirildi.', 'success');
+                return redirect()->back();
+            }
+            toast('Kategoriye tanimlanmis indirim bulunumadi ve geri getirilemedi.', 'error');
+            return redirect()->back();
+        } catch (Throwable $th) {
+            return $this->exception($th, 'admin.discount.index', 'Kategori indirimi geri getirilemedi!');
+        }
     }
 
     public function showAssignBrandsForm(Discounts $discount, BrandService $brandService)

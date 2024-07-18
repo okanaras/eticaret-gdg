@@ -97,14 +97,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.check'])->gro
         Route::post('/{discount}/assign-products', [DiscountController::class, 'showAssignProducts']);
         Route::get('/{discount}/products', [DiscountController::class, 'showProductsList'])->name('show-products-list');
         Route::delete('/{discount}/products/{product_remove}', [DiscountController::class, 'removeProduct'])->name('remove-product');
+        Route::put('/{discount}/products/{product_restore}', [DiscountController::class, 'restoreProduct'])->name('restore-product');
 
         Route::get('/{discount}/assign-categories', [DiscountController::class, 'showAssignCategoriesForm'])->name('assign-categories');
         Route::post('/{discount}/assign-categories', [DiscountController::class, 'showAssignCategories']);
         Route::get('/{discount}/categories', [DiscountController::class, 'showCategoriesList'])->name('show-categories-list');
+        Route::delete('/{discount}/categories/{category}', [DiscountController::class, 'removeCategory'])->name('remove-category');
+        Route::put('/{discount}/categories/{category}', [DiscountController::class, 'restoreCategory'])->name('restore-category');
 
         Route::get('/{discount}/assign-brands', [DiscountController::class, 'showAssignBrandsForm'])->name('assign-brands');
         Route::post('/{discount}/assign-brands', [DiscountController::class, 'showAssignBrands']);
         Route::get('/{discount}/brands', [DiscountController::class, 'showBrandsList'])->name('show-brands-list');
+        Route::delete('/{discount}/brands/{brand_remove}', [DiscountController::class, 'removeBrand'])->name('remove-brand');
     });
 
 
