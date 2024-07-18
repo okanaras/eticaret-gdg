@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Product extends Model
@@ -23,6 +23,10 @@ class Product extends Model
     ];
 
     public function getRouteKey(): string
+    // buradaki gelistirme web.php de {product} default olarak id yi baz aliyor.
+    // Biz daha once route bindingi ogrenmek icin burada slug a cevirdik.
+    // Ama daha kullanisli hali ilgili modelden obje olusturutup o objenin setKeyName fonk una gondermektir.
+    // or : $product = new Product; $product->setKeyName('slug'); daha sonra $product::query()... || Seklinde dinamik kullanmak gerekir. Aksi takdir de her zaman slug baz alinacak
     {
         return 'slug';
     }
@@ -52,6 +56,12 @@ class Product extends Model
         return $this->belongsTo(ProductsMain::class, 'main_product_id', 'id');
     }
 
+    public function discounts(): BelongsToMany
+    {
+        return $this->belongsToMany(Discounts::class, 'discount_products', 'product_id', 'discount_id')
+            ->withPivot('deleted_at');
+    }
+
     // local scope
     public function scopeWithRelations($query)
     {
@@ -61,9 +71,9 @@ class Product extends Model
     // global scope
     protected static function booted()
     {
-        static::addGlobalScope('activeProudctMain', function (Builder $builder) {
-            $builder->with(['productsMain', 'productsMain.category', 'productsMain.brand', 'variantImages']);
-        });
+        // static::addGlobalScope('activeProudctMain', function (Builder $builder) {
+        //     $builder->with(['productsMain', 'productsMain.category', 'productsMain.brand', 'variantImages']);
+        // });
     }
 
     /**

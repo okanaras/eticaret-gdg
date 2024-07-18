@@ -6,6 +6,7 @@ use App\Enums\DiscountTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DiscountAssignProductsRequest;
 use App\Http\Requests\DiscountStoreRequest;
+use App\Models\DiscountProducts;
 use App\Models\Discounts;
 use App\Models\Product;
 use App\Services\BrandService;
@@ -21,6 +22,7 @@ use Throwable;
 class DiscountController extends Controller
 {
     use GdgException;
+
     public function __construct(public DiscountService $discountService)
     {
     }
@@ -175,6 +177,31 @@ class DiscountController extends Controller
         }
     }
 
+    public function showProductsList(Request $request, Discounts $discount)
+    {
+        $filters = $this->discountService->getFiltersForProduct();
+        $discounts = $this->discountService->getDiscountForProductList();
+
+        return view('admin.discount.assign-product.product-list', compact('discount', 'discounts', 'filters'));
+    }
+
+    public function removeProduct(Request $request, Discounts $discount, int|string $product_remove)
+    {
+        $discount->products()->updateExistingPivot($product_remove, ['deleted_at' => now()]); // ! bu islem ilgili kosullara ait her veriyi set eder.
+
+        // $discount->products()->detach([$product_remove]); // ! detach soft deletes yapmiyor direkt kaldiriyor.
+
+        // $result = DiscountProducts::query()
+        //     ->where('product_id', $product_remove)
+        //     ->where('discount_id', $discount->id)
+        //     ->orderBy('id', 'desc')
+        //     ->firstOrFail();
+        // $result->delete(); // ! burda ise ilk bulunan son eklenen(orderby id desc, firstorfail) gibi sekilde query degistirilebilinir
+
+        toast('Urun indirimden kaldirildi.', 'success');
+        return redirect()->back();
+    }
+
     public function showAssignCategoriesForm(Discounts $discount, CategoryService $categoryService)
     {
         $categories = $categoryService->getAllActiveCategories();
@@ -212,6 +239,14 @@ class DiscountController extends Controller
         } catch (Throwable $th) {
             dd($th->getMessage());
         }
+    }
+
+    public function showCategoriesList(Request $request, Discounts $discount)
+    {
+        $filters = $this->discountService->getFiltersForCategories();
+        $discounts = $this->discountService->getDiscountForCategoryList();
+
+        return view('admin.discount.assign-product.category-list', compact('discount', 'discounts', 'filters'));
     }
 
     public function showAssignBrandsForm(Discounts $discount, BrandService $brandService)
@@ -253,21 +288,6 @@ class DiscountController extends Controller
         }
     }
 
-    public function showProductsList(Request $request, Discounts $discount)
-    {
-        $filters = $this->discountService->getFiltersForProduct();
-        $discounts = $this->discountService->getDiscountForProductList();
-
-        return view('admin.discount.assign-product.product-list', compact('discount', 'discounts', 'filters'));
-    }
-
-    public function showCategoriesList(Request $request, Discounts $discount)
-    {
-        $filters = $this->discountService->getFiltersForCategories();
-        $discounts = $this->discountService->getDiscountForCategoryList();
-
-        return view('admin.discount.assign-product.category-list', compact('discount', 'discounts', 'filters'));
-    }
     public function showBrandsList(Request $request, Discounts $discount)
     {
         $filters = $this->discountService->getFiltersForBrands();

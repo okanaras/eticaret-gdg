@@ -165,7 +165,7 @@
 @push('js')
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // let deleteForm = document.querySelector('#deleteForm');
+            let deleteForm = document.querySelector('#deleteForm');
             let defaultOrderDirection = "{{ request('order_direction') }}";
 
             feather.replace();
@@ -173,33 +173,35 @@
             document.querySelector('.table').addEventListener('click', (event) => {
                 let element = event.target;
 
-                let dataID = element.getAttribute('data-id');
+                let dataDiscountID = element.getAttribute('data-discount-id');
+                let dataProductID = element.getAttribute('data-product-id');
                 let dataName = element.getAttribute('data-name');
 
-                // if (element.classList.contains('btn-delete-discount')) {
-                //     Swal.fire({
-                //         title: " '" + dataName + "' indirimini silmek istediginize emin misiniz?",
-                //         showCancelButton: true,
-                //         confirmButtonText: "Evet",
-                //         cancelButtonText: "Hayir"
-                //     }).then((result) => {
-                //         /* Read more about isConfirmed, isDenied below */
-                //         if (result.isConfirmed) {
-                //             let route =
-                //                 '{{ route('admin.discount.destroy', ['discount' => ':discount']) }}'
-                //             route = route.replace(':discount', dataID)
+                if (element.classList.contains('btn-delete-discount')) {
+                    Swal.fire({
+                        title: " '" + dataName + "' indirimini silmek istediginize emin misiniz?",
+                        showCancelButton: true,
+                        confirmButtonText: "Evet",
+                        cancelButtonText: "Hayir"
+                    }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            let route =
+                                '{{ route('admin.discount.remove-product', ['discount' => ':discount', 'product_remove' => ':product']) }}'
+                            route = route.replace(':discount', dataDiscountID)
+                                .replace(':product', dataProductID);
 
-                //             deleteForm.action = route;
+                            deleteForm.action = route;
 
-                //             setTimeout(() => {
-                //                 deleteForm.submit();
-                //             }, 100);
+                            setTimeout(() => {
+                                deleteForm.submit();
+                            }, 100);
 
-                //         } else if (result.dismiss) {
-                //             toastr.info("Herhangi bir islem gerceklestirilmedi!", 'Bilgi');
-                //         }
-                //     });
-                // }
+                        } else if (result.dismiss) {
+                            toastr.info("Herhangi bir islem gerceklestirilmedi!", 'Bilgi');
+                        }
+                    });
+                }
 
                 if (element.classList.contains('order-by')) {
                     let dataOrder = element.getAttribute('data-order');
