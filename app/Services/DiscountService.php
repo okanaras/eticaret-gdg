@@ -140,6 +140,15 @@ class DiscountService
                 'operator' => '=',
                 'options' => ['all' => 'Tumu', 'Pasif', 'Aktif'],
             ],
+            'with_trashed' => [
+                'label' => 'Silinmis Veriler Getirilsin Mi?',
+                'type' => 'select',
+                'column' => 'with_trashed',
+                'column_live' => 'deleted_at',
+                'table' => 'discount_products',
+                'operator' => '=',
+                'options' => ['Hayir', 'Evet'],
+            ],
             'product_name' => [
                 'label' => 'Urun Adi(Varyant)',
                 'type' => 'text',
@@ -453,6 +462,10 @@ class DiscountService
             ->join('product_types', 'product_types.id', '=', 'products_main.type_id')
             ->select('discounts.*', 'products.id as pId', 'products.name as pName', 'products.final_price', 'products.status', 'products_main.category_id', 'categories.name as cName', 'brands.name as bName', 'product_types.name as ptName')
             ->where('discounts.id', request()->discount->id);
+
+        if (empty(request()->all())) {
+            $query = $query->whereNull('discount_products.deleted_at');
+        }
 
         $filters = $this->getFiltersForProduct();
         $query = $this->filterService->applyFilters($query, $filters);

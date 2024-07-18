@@ -21,8 +21,12 @@ class FilterService
                 $filterKey != 'order_direction'
             ) {
                 $requestValue = $filterValue['operator'] == 'like' ? '%' . $this->request->$filterKey . '%' : $this->request->$filterKey;
-                if (isset($filterValue['table'])) {
+                if (isset($filterValue['table']) && $filterKey != 'with_trashed') {
                     $query = $query->where($filterValue['table'] . '.' . $filterValue['column_live'], $filterValue['operator'], $requestValue);
+                } else if ($filterKey == 'with_trashed') {
+                    if ($requestValue == 0) {
+                        $query = $query->whereNull($filterValue['table'] . '.' . $filterValue['column_live']);
+                    }
                 } else {
                     $query = $query->where($filterValue['column'], $filterValue['operator'], $requestValue);
                 }
