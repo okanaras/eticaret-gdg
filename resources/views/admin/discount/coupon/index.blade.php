@@ -203,16 +203,18 @@
                 if (element.classList.contains('btn-restore-coupon')) {
                     Swal.fire({
                         title: " '" + dataName +
-                            "' indirimini geri almak istediginize emin misiniz?",
+                            "' indirim kodunu geri almak istediginize emin misiniz?",
                         showCancelButton: true,
                         confirmButtonText: "Evet",
                         cancelButtonText: "Hayir"
                     }).then((result) => {
                         /* Read more about isConfirmed, isDenied below */
                         if (result.isConfirmed) {
+
+                            let dataDiscountID = element.getAttribute('data-coupon-id');
                             let route =
-                                '{{ route('admin.discount.restore', ['discount_restore' => ':discount']) }}'
-                            route = route.replace(':discount', dataDiscountID);
+                                '{{ route('admin.discount-coupons.restore', ['discount_coupon' => ':discount_coupon']) }}'
+                            route = route.replace(':discount_coupon', dataDiscountID);
 
                             putForm.action = route;
 

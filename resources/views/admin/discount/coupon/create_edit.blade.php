@@ -55,7 +55,8 @@
 
                 <div class="col-md-6 mb-3">
                     <label for="discount_id" class="form-label">Indirim Tanimlamasi</label>
-                    <select class="form-select select-discounts" name="discount_id" id="discount_id" data-width="100%">
+                    <select class="form-select select-discounts" name="discount_id" id="discount_id" data-width="100%"
+                        {{ isset($discount) ? ($discount->used_count ? 'disabled' : '') : '' }}>
                         <option selected='selected' value="-1">Indirim Turu Seciniz</option>
                         @foreach ($discounts as $itemDiscount)
                             <option value="{{ $itemDiscount->id }}"
@@ -141,6 +142,7 @@
                 wrap: true,
                 enableTime: false,
                 dateFormat: "Y-m-d",
+                minDate: "{{ now()->subDay()->format('Y-m-d') }}"
             });
         });
     </script>

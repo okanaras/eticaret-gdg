@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use App\Models\Discounts;
 use App\Models\DiscountCoupons;
 
@@ -35,12 +36,29 @@ class DiscountCouponService
         if (is_null($data)) {
             $data = $this->prepareData;
         }
+
+        if ($usedCount = $this->discountCoupons->used_count) {
+            unset($data['discount_id']);
+            if ($usedCount > $data['usage_limit']) {
+                $data['usage_limit'] = $usedCount;
+            }
+        }
+
+        if (now() > Carbon::parse($data['expiry_date']) && $this->discountCoupons->expiry_date != $data['expiry_date']) {
+            $data['expiry_date'] = now()->subDay()->format('Y-m-d');
+        }
+
         return $this->discountCoupons->update($data);
     }
 
     public function delete(): bool
     {
         return $this->discountCoupons->delete();
+    }
+
+    public function restore(): bool
+    {
+        return $this->discountCoupons->restore();
     }
 
     public function getFilters(): array
@@ -128,6 +146,13 @@ class DiscountCouponService
     public function getById(int $id): ?DiscountCoupons
     {
         return $this->discountCoupons->find($id);
+    }
+
+    public function getByIdWT(int $id): ?DiscountCoupons
+    {
+        return $this->discountCoupons::query()
+            ->withTrashed()
+            ->find($id);
     }
 
     public function setDiscountCoupon(DiscountCoupons $discountCoupon): self

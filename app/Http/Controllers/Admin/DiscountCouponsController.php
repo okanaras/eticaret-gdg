@@ -119,4 +119,22 @@ class DiscountCouponsController extends Controller
             return $this->exception($th, 'admin.discount-coupons.index', 'Indirim kodu silinemedi.');
         }
     }
+
+    public function restore(Request $request)
+    {
+        try {
+            $discountCouponID = $request->discount_coupon;
+            $discountCoupon = $this->discountCouponService->getByIdWT($discountCouponID);
+
+            if ($discountCoupon) {
+                $this->discountCouponService->setDiscountCoupon($discountCoupon)->restore();
+                toast('Indirimi kodu geri getirildi.', 'success');
+                return redirect()->back();
+            }
+            toast('Indirimi kodu bulunumadi ve geri getirilemedi.', 'error');
+            return redirect()->back();
+        } catch (Throwable $th) {
+            return $this->exception($th, 'admin.discount.index', 'Indirim kodu geri getirilemedi!');
+        }
+    }
 }
