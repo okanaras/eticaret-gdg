@@ -21,6 +21,7 @@
         "laravel/tinker": "^2.9",
         "okanaras/laravel-filemanager": "dev-master",
         "realrashid/sweet-alert": "^7.1",
+        "roach-php/laravel": "^3.1",
         "spatie/laravel-permission": "^6.7"
     },
     "require-dev": {

@@ -22,7 +22,7 @@ class BrandFactory extends Factory
             // factory de fake data olusturururz, seeder da factory cagirilir veya manuel veri doldururuz. Seeder lari ise databaseSeeder da $this->call([BrandSeeder::class,]); ile cagiririz.
 
             'name' => $name,
-            'slug' => Str::slug($name),
+            'slug' => fake()->unique(true)->slug,
             'status' => fake()->boolean(),
             'is_featured' => fake()->boolean(),
             'order' => fake()->randomNumber()

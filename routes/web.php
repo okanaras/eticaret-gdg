@@ -1,20 +1,22 @@
 <?php
 
-use App\Http\Controllers\Admin\BrandController;
+use RoachPHP\Roach;
+use App\Spiders\KoraySporSpider;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Front\CardController;
+use App\Http\Controllers\Admin\BrandController;
+use App\Http\Controllers\Front\FrontController;
+use App\Http\Controllers\Admin\SlidersController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Front\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DiscountController;
-use App\Http\Controllers\Admin\DiscountCouponsController;
-use App\Http\Controllers\Front\CardController;
 use App\Http\Controllers\Front\CheckoutController;
-use App\Http\Controllers\Front\DashboardController;
-use App\Http\Controllers\Front\FrontController;
 use App\Http\Controllers\Front\MyOrdersController;
-use App\Http\Controllers\Front\ProductController;
+use App\Http\Controllers\Front\DashboardController;
+use App\Http\Controllers\Admin\DiscountCouponsController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
-use App\Http\Controllers\Admin\SlidersController;
-use Illuminate\Support\Facades\Route;
 
 /** Auth */
 Route::prefix('/kayit-ol')->middleware(['throttle:registration', 'guest'])->group(function () {
@@ -116,6 +118,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin.check'])->gro
 
     Route::resource('discount-coupons', DiscountCouponsController::class);
     Route::put('discount-coupons/{discount_coupon}/restore', [DiscountCouponsController::class, 'restore'])->name('discount-coupons.restore');
+
+    Route::get('/scraper', function () {
+        $result = Roach::startSpider(KoraySporSpider::class);
+        dd('$result: ', $result);
+    });
 
     Route::group(['prefix' => 'gdg-filemanager', 'middleware' => ['web', 'auth']], function () {
         \UniSharp\LaravelFilemanager\Lfm::routes();
